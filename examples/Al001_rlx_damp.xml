@@ -1,38 +1,24 @@
 <qes:espresso xmlns:qes="http://www.quantum-espresso.org/ns/qes/qes-1.0"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes-1.0 espresso.xsd">
+              xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes-1.0 ../qespresso/scheme/qes.xsd">
   <input>
     <control_variables>
-      <title>
-
-      </title>
-      <calculation>
-relax
-      </calculation>
-      <restart_mode>
-from_scratch
-      </restart_mode>
-      <prefix>
-Al
-      </prefix>
-      <pseudo_dir>
-/scratch/pdelugas/espresso-xsd/pseudo
-      </pseudo_dir>
-      <outdir>
-/scratch/pdelugas/espresso-xsd/tempdir
-      </outdir>
+      <title> Al001 relaxation with damped dynamics </title>
+      <calculation>relax</calculation>
+      <restart_mode>from_scratch</restart_mode>
+      <prefix>Al</prefix>
+      <pseudo_dir>/scratch/pdelugas/espresso-xsd/pseudo</pseudo_dir>
+      <outdir>/scratch/pdelugas/espresso-xsd/tempdir</outdir>
       <stress>
-F
+          false
       </stress>
       <forces>
-F
+         false
       </forces>
       <wf_collect>
-F
+         false
       </wf_collect>
-      <disk_io>
-default
-      </disk_io>
+      <disk_io>low</disk_io>
       <max_seconds>
     10000000
       </max_seconds>
@@ -45,9 +31,7 @@ default
       <press_conv_thr>
        0.5000000E+00
       </press_conv_thr>
-      <verbosity>
-default
-      </verbosity>
+      <verbosity>low</verbosity>
       <print_every>
       100000
       </print_every>
@@ -57,9 +41,7 @@ default
         <mass>
        0.1000000E+01
         </mass>
-        <pseudo_file>
-Al.pz-vbc.UPF
-        </pseudo_file>
+        <pseudo_file>Al.pz-vbc.UPF</pseudo_file>
       </specie>
     </atomic_species>
     <atomic_structure nat="7" alat="5.303300000000000E+000">
@@ -99,28 +81,21 @@ Al.pz-vbc.UPF
       </cell>
     </atomic_structure>
     <dft>
-      <functional>
- SLA  PZ   NOGX NOGC
-      </functional>
+      <functional>PZ</functional>
     </dft>
     <spin>
       <lsda>
-F
+         false
       </lsda>
       <noncolin>
-F
+        false
       </noncolin>
       <spinorbit>
-F
+        false
       </spinorbit>
     </spin>
     <bands>
-      <nbnd>
-           0
-      </nbnd>
-      <smearing degauss="5.000000000000000E-002">
-methfessel-paxton
-      </smearing>
+      <smearing degauss="5.000000000000000E-002">gaussian</smearing>
       <tot_charge>
        0.0000000E+00
       </tot_charge>
@@ -134,12 +109,8 @@ smearing
       </ecutwfc>
     </basis>
     <electron_control>
-      <diagonalization>
-david
-      </diagonalization>
-      <mixing_mode>
-plain
-      </mixing_mode>
+      <diagonalization>davidson</diagonalization>
+      <mixing_mode>plain</mixing_mode>
       <mixing_beta>
        0.3000000E+00
       </mixing_beta>
@@ -153,13 +124,13 @@ plain
          100
       </max_nstep>
       <real_space_q>
-F
+         false
       </real_space_q>
       <diago_thr_init>
        0.0000000E+00
       </diago_thr_init>
       <diago_full_acc>
-F
+         false
       </diago_full_acc>
       <diago_cg_maxiter>
           20
@@ -184,16 +155,14 @@ F
 damp
       </ion_dynamics>
       <remove_rigid_rot>
-F
+false
       </remove_rigid_rot>
       <refold_pos>
-F
+           false
       </refold_pos>
     </ion_control>
     <cell_control>
-      <cell_dynamics>
-none
-      </cell_dynamics>
+      <cell_dynamics>none</cell_dynamics>
       <wmass>
        0.6380110E+04
       </wmass>
@@ -208,22 +177,22 @@ none
     </cell_control>
     <symmetry_flags>
       <nosym>
-F
+          false
       </nosym>
       <nosym_evc>
-F
+        false
       </nosym_evc>
       <noinv>
-F
+        false
       </noinv>
       <no_t_rev>
-F
+         false
       </no_t_rev>
       <force_symmorphic>
-F
+        false
       </force_symmorphic>
       <use_all_frac>
-F
+         false
       </use_all_frac>
     </symmetry_flags>
     <free_positions>
@@ -236,4 +205,4 @@ F
        0.1000000E+01       0.1000000E+01       0.1000000E+01
     </free_positions>
   </input>
-</espresso>
+</qes:espresso>

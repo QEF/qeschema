@@ -1,38 +1,24 @@
 <qes:espresso xmlns:qes="http://www.quantum-espresso.org/ns/qes/qes-1.0"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes-1.0 espresso.xsd">
+              xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes-1.0 ../qespresso/scheme/qes.xsd">
   <input>
     <control_variables>
-      <title>
-
-      </title>
-      <calculation>
-scf
-      </calculation>
-      <restart_mode>
-from_scratch
-      </restart_mode>
-      <prefix>
-feo_af
-      </prefix>
-      <pseudo_dir>
-/scratch/pdelugas/espresso-xsd/pseudo/
-      </pseudo_dir>
-      <outdir>
-/scratch/pdelugas/espresso-xsd/tempdir/
-      </outdir>
+      <title>FeO_LDA+U=0</title>
+      <calculation>scf</calculation>
+      <restart_mode>from_scratch</restart_mode>
+      <prefix>feo_af</prefix>
+      <pseudo_dir>/scratch/pdelugas/espresso-xsd/pseudo/</pseudo_dir>
+      <outdir>/scratch/pdelugas/espresso-xsd/tempdir/</outdir>
       <stress>
-T
+            true
       </stress>
       <forces>
-T
+            true
       </forces>
       <wf_collect>
-F
+            false
       </wf_collect>
-      <disk_io>
-default
-      </disk_io>
+      <disk_io>low</disk_io>
       <max_seconds>
     10000000
       </max_seconds>
@@ -45,9 +31,7 @@ default
       <press_conv_thr>
        0.5000000E+00
       </press_conv_thr>
-      <verbosity>
-default
-      </verbosity>
+      <verbosity>low</verbosity>
       <print_every>
       100000
       </print_every>
@@ -57,9 +41,7 @@ default
         <mass>
        0.1000000E+01
         </mass>
-        <pseudo_file>
-O.pz-rrkjus.UPF
-        </pseudo_file>
+        <pseudo_file>O.pz-rrkjus.UPF</pseudo_file>
         <starting_magnetization>
        0.0000000E+00
         </starting_magnetization>
@@ -68,9 +50,7 @@ O.pz-rrkjus.UPF
         <mass>
        0.1000000E+01
         </mass>
-        <pseudo_file>
-Fe.pz-nd-rrkjus.UPF
-        </pseudo_file>
+        <pseudo_file>Fe.pz-nd-rrkjus.UPF</pseudo_file>
         <starting_magnetization>
        0.5000000E+00
         </starting_magnetization>
@@ -79,9 +59,7 @@ Fe.pz-nd-rrkjus.UPF
         <mass>
        0.1000000E+01
         </mass>
-        <pseudo_file>
-Fe.pz-nd-rrkjus.UPF
-        </pseudo_file>
+        <pseudo_file>Fe.pz-nd-rrkjus.UPF</pseudo_file>
         <starting_magnetization>
       -0.5000000E+00
         </starting_magnetization>
@@ -115,9 +93,7 @@ Fe.pz-nd-rrkjus.UPF
       </cell>
     </atomic_structure>
     <dft>
-      <functional>
- SLA  PZ   NOGX NOGC
-      </functional>
+      <functional>PZ</functional>
       <dftU>
         <lda_plus_u_kind>
            0
@@ -167,34 +143,30 @@ Fe.pz-nd-rrkjus.UPF
         <Hubbard_J specie="Fe2" label="no Hubbard">
        0.0000000E+00       0.0000000E+00       0.0000000E+00
         </Hubbard_J>
-        <U_projection_type>
-atomic
-        </U_projection_type>
+        <U_projection_type>atomic</U_projection_type>
       </dftU>
     </dft>
     <spin>
       <lsda>
-T
+        true
       </lsda>
       <noncolin>
-F
+          false
       </noncolin>
       <spinorbit>
-F
+          false
       </spinorbit>
     </spin>
     <bands>
       <nbnd>
           20
       </nbnd>
-      <smearing degauss="1.000000000000000E-002">
-gauss
-      </smearing>
+      <smearing degauss="1.000000000000000E-002">gaussian</smearing>
       <tot_charge>
        0.0000000E+00
       </tot_charge>
       <occupations spin="2">
-smearing
+            smearing
       </occupations>
     </bands>
     <basis>
@@ -206,12 +178,8 @@ smearing
       </ecutrho>
     </basis>
     <electron_control>
-      <diagonalization>
-david
-      </diagonalization>
-      <mixing_mode>
-plain
-      </mixing_mode>
+      <diagonalization>davidson</diagonalization>
+      <mixing_mode>plain</mixing_mode>
       <mixing_beta>
        0.3000000E+00
       </mixing_beta>
@@ -225,41 +193,36 @@ plain
          100
       </max_nstep>
       <real_space_q>
-F
+          false
       </real_space_q>
       <diago_thr_init>
        0.0000000E+00
       </diago_thr_init>
       <diago_full_acc>
-F
+            false
       </diago_full_acc>
       <diago_cg_maxiter>
           20
       </diago_cg_maxiter>
     </electron_control>
-    <tagname>
-      <monckhorst_pack nk1="2" nk2="2" nk3="2" k1="F" k2="F" k3="F">
+    <k_points_IBZ>
+      <monkhorst_pack nk1="2" nk2="2" nk3="2" k1="false" k2="false" k3="false">
 Monckhort-Pack
-      </monckhorst_pack>
-      <nk>
-           0
-      </nk>
-    </tagname>
+      </monkhorst_pack>
+    </k_points_IBZ>
     <ion_control>
       <ion_dynamics>
 none
       </ion_dynamics>
       <remove_rigid_rot>
-F
+        false
       </remove_rigid_rot>
       <refold_pos>
-F
+        false
       </refold_pos>
     </ion_control>
     <cell_control>
-      <cell_dynamics>
-none
-      </cell_dynamics>
+      <cell_dynamics>none</cell_dynamics>
       <wmass>
        0.3645777E+04
       </wmass>
@@ -274,23 +237,23 @@ none
     </cell_control>
     <symmetry_flags>
       <nosym>
-F
+        false
       </nosym>
       <nosym_evc>
-F
+        false
       </nosym_evc>
       <noinv>
-F
+        false
       </noinv>
       <no_t_rev>
-F
+        false
       </no_t_rev>
       <force_symmorphic>
-F
+        false
       </force_symmorphic>
       <use_all_frac>
-F
+        false
       </use_all_frac>
     </symmetry_flags>
   </input>
-</espresso>
+</qes:espresso>

@@ -1,38 +1,24 @@
 <qes:espresso xmlns:qes="http://www.quantum-espresso.org/ns/qes/qes-1.0"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes-1.0 espresso.xsd">
+              xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes-1.0 ../qespresso/scheme/qes.xsd">
   <input>
     <control_variables>
-      <title>
-
-      </title>
-      <calculation>
-md
-      </calculation>
-      <restart_mode>
-from_scratch
-      </restart_mode>
-      <prefix>
-pwscf
-      </prefix>
-      <pseudo_dir>
-/scratch/pdelugas/espresso-xsd/pseudo/
-      </pseudo_dir>
-      <outdir>
-/scratch/pdelugas/espresso-xsd/tempdir/
-      </outdir>
+      <title>Si_molecular_dynamics</title>
+      <calculation>md</calculation>
+      <restart_mode>from_scratch</restart_mode>
+      <prefix>pwscf</prefix>
+      <pseudo_dir>/scratch/pdelugas/espresso-xsd/pseudo/</pseudo_dir>
+      <outdir>/scratch/pdelugas/espresso-xsd/tempdir/</outdir>
       <stress>
-F
+        false
       </stress>
       <forces>
-F
+        false
       </forces>
       <wf_collect>
-F
+        false
       </wf_collect>
-      <disk_io>
-high
-      </disk_io>
+      <disk_io>high</disk_io>
       <max_seconds>
     10000000
       </max_seconds>
@@ -45,9 +31,7 @@ high
       <press_conv_thr>
        0.5000000E+00
       </press_conv_thr>
-      <verbosity>
-default
-      </verbosity>
+      <verbosity>low</verbosity>
       <print_every>
       100000
       </print_every>
@@ -57,9 +41,7 @@ default
         <mass>
        0.2808600E+02
         </mass>
-        <pseudo_file>
-Si.pz-vbc.UPF
-        </pseudo_file>
+        <pseudo_file>Si.pz-vbc.UPF</pseudo_file>
       </specie>
     </atomic_species>
     <atomic_structure nat="8" alat="1.018000000000000E+001">
@@ -102,31 +84,24 @@ Si.pz-vbc.UPF
       </cell>
     </atomic_structure>
     <dft>
-      <functional>
- SLA  PZ   NOGX NOGC
-      </functional>
+      <functional>PZ</functional>
     </dft>
     <spin>
       <lsda>
-F
+        false
       </lsda>
       <noncolin>
-F
+        false
       </noncolin>
       <spinorbit>
-F
+        false
       </spinorbit>
     </spin>
     <bands>
-      <nbnd>
-           0
-      </nbnd>
       <tot_charge>
        0.0000000E+00
       </tot_charge>
-      <occupations spin="1">
-fixed
-      </occupations>
+      <occupations spin="1">fixed</occupations>
     </bands>
     <basis>
       <ecutwfc>
@@ -134,12 +109,8 @@ fixed
       </ecutwfc>
     </basis>
     <electron_control>
-      <diagonalization>
-david
-      </diagonalization>
-      <mixing_mode>
-plain
-      </mixing_mode>
+      <diagonalization>davidson</diagonalization>
+      <mixing_mode>plain</mixing_mode>
       <mixing_beta>
        0.7000000E+00
       </mixing_beta>
@@ -153,57 +124,48 @@ plain
          100
       </max_nstep>
       <real_space_q>
-F
+        false
       </real_space_q>
       <diago_thr_init>
        0.0000000E+00
       </diago_thr_init>
       <diago_full_acc>
-F
+        false
       </diago_full_acc>
       <diago_cg_maxiter>
           20
       </diago_cg_maxiter>
     </electron_control>
     <k_points_IBZ>
-      <monckhorst_pack nk1="1" nk2="1" nk3="1" k1="F" k2="F" k3="F">
+      <monkhorst_pack nk1="1" nk2="1" nk3="1" k1="false" k2="false" k3="false">
 Monckhort-Pack
-      </monckhorst_pack>
-      <nk>
-           0
-      </nk>
+      </monkhorst_pack>
     </k_points_IBZ>
     <ion_control>
       <ion_dynamics>
 verlet
       </ion_dynamics>
       <remove_rigid_rot>
-F
+        false
       </remove_rigid_rot>
       <refold_pos>
-F
+        false
       </refold_pos>
       <md>
-        <pot_extrapolation>
-second-order
-        </pot_extrapolation>
-        <wfc_extrapolation>
-second-order
-        </wfc_extrapolation>
-        <ion_temperature>
-not_controlled
-        </ion_temperature>
+        <pot_extrapolation>second-order</pot_extrapolation>
+        <wfc_extrapolation>second-order</wfc_extrapolation>
+        <ion_temperature>not_controlled</ion_temperature>
         <timestep>
-       0.2000000E+02
+            0.2000000E+02
         </timestep>
         <tempw>
-       0.3000000E+03
+            0.3000000E+03
         </tempw>
         <tolp>
-       0.1000000E+03
+            0.1000000E+03
         </tolp>
         <deltaT>
-       0.1000000E+01
+            0.1000000E+01
         </deltaT>
         <nraise>
            1
@@ -211,9 +173,7 @@ not_controlled
       </md>
     </ion_control>
     <cell_control>
-      <cell_dynamics>
-none
-      </cell_dynamics>
+      <cell_dynamics>none</cell_dynamics>
       <wmass>
        0.2047906E+06
       </wmass>
@@ -228,22 +188,22 @@ none
     </cell_control>
     <symmetry_flags>
       <nosym>
-T
+        true
       </nosym>
       <nosym_evc>
-F
+        true
       </nosym_evc>
       <noinv>
-F
+        true
       </noinv>
       <no_t_rev>
-F
+        true
       </no_t_rev>
       <force_symmorphic>
-F
+        false
       </force_symmorphic>
       <use_all_frac>
-F
+        false
       </use_all_frac>
     </symmetry_flags>
     <free_positions>
@@ -257,4 +217,4 @@ F
        0.1000000E+01       0.1000000E+01       0.1000000E+01
     </free_positions>
   </input>
-</espresso>
+</qes:espresso>
