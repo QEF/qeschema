@@ -1,5 +1,12 @@
 <?xml version="1.0"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+<!--
+Copyright (c), 2015-2016, Quantum Espresso Foundation. All rights reserved.
+This file is distributed under the terms of the MIT License. See the
+file 'LICENSE' in the root directory of the present distribution, or
+http://opensource.org/licenses/MIT.
+Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
+-->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
 	xmlns:qes="http://www.quantum-espresso.org/ns/qes/qes-1.0" 
 	targetNamespace="http://www.quantum-espresso.org/ns/qes/qes-1.0">
   <!-- ESPRESSO (root element) -->
