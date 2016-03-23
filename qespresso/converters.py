@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c), <year> <copyright holders>. All rights reserved.
+# Copyright (c), 2015-2016, Quantum Espresso Foundation and SISSA (Scuola
+# Internazionale Superiore di Studi Avanzati). All rights reserved.
 # This file is distributed under the terms of the MIT License. See the
 # file 'LICENSE' in the root directory of the present distribution, or
 # http://opensource.org/licenses/MIT.
+# Authors: Davide Brunato, Giovanni Borghi
 #
 """
 Data format converters for Quantum Espresso
@@ -327,12 +329,15 @@ def get_starting_magnetization(name, **kwargs):
         return []
 
     lines = []
-    k = 0
-    for specie in species:
-        k += 1
-        lines.append(' {0}({1})={2}'.format(
-            name, k, specie['starting_magnetization']
-        ))
+    try:
+        lines.append(' {0}({1})={2}'.format(name, 1, species['starting_magnetization']))
+    except TypeError:
+        k = 0
+        for specie in species:
+            k += 1
+            lines.append(' {0}({1})={2}'.format(
+                name, k, specie['starting_magnetization']
+            ))
     return lines
 
 

@@ -1,8 +1,10 @@
 #
-# Copyright (c), <year> <copyright holders>. All rights reserved.
+# Copyright (c), 2015-2016, Quantum Espresso Foundation and SISSA (Scuola
+# Internazionale Superiore di Studi Avanzati). All rights reserved.
 # This file is distributed under the terms of the MIT License. See the
 # file 'LICENSE' in the root directory of the present distribution, or
 # http://opensource.org/licenses/MIT.
+# Authors: Davide Brunato, Giovanni Borghi
 #
 """
 Conversion functions for Quantum Espresso cards.
@@ -26,6 +28,7 @@ def get_atomic_species_card(name, **kwargs):
     :param kwargs: Dictionary with converted data from XML file
     :return: List of strings
     """
+    print(kwargs)
     try:
         atomic_species = kwargs['atomic_species']
         species = atomic_species['specie']
@@ -34,8 +37,11 @@ def get_atomic_species_card(name, **kwargs):
         return []
 
     lines = [name]
-    for specie in species:
-        lines.append(' {0} {1} {2}'.format(specie['name'], specie['mass'], specie['pseudo_file']))
+    try:
+        lines.append(' {0} {1} {2}'.format(species['name'], species['mass'], species['pseudo_file']))
+    except TypeError:
+        for specie in species:
+            lines.append(' {0} {1} {2}'.format(specie['name'], specie['mass'], specie['pseudo_file']))
     return lines
 
 
