@@ -1,9 +1,8 @@
 #
-# Copyright (C) 2001-2016 Quantum ESPRESSO group
-# This file is distributed under the terms of the
-# GNU General Public License. See the file `License'
-# in the root directory of the present distribution,
-# or http://www.gnu.org/copyleft/gpl.txt .
+# Copyright (c), <year> <copyright holders>. All rights reserved.
+# This file is distributed under the terms of the MIT License. See the
+# file 'LICENSE' in the root directory of the present distribution, or
+# http://opensource.org/licenses/MIT.
 #
 
 import logging

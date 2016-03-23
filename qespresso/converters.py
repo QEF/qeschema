@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2001-2015 Quantum ESPRESSO group
-# This file is distributed under the terms of the
-# GNU General Public License. See the file `License'
-# in the root directory of the present distribution,
-# or http://www.gnu.org/copyleft/gpl.txt .
+# Copyright (c), <year> <copyright holders>. All rights reserved.
+# This file is distributed under the terms of the MIT License. See the
+# file 'LICENSE' in the root directory of the present distribution, or
+# http://opensource.org/licenses/MIT.
 #
 """
 Data format converters for Quantum Espresso
@@ -113,14 +112,18 @@ def to_fortran(value):
     return str(value)
 
 
-from collections.abc import Container
+try:
+    from collections.abc import Container
+except ImportError:
+    from collections import Container
+
 
 class RawInputConverter(Container):
     """
     A Fortran's namelist builder.
     """
 
-    target_pattern = re.compile('(\w+)(?:\[((?:\w+)(?:\%\w+)*)\]|)')
+    target_pattern = re.compile('(\w+)(?:\[((?:\w+)(?:%\w+)*)\]|)')
     """RE pattern to extract Fortran input's namelist/card and name of a parameter"""
 
     def __init__(self, invariant_map, variant_map, input_namelists=None, input_cards=None):
@@ -147,18 +150,36 @@ class RawInputConverter(Container):
     def __contains__(self, path):
         return path in self.invariant_map or path in self.variant_map
 
-    def set_path(self, path, value):
+    def set_path(self, path, tag, node_dict):
         """
         Insert values for a path.
 
         :param path:
-        :param value:
+        :param tag:
+        :param node_dict:
         :return:
         """
-        logger.debug("Set input with path '{0}' and value '{1}'".format(path, value))
+        if len(node_dict) != 1:
+            raise ValueError("The node_dict argument must contains exactly "
+                             "one element! {0}".format(node_dict))
+        logger.debug("Set input with path '{0}' and node dict '{1}'".format(path, node_dict))
         _path, _, keyword = path.rpartition('/')
-        if keyword == '_text':
-            keyword = _path.rsplit('/', 1)[1]
+
+        value = node_dict[tag]
+        if isinstance(value, dict) and keyword != tag:
+            try:
+                value = value[keyword]
+            except KeyError:
+                if keyword == '_text':
+                    value = node_dict[tag]
+                else:
+                    raise ValueError(
+                        "Keyword '{0}' not found in node_dict \"{1}\"!".format(keyword, node_dict)
+                    )
+
+        if value is None:
+            logger.debug("Skip element '%s': None value!" % path)
+            return
 
         # Set the target parameter if the path is in invariant_map dictionary
         if path in self.invariant_map:
@@ -166,7 +187,7 @@ class RawInputConverter(Container):
 
         # Add argument to variant transformations associated with the path
         if path in self.variant_map:
-            self.add_kwarg(path, keyword, value)
+            self.add_kwarg(path, tag, node_dict)
 
     def set_parameter(self, path, value):
         target = self.invariant_map[path]
@@ -181,8 +202,8 @@ class RawInputConverter(Container):
         self._input[namelist][name] = to_fortran(value)
         logger.debug("Set {0}[{1}]={2}".format(namelist, name, self._input[namelist][name]))
 
-    def add_kwarg(self, path, keyword, value):
-        arg_dict = {keyword: value}
+    def add_kwarg(self, path, tag, node_dict):
+        arg_dict = node_dict.copy()
         if isinstance(self.variant_map[path][0], str):
             target_items = list([self.variant_map[path]])[:2]
         else:
@@ -194,7 +215,7 @@ class RawInputConverter(Container):
             if _get_qe_input is not None:
                 arg_dict.update({
                     '_get_qe_input': _get_qe_input,
-                    '_related_tag': keyword
+                    '_related_tag': tag
                 })
             if name is not None:
                 if name in self._input[group]:
@@ -712,7 +733,7 @@ class PhononInputConverter(RawInputConverter):
         },
         'miscellanea': {
             'amass': {
-                        #'atom': "??",
+                        # 'atom': "??",
                         '_text': "INPUTPH[amass]"
                     },
             'verbosity': "INPUTPH[verbosity]",
@@ -770,3 +791,19 @@ class PhononInputConverter(RawInputConverter):
             input_namelists=('INPUTPH',),
             input_cards=('qPointsSpecs',)
         )
+
+
+class NebInputConverter(RawInputConverter):
+    """
+    Convert to/from Fortran input for Phonon.
+    """
+    NEB_TEMPLATE_MAP = {
+    }
+
+    def __init__(self):
+        super(NebInputConverter, self).__init__(
+            *conversion_maps_builder(self.NEB_TEMPLATE_MAP),
+            input_namelists=tuple(),
+            input_cards=tuple()
+        )
+

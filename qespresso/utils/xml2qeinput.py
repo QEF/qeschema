@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 #
-# Copyright (C) 2001-2015 Quantum ESPRESSO group. This file is distributed
-# under the terms of the GNU General Public License version 2. See the file
-# `License' in the root directory of the present distribution, or
-# http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
+# Copyright (c), <year> <copyright holders>. All rights reserved.
+# This file is distributed under the terms of the MIT License. See the
+# file 'LICENSE' in the root directory of the present distribution, or
+# http://opensource.org/licenses/MIT.
 #
 """
 Convert from XML input  to Fortran input

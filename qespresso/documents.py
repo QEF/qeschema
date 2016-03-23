@@ -1,19 +1,16 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2001-2016 Quantum ESPRESSO group
-# This file is distributed under the terms of the
-# GNU General Public License. See the file `License'
-# in the root directory of the present distribution,
-# or http://www.gnu.org/copyleft/gpl.txt .
+# Copyright (c), <year> <copyright holders>. All rights reserved.
+# This file is distributed under the terms of the MIT License. See the
+# file 'LICENSE' in the root directory of the present distribution, or
+# http://opensource.org/licenses/MIT.
 #
 import logging
 import os.path
 
-from .converters import PwInputConverter, PhononInputConverter
+from .converters import PwInputConverter, PhononInputConverter, NebInputConverter
 from .exceptions import ConfigError
-# from .namelist_reader import namelists_to_dict
 from .xsdtypes import etree_node_to_dict, get_etree_node_path, XmlDocument
-from .utils.logger import set_logger
 
 logger = logging.getLogger('qespresso')
 
@@ -64,7 +61,6 @@ class QeDocument(XmlDocument):
         schema = self.schema
         input_path = self.get_input_path()
         input_root = self.find(self.get_input_path())
-        input_filter = lambda x: x.startswith(input_path) and self.find(x) is None
 
         # Extract values from input's subtree of the XML document
         for elem in input_root.iter():
@@ -76,41 +72,41 @@ class QeDocument(XmlDocument):
             # Convert attributes
             for attr_name, value in elem.attrib.items():
                 logger.debug("Convert attribute '%s' of element '%s'" % (attr_name, path))
-                xsd_type = schema.get_attribute_type(attr_name, path)
                 path_key = '%s/%s' % (rel_path, attr_name)
                 if path_key not in qe_input:
                     logger.debug("Attribute's path '%s' not in converter!" % path_key)
                     continue
-
-                qe_input.set_path(path_key, xsd_type.decode(value))
+                qe_input.set_path(path_key, elem.tag, node_dict)
 
             logger.debug("Convert element '%s'" % path)
             path_key = '%s/_text' % rel_path if elem.attrib else rel_path
             if path_key not in qe_input:
                 logger.debug("Element's path '%s' not in converter!" % path_key)
                 continue
-
-            value = node_dict[elem.tag]['_text'] if elem.attrib else node_dict[elem.tag]
-            if value is None:
-                logger.debug("Skip element '%s': None value!" % path)
-                continue
-            qe_input.set_path(path_key, value)
+            qe_input.set_path(path_key, elem.tag, node_dict)
 
         if use_defaults:
             # Add defaults for elements not included in input XML subtree
-            for path in filter(input_filter, schema.elements):
+            for path in filter(
+                    lambda x: x.startswith(input_path) and self.find(x) is None,
+                    schema.elements
+            ):
                 rel_path = path.replace(input_path, '.')
+                tag = rel_path.rsplit('/', 1)[-1]
                 xsd_attributes = schema.get_attributes(path)
+                defaults_dict = {}
+                defaults_path_keys = []
+
                 try:
-                    # Add default value for attributes
+                    # Add default values for attributes
                     for attr_name, xsd_attribute in xsd_attributes.items():
                         default_value = xsd_attribute.get_default()
                         if default_value is not None:
                             path_key = '%s/%s' % (rel_path, attr_name)
                             xsd_type = xsd_attribute.xsd_type
                             value = xsd_type.decode(default_value)
-                            qe_input.set_path(path_key, value)
-
+                            defaults_dict[attr_name] = value
+                            defaults_path_keys.append(path_key)
                 except AttributeError:
                     pass
 
@@ -119,7 +115,11 @@ class QeDocument(XmlDocument):
                     path_key = '%s/_text' % rel_path if xsd_attributes else rel_path
                     xsd_type = schema.get_element_type(path)
                     value = xsd_type.decode(default_value)
-                    qe_input.set_path(path_key, value)
+                    defaults_dict[path_key.rsplit("/")[-1]] = value
+                    defaults_path_keys.append(path_key)
+
+                for path_key in defaults_path_keys:
+                    qe_input.set_path(path_key, tag, defaults_dict)
 
         return qe_input.get_qe_input()
 
@@ -127,9 +127,8 @@ class QeDocument(XmlDocument):
         if self._document is not None:
             raise ConfigError("Configuration not loaded!")
 
-        fortran_input = self.input_builder()
+        # fortran_input = self.input_builder()
         return None
-        # return namelists_to_dict(filename)
 
 
 class PwDocument(QeDocument):
@@ -139,7 +138,7 @@ class PwDocument(QeDocument):
     def __init__(self):
         self._input_tag = 'input'
         super(PwDocument, self).__init__(
-            xsd_file='%s/schema/qes.xsd' % os.path.dirname(os.path.abspath(__file__)),
+            xsd_file='%s/scheme/qes.xsd' % os.path.dirname(os.path.abspath(__file__)),
             input_builder=PwInputConverter
         )
 
@@ -154,9 +153,24 @@ class PhononDocument(QeDocument):
     def __init__(self):
         self._input_tag = 'input'
         super(PhononDocument, self).__init__(
-            xsd_file='%s/schema/ph_xmlschema.xsd' % os.path.dirname(os.path.abspath(__file__)),
+            xsd_file='%s/scheme/ph_xmlschema.xsd' % os.path.dirname(os.path.abspath(__file__)),
             input_builder=PhononInputConverter
         )
 
     def get_input_path(self):
         return './inputPH'
+
+
+class NebDocument(QeDocument):
+    """
+    Class to manage Phonon XML documents.
+    """
+    def __init__(self):
+        self._input_tag = 'input'
+        super(NebDocument, self).__init__(
+            xsd_file='%s/scheme/NebInputOutput.xsd' % os.path.dirname(os.path.abspath(__file__)),
+            input_builder=NebInputConverter
+        )
+
+    def get_input_path(self):
+        return './NebInput'
