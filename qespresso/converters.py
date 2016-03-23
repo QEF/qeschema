@@ -289,8 +289,9 @@ def get_specie_related_values(name, **kwargs):
         atomic_species = kwargs['atomic_species']
         species = atomic_species['specie']
     except KeyError as msg:
-        logger.error("Missing required arguments when building "
-                     "parameter '%s'! %s" % (name, msg))
+        if msg.message != '_text':
+            logger.error("Missing required arguments when building "
+                         "parameter '%s'! %s" % (name, msg))
         return []
 
     specie_index = 1

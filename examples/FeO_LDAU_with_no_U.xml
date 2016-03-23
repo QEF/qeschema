@@ -95,9 +95,7 @@
     <dft>
       <functional>PZ</functional>
       <dftU>
-        <lda_plus_u_kind>
-           0
-        </lda_plus_u_kind>
+        <lda_plus_u_kind>0</lda_plus_u_kind>
         <Hubbard_U specie="O1" label="no Hubbard">
        0.0000000E+00
         </Hubbard_U>

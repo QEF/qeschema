@@ -32,7 +32,6 @@ def get_atomic_species_card(name, **kwargs):
         atomic_species = kwargs['atomic_species']
         species = atomic_species['specie']
     except KeyError as msg:
-        print(name, kwargs)
         logger.error("Missing required arguments when building ATOMIC_SPECIES card! %s" % msg)
         return []
 
@@ -175,7 +174,7 @@ def get_atomic_forces_card(name, **kwargs):
     try:
         external_atomic_forces = kwargs['external_atomic_forces']
     except KeyError:
-        logger.error("Missing required arguments when building ATOMIC_FORCES card!")
+        logger.debug("Missing required arguments when building ATOMIC_FORCES card!")
         return []
 
     # Warning if number of atoms in atomic positions differ with forces
