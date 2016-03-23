@@ -28,11 +28,11 @@ def get_atomic_species_card(name, **kwargs):
     :param kwargs: Dictionary with converted data from XML file
     :return: List of strings
     """
-    print(kwargs)
     try:
         atomic_species = kwargs['atomic_species']
         species = atomic_species['specie']
     except KeyError as msg:
+        print(name, kwargs)
         logger.error("Missing required arguments when building ATOMIC_SPECIES card! %s" % msg)
         return []
 

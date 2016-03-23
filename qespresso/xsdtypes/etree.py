@@ -100,8 +100,8 @@ def etree_node_to_dict(root_node, xml_schema, dict_class=dict, spaces_for_tab=4,
         # Get the XSD type for node's text decoding
         xsd_type = xml_schema.get_element_type(node_path)
         logger.debug("Decode '{0}' to type '{1}'".format(
-            ' '.join(text.replace('\n', r'\n').replace('\t', ' ').split()),
-            xsd_type.name))
+            ' '.join(text.replace('\n', r'\n').replace('\t', ' ').split()), xsd_type.name)
+        )
 
         if node_dict:
             # if we have a dictionary add the text as a dictionary value (if there is any)
