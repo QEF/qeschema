@@ -6,7 +6,7 @@
   <element name="espresso" type="qes:espressoType" />
   <complexType name="espressoType">
     <sequence>
-      <element type="qes:general_infoType" name="general_info" />
+      <element type="qes:general_infoType" name="general_info" minOccurs="0" />
       <element type="qes:parallel_infoType" name="parallel_info" minOccurs="0" />
       <element type="qes:inputType" name="input" />
       <element type="qes:stepType" name="step" minOccurs="0" maxOccurs="unbounded" />
@@ -108,7 +108,7 @@
       <element type="double" name="etot_conv_thr" default="1.0e-5"/>
       <element type="double" name="forc_conv_thr" default="1.0e-3"/>
       <element type="double" name="press_conv_thr"/>
-      <element type="qes:lowhighType" name="verbosity" default="low" />
+      <element type="qes:lowhighType" name="verbosity" default="low"/>
       <element type="positiveInteger" name="print_every"/>
     </sequence>
   </complexType>
@@ -345,7 +345,7 @@
   </complexType>
   <complexType name="bandsType">
     <sequence>
-      <element type="positiveInteger" name="nbnd"/>
+      <element type="positiveInteger" name="nbnd" minOccurs="0"/>
       <element type="qes:smearingType" name="smearing"/>
       <element type="double" name="tot_charge"/>
       <element type="qes:occupationsType" name="occupations"/>
