@@ -242,7 +242,7 @@ class XSDSimpleType(XSDType):
 
     def validate(self, value):
         if isinstance(value, list):
-            if self.is_list:
+            if self._is_list:
                 for item in value:
                     self.validate(item)
             else:
@@ -255,7 +255,8 @@ class XSDSimpleType(XSDType):
     def decode(self, text):
         if not isinstance(text, str):
             raise TypeError("argument must be a string!")
-        if self.is_list:
+
+        if self._is_list:
             matrix = [item.strip() for item in text.split('\n') if item.strip()]
             if len(matrix) == 1:
                 # Only one data line --> decode to simple list
@@ -274,7 +275,7 @@ class XSDSimpleType(XSDType):
         return value
 
     def encode(self, obj):
-        if self.is_list:
+        if self._is_list:
             if not isinstance(obj, list):
                 raise TypeError("argument must be a list!")
             return u' '.join([self.base_type.encode(item) for item in obj])

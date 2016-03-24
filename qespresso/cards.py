@@ -28,7 +28,6 @@ def get_atomic_species_card(name, **kwargs):
     :param kwargs: Dictionary with converted data from XML file
     :return: List of strings
     """
-    print(kwargs)
     try:
         atomic_species = kwargs['atomic_species']
         species = atomic_species['specie']
@@ -175,7 +174,7 @@ def get_atomic_forces_card(name, **kwargs):
     try:
         external_atomic_forces = kwargs['external_atomic_forces']
     except KeyError:
-        logger.error("Missing required arguments when building ATOMIC_FORCES card!")
+        logger.debug("Missing required arguments when building ATOMIC_FORCES card!")
         return []
 
     # Warning if number of atoms in atomic positions differ with forces

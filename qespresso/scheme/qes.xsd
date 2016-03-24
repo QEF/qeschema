@@ -180,7 +180,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
     <sequence>
       <element type="double" name="mass" minOccurs="0" />
       <element type="string" name="pseudo_file"/>
-      <element type="double" name="starting_magnetization" minOccurs="0" />
+      <element type="double" name="starting_magnetization" minOccurs="0" default="0.0"/>
       <element type="double" name="spin_teta" minOccurs="0" maxOccurs="1" />
       <element type="double" name="spin_phi"  minOccurs="0" maxOccurs="1" />
     </sequence>

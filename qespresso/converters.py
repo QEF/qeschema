@@ -184,7 +184,7 @@ class RawInputConverter(Container):
             return
 
         # Set the target parameter if the path is in invariant_map dictionary
-        if path in self.invariant_map:
+        if not isinstance(value, dict) and path in self.invariant_map:
             self.set_parameter(path, value)
 
         # Add argument to variant transformations associated with the path
@@ -289,8 +289,9 @@ def get_specie_related_values(name, **kwargs):
         atomic_species = kwargs['atomic_species']
         species = atomic_species['specie']
     except KeyError as msg:
-        logger.error("Missing required arguments when building "
-                     "parameter '%s'! %s" % (name, msg))
+        if msg.message != '_text':
+            logger.error("Missing required arguments when building "
+                         "parameter '%s'! %s" % (name, msg))
         return []
 
     specie_index = 1
@@ -330,13 +331,13 @@ def get_starting_magnetization(name, **kwargs):
 
     lines = []
     try:
-        lines.append(' {0}({1})={2}'.format(name, 1, species['starting_magnetization']))
-    except TypeError:
+        lines.append(' {0}(1)={1}'.format(name, species.get('starting_magnetization', 0.0)))
+    except AttributeError:
         k = 0
         for specie in species:
             k += 1
             lines.append(' {0}({1})={2}'.format(
-                name, k, specie['starting_magnetization']
+                name, k, specie.get('starting_magnetization', 0.0)
             ))
     return lines
 
@@ -474,12 +475,12 @@ class PwInputConverter(RawInputConverter):
             'ntyp': 'SYSTEM[ntyp]',
             '_text': [
                 ("ATOMIC_SPECIES", cards.get_atomic_species_card, None),
-                ('SYSTEM[Hubbard_U]',),
-                ('SYSTEM[Hubbard_J0]',),
-                ('SYSTEM[Hubbard_alpha]',),
-                ('SYSTEM[Hubbard_beta]',),
-                ('SYSTEM[Hubbard_J]',),
-                ('SYSTEM[starting_ns_eigenvalue]',),
+                ('SYSTEM[Hubbard_U]',get_specie_related_values),
+                ('SYSTEM[Hubbard_J0]',get_specie_related_values),
+                ('SYSTEM[Hubbard_alpha]',get_specie_related_values),
+                ('SYSTEM[Hubbard_beta]',get_specie_related_values),
+                ('SYSTEM[Hubbard_J]',get_specie_related_values),
+                ('SYSTEM[starting_ns_eigenvalue]',get_specie_related_values),
                 ('SYSTEM[starting_magnetization]', get_starting_magnetization, None),
             ]
         },
@@ -491,7 +492,7 @@ class PwInputConverter(RawInputConverter):
                 ("CELL_PARAMETERS",
                  cards.get_cell_parameters_card, None)
             ],
-            'atomic_positions': ('ATOMIC_FORCES',),
+            'atomic_positions': ('ATOMIC_FORCES', cards.get_atomic_forces_card, None),
         },
         'dft': {
             'functional': "SYSTEM[input_dft]",
@@ -713,7 +714,7 @@ class PhononInputConverter(RawInputConverter):
             'lqdir': "INPUTPH[lqdir]"
         },
         'control_ph': {
-            'ldisp': [('qPointsSpecs',), "INPUTPH[ldisp]"],
+            'ldisp': [('qPointsSpecs', cards.get_qpoints_card, None), "INPUTPH[ldisp]"],
             'epsil': "INPUTPH[epsil]",
             'trans': "INPUTPH[trans]",
             'zeu': "INPUTPH[zeu]",
@@ -732,7 +733,7 @@ class PhononInputConverter(RawInputConverter):
             'lnoloc': "INPUTPH[lnoloc]"
         },
         'control_qplot': {
-            'qplot': [('qPointsSpecs',), "INPUTPH[qplot]"],
+            'qplot': [('qPointsSpecs', cards.get_qpoints_card, None), "INPUTPH[qplot]"],
             'q2d': "INPUTPH[q2d]",
             'q_in_band_form': "INPUTPH[q_in_band_form]"
         },
