@@ -353,9 +353,9 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
   <complexType name="bandsType">
     <sequence>
       <element type="positiveInteger" name="nbnd" minOccurs="0"/>
-      <element type="qes:smearingType" name="smearing"/>
-      <element type="double" name="tot_charge"/>
-      <element type="qes:occupationsType" name="occupations"/>
+      <element type="qes:smearingType" name="smearing" minOccurs="0"/>
+      <element type="double" name="tot_charge" minOccurs="0"/>
+      <element type="qes:occupationsType" name="occupations" minOccurs="0 "/>
     </sequence>
   </complexType>
   <complexType name="smearingType">
@@ -450,7 +450,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
   <complexType name="k_points_IBZType">
     <sequence>
       <element type="qes:monkhorst_packType" name="monkhorst_pack" minOccurs="0" maxOccurs="1"/>
-      <element type="positiveInteger" name="nk"/>
+      <element type="positiveInteger" name="nk" minOccurs="0"/>
       <element type="qes:k_pointType" name="k_point" maxOccurs="unbounded" minOccurs="0"/>
     </sequence>
   </complexType>
