@@ -63,15 +63,19 @@ def get_atomic_positions_cell_card(name, **kwargs):
     wyckoff_positions = atomic_structure.get('wyckoff_positions', {})
     try:
         is_wyckoff = False
-        atoms = []
         if atomic_positions:
             atoms = atomic_positions['atom']
         elif wyckoff_positions:
             atoms = wyckoff_positions['atom']
             is_wyckoff = True
+        else:
+            atoms = []
     except KeyError:
         logger.error("Cannot find any atoms for building ATOMIC_POSITIONS!")
         return []
+    else:
+        if not isinstance(atoms, list):
+            atoms = [atoms]
 
     # Check atoms with position constraints
     free_positions = kwargs.get('free_positions', [])
@@ -148,6 +152,9 @@ def get_k_points_card(name, **kwargs):
     except KeyError as msg:
         logger.error("Missing required arguments when building K_POINTS card! %s" % msg)
         return []
+    else:
+        if not isinstance(k_point, list):
+            k_point = [k_point]
 
     lines = [name] if k_attrib is None else ['%s %s' % (name, k_attrib)]
     if k_attrib is None:
