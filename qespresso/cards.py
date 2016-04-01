@@ -134,7 +134,7 @@ def get_k_points_card(name, **kwargs):
     :param kwargs: Dictionary with converted data from XML file
     :return: List of strings
     """
-    k_point = nk = None
+    k_point = nk = monkhorst_pack= None
     gamma_only = kwargs.get('gamma_only', False)
     try:
         if not gamma_only:
@@ -165,7 +165,7 @@ def get_k_points_card(name, **kwargs):
                 point['weight'])
             )
     elif k_attrib == 'automatic':
-        lines.append(str('monkhorst_pack'))     # To be tested with specific input!
+        lines.append(' %(nk1)s %(nk2)s %(nk3)s %(k1)s %(k2)s %(k3)s' % monkhorst_pack)
 
     return lines
 
