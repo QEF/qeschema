@@ -129,7 +129,7 @@
       </diago_cg_maxiter>
     </electron_control>
     <k_points_IBZ>
-      <monkhorst_pack nk1="4" nk2="4" nk3="4" k1="true" k2="true" k3="true">
+      <monkhorst_pack nk1="4" nk2="4" nk3="4" k1="1" k2="1" k3="1">
 Uniform grid with offset
       </monkhorst_pack>
     </k_points_IBZ>

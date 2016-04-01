@@ -204,7 +204,7 @@ smearing
       </diago_cg_maxiter>
     </electron_control>
     <k_points_IBZ>
-      <monkhorst_pack nk1="2" nk2="2" nk3="2" k1="false" k2="false" k3="false">
+      <monkhorst_pack nk1="2" nk2="2" nk3="2" k1="0" k2="0" k3="0">
               Monckhort-Pack
       </monkhorst_pack>
     </k_points_IBZ>

@@ -95,9 +95,7 @@
     <dft>
       <functional>PZ</functional>
       <dftU>
-        <lda_plus_u_kind>
-           0
-        </lda_plus_u_kind>
+        <lda_plus_u_kind>0</lda_plus_u_kind>
         <Hubbard_U specie="O1" label="no Hubbard">
        0.0000000E+00
         </Hubbard_U>
@@ -204,7 +202,7 @@
       </diago_cg_maxiter>
     </electron_control>
     <k_points_IBZ>
-      <monkhorst_pack nk1="2" nk2="2" nk3="2" k1="false" k2="false" k3="false">
+      <monkhorst_pack nk1="2" nk2="2" nk3="2" k1="1" k2="1" k3="1">
 Monckhort-Pack
       </monkhorst_pack>
     </k_points_IBZ>
