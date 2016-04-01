@@ -299,7 +299,7 @@ def get_specie_related_values(name, **kwargs):
         if specie['name'] == tag_specie:
             break
         specie_index += 1
-    if specie_index == len(species):
+    else:
         raise ConfigError("Unknown specie '%s' in tag '%s'" % (tag_specie, name))
 
     if isinstance(tag_values, list):
@@ -426,6 +426,21 @@ def get_system_edir(name, **kwargs):
     else:
         return []
 
+def get_electric_potential_related(name, **kwargs):
+    try:
+        electric_potential = kwargs['electric_potential']
+    except KeyError as msg:
+        logger.error("Missing required arguments when building "
+                     "parameter '%s'! %s" % (name, msg))
+        return []
+
+    if name == 'tefield':
+        return [' %s=%s' % (name, to_fortran(electric_potential == 'sawtooth_potential'))]
+    elif name == 'lelfield':
+        return [' %s=%s' % (name, to_fortran(electric_potential == 'homogenous_field'))]
+    elif name == 'lberry':
+        return [' %s=%s' % (name, to_fortran(electric_potential == 'Berry_Phase'))]
+    return []
 
 def get_control_gdir(name, **kwargs):
     """
@@ -541,7 +556,7 @@ class PwInputConverter(RawInputConverter):
         },
         'spin': {
             'lsda': ("SYSTEM[nspin]", get_system_nspin, None),
-            'noncolin': [("SYSTEM[nspin]", None, None), "SYSTEM[noncolin]"],
+            'noncolin': [("SYSTEM[nspin]", get_system_nspin, None), "SYSTEM[noncolin]"],
             'spinorbit': "SYSTEM[lspinorb]"
         },
         'bands': {
@@ -553,7 +568,7 @@ class PwInputConverter(RawInputConverter):
             'tot_charge': "SYSTEM[tot_charge]",
             'occupations': {
                 '_text': "SYSTEM[occupations]",
-                'spin': ("SYSTEM[nspin]",)
+                'spin': ("SYSTEM[nspin]", get_system_nspin)
             }
         },
         'basis': {
@@ -646,16 +661,13 @@ class PwInputConverter(RawInputConverter):
         'free_positions': [("ATOMIC_POSITIONS",), ("CELL_PARAMETERS",)],
         'electric_field': {
             'electric_potential': [
-                ("CONTROL[tefield]",
-                 lambda x: x == "sawtooth_potential"),
-                ("CONTROL[lelfield]",
-                 lambda x: x == "homogenous_field"),
-                ("CONTROL[lberry]",
-                 lambda x: x == "Berry_Phase"),
-                ("SYSTEM[eamp]",),
-                ("ELECTRONS[efield]",),
-                ("SYSTEM[edir]",),
-                ("CONTROL[gdir]",)
+                ("CONTROL[tefield]", get_electric_potential_related),
+                ("CONTROL[lelfield]", get_electric_potential_related),
+                ("CONTROL[lberry]", get_electric_potential_related),
+                ("SYSTEM[eamp]", get_system_eamp),
+                ("ELECTRONS[efield]", get_electrons_efield),
+                ("SYSTEM[edir]", get_system_edir),
+                ("CONTROL[gdir]", get_control_gdir)
             ],
             'dipole_correction': "CONTROL[dipfield]",
             'electric_field_direction': [
