@@ -31,8 +31,8 @@ def get_atomic_species_card(name, **kwargs):
     try:
         atomic_species = kwargs['atomic_species']
         species = atomic_species['specie']
-    except KeyError as msg:
-        logger.error("Missing required arguments when building ATOMIC_SPECIES card! %s" % msg)
+    except KeyError as err:
+        logger.error("Missing required arguments when building ATOMIC_SPECIES card! %s" % err)
         return []
 
     lines = [name]
@@ -149,8 +149,8 @@ def get_k_points_card(name, **kwargs):
         else:
             k_attrib = 'gamma'
 
-    except KeyError as msg:
-        logger.error("Missing required arguments when building K_POINTS card! %s" % msg)
+    except KeyError as err:
+        logger.error("Missing required arguments when building K_POINTS card! %s" % err)
         return []
     else:
         if not isinstance(k_point, list):
@@ -215,7 +215,7 @@ def get_cell_parameters_card(name, **kwargs):
     cells = atomic_structure.get('cell', {})
     if cells:
         lines = ['%s angstrom' % name]
-        for key in cells:
+        for key in sorted(cells):
             if key not in ['a1', 'a2', 'a3']:
                 continue
             lines.append(' %s' % ' '.join([str(value) for value in cells[key]]))
@@ -238,9 +238,9 @@ def get_qpoints_card(name, **kwargs):
         if not qplot and ldisp:
             return []
         q_points_list = kwargs['q_points_list']['q_point']
-    except KeyError as msg:
+    except KeyError as err:
         logger.error("Missing required arguments when building "
-                     "parameter '%s'! %s" % (name, msg))
+                     "parameter '%s'! %s" % (name, err))
         return []
 
     lines = []

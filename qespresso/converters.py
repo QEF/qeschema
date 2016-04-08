@@ -288,10 +288,11 @@ def get_specie_related_values(name, **kwargs):
         tag_values = tag_data['_text']
         atomic_species = kwargs['atomic_species']
         species = atomic_species['specie']
-    except KeyError as msg:
-        if msg.message != '_text':
+    except KeyError as err:
+        key = str(err).strip("'")
+        if key != '_text':
             logger.error("Missing required arguments when building "
-                         "parameter '%s'! %s" % (name, msg))
+                         "parameter '%s'! %s" % (name, key))
         return []
 
     specie_index = 1
@@ -324,9 +325,9 @@ def get_starting_magnetization(name, **kwargs):
     try:
         atomic_species = kwargs['atomic_species']
         species = atomic_species['specie']
-    except KeyError as msg:
+    except KeyError as err:
         logger.error("Missing required arguments when building "
-                     "parameter '%s'! %s" % (name, msg))
+                     "parameter '%s'! %s" % (name, err))
         return []
 
     lines = []
@@ -360,9 +361,9 @@ def get_system_nspin(name, **kwargs):
             return [' nspin=4']
         else:
             return [' nspin=1']
-    except KeyError as msg:
+    except KeyError as err:
         logger.error("Missing required arguments when building "
-                     "parameter '%s'! %s" % (name, msg))
+                     "parameter '%s'! %s" % (name, err))
         return []
 
 
@@ -376,9 +377,9 @@ def get_system_eamp(name, **kwargs):
     try:
         electric_potential = kwargs['electric_potential']
         electric_field_amplitude = kwargs['electric_field_amplitude']
-    except KeyError as msg:
+    except KeyError as err:
         logger.error("Missing required arguments when building "
-                     "parameter '%s'! %s" % (name, msg))
+                     "parameter '%s'! %s" % (name, err))
         return []
 
     if electric_potential == 'sawtooth_potential':
@@ -396,9 +397,9 @@ def get_electrons_efield(name, **kwargs):
     try:
         electric_potential = kwargs['electric_potential']
         electric_field_amplitude = kwargs['electric_field_amplitude']
-    except KeyError as msg:
+    except KeyError as err:
         logger.error("Missing required arguments when building "
-                     "parameter '%s'! %s" % (name, msg))
+                     "parameter '%s'! %s" % (name, err))
         return []
 
     if electric_potential == 'homogenous_field':
@@ -416,9 +417,9 @@ def get_system_edir(name, **kwargs):
     try:
         electric_potential = kwargs['electric_potential']
         electric_field_direction = kwargs['electric_field_direction']
-    except KeyError as msg:
+    except KeyError as err:
         logger.error("Missing required arguments when building "
-                     "parameter '%s'! %s" % (name, msg))
+                     "parameter '%s'! %s" % (name, err))
         return []
 
     if electric_potential == 'sawtooth_potential':
@@ -429,9 +430,9 @@ def get_system_edir(name, **kwargs):
 def get_electric_potential_related(name, **kwargs):
     try:
         electric_potential = kwargs['electric_potential']
-    except KeyError as msg:
+    except KeyError as err:
         logger.error("Missing required arguments when building "
-                     "parameter '%s'! %s" % (name, msg))
+                     "parameter '%s'! %s" % (name, err))
         return []
 
     if name == 'tefield':
@@ -451,9 +452,9 @@ def get_control_gdir(name, **kwargs):
     try:
         electric_potential = kwargs['electric_potential']
         electric_field_direction = kwargs['electric_field_direction']
-    except KeyError as msg:
+    except KeyError as err:
         logger.error("Missing required arguments when building "
-                     "parameter '%s'! %s" % (name, msg))
+                     "parameter '%s'! %s" % (name, err))
         return []
 
     if electric_potential in ('homogenous_field', 'Berry_Phase'):
