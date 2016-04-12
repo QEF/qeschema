@@ -92,7 +92,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
       <element type="qes:magnetizationType" name="magnetization"/>
       <element type="qes:total_energyType" name="total_energy"/>
       <element type="qes:band_structureType" name="band_structure"/>
-      <element type="qes:matrixType" name="forces"/>
+      <element type="qes:matrixType" name="forces" minOccurs="0"/>
       <element type="qes:matrixType" name="stress" minOccurs="0" />
       <element type="string" name="electric_field" minOccurs="0" />
     </sequence>
@@ -205,7 +205,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
     	<attribute type="string" name="name" />
     	<attribute type="string" name="position" use="optional" />
       </extension>
-  	</simpleContent>
+    </simpleContent>
   </complexType>
   <complexType name="wyckoff_positionsType">
     <sequence>
@@ -355,6 +355,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
       <element type="qes:smearingType" name="smearing" minOccurs="0"/>
       <element type="double" name="tot_charge" minOccurs="0"/>
       <element type="qes:occupationsType" name="occupations" minOccurs="0 "/>
+      <element type="qes:inputOccupationsType" name="inputOccupations" minOccurs="0" maxOccurs="2" />
     </sequence>
   </complexType>
   <complexType name="smearingType">
@@ -459,9 +460,9 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
         <attribute type="positiveInteger" name="nk1"/>
         <attribute type="positiveInteger" name="nk2"/>
         <attribute type="positiveInteger" name="nk3"/>
-        <attribute type="nonNegativeInteger" name="k1"/>
-        <attribute type="nonNegativeInteger" name="k2"/>
-        <attribute type="nonNegativeInteger" name="k3"/>
+        <attribute type="positiveInteger" name="k1"/>
+        <attribute type="positiveInteger" name="k2"/>
+        <attribute type="positiveInteger" name="k3"/>
       </extension>
     </simpleContent>
   </complexType>
@@ -607,6 +608,15 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
      </restriction>
   </simpleType>
 
+  <complexType name="inputOccupationsType">
+     <simpleContent>
+        <extension base="qes:vectorType">
+           <attribute type="positiveInteger" name="ispin"/>
+           <attribute type="double" name="spin_factor"/>
+        </extension>
+     </simpleContent>
+  </complexType>
+
   <!-- OUTPUT TYPE -->
   <complexType name="convergence_infoType">
     <sequence>
@@ -651,7 +661,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
   </complexType>
   <complexType name="equivalent_atomsType">
     <simpleContent>
-      <extension base="qes:vectorType">
+      <extension base="qes:integerListType">
         <attribute type="positiveInteger" name="nat"/>
       </extension>
     </simpleContent>
@@ -660,6 +670,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
     <simpleContent>
       <extension base="string">
         <attribute type="string" name="name" use="optional"/>
+        <attribute  type="string" name="class" use="optional"/>
         <attribute type="boolean" name="time_reversal" use="optional"/>
       </extension>
     </simpleContent>
@@ -737,6 +748,13 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
     <restriction>
        <simpleType>
          <list itemType="double"/>
+       </simpleType>
+    </restriction>
+  </simpleType>
+  <simpleType name="integerListType">
+    <restriction>
+       <simpleType>
+         <list itemType="integer"/>
        </simpleType>
     </restriction>
   </simpleType>
