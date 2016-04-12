@@ -61,7 +61,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
       <element type="qes:boundary_conditionsType" name="boundary_conditions" minOccurs="0" />
       <element type="qes:ekin_functionalType" name="ekin_functional" minOccurs="0" />
       <element type="qes:matrixType" name="external_atomic_forces" minOccurs="0" />
-      <element type="qes:matrixType" name="free_positions" minOccurs="0" />
+      <element type="qes:integerMatrixType" name="free_positions" minOccurs="0" />
       <element type="qes:matrixType" name="starting_atomic_velocities" minOccurs="0" />
       <element type="qes:electric_fieldType" name="electric_field" minOccurs="0" />
       <element type="qes:atomic_constraintsType" name="atomic_constraints" minOccurs="0" />
@@ -513,7 +513,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
       <element type="boolean" name="fix_volume" minOccurs="0" />
       <element type="boolean" name="fix_area"   minOccurs="0" />
       <element type="boolean" name="isotropic" minOccurs="0" />
-      <element type="qes:matrixType" name="free_cell" minOccurs="0" />
+      <element type="qes:integerMatrixType" name="free_cell" minOccurs="0" />
     </sequence>
   </complexType>
   <complexType name="symmetry_flagsType">
@@ -764,6 +764,11 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
   <complexType name="matrixType">
     <simpleContent>
       <extension base="qes:doubleListType" />
+    </simpleContent>
+  </complexType>
+  <complexType name="integerMatrixType">
+    <simpleContent>
+      <extension base="qes:integerListType"/>
     </simpleContent>
   </complexType>
 </schema>
