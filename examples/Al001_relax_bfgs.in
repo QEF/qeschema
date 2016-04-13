@@ -1,7 +1,7 @@
 &CONTROL
  calculation='relax'
  dipfield=.false.
- disc_io='low'
+ disk_io='low'
  dt=20.0
  etot_conv_thr=0.0001
  forc_conv_thr=0.001
@@ -44,7 +44,7 @@
  diago_full_acc=.false.
  diago_thr_init=0.0
  diagonalization='davidson'
- electrons_maxstep=100
+ electron_maxstep=100
  mixing_beta=0.3
  mixing_mode='plain'
  mixing_ndim=8
@@ -70,20 +70,20 @@
 /
 ATOMIC_SPECIES
  Al 1.0 Al.pz-vbc.UPF
-ATOMIC_POSITIONS angstrom
- Al 0.09428092 0.09428092 -0.4 1.0 1.0 1.0
- Al 0.0 0.0 -0.2666666 1.0 1.0 1.0
- Al 0.09428092 0.09428092 -0.1333334 1.0 1.0 1.0
- Al 0.0 0.0 0.0 1.0 1.0 1.0
- Al 0.09428092 0.09428092 0.1333334 1.0 1.0 1.0
- Al 0.0 0.0 0.2666666 1.0 1.0 1.0
- Al 0.09428092 0.09428092 0.4 1.0 1.0 1.0
+ATOMIC_POSITIONS bohr
+ Al 0.09428092 0.09428092 -0.4 1 1 1
+ Al 0.0 0.0 -0.2666666 1 1 1
+ Al 0.09428092 0.09428092 -0.1333334 1 1 1
+ Al 0.0 0.0 0.0 1 1 1
+ Al 0.09428092 0.09428092 0.1333334 1 1 1
+ Al 0.0 0.0 0.2666666 1 1 1
+ Al 0.09428092 0.09428092 0.4 1 1 1
 K_POINTS
  3
  0.125 0.125 0.0 1.0
  0.125 0.375 0.0 2.0
  0.375 0.375 0.0 1.0
-CELL_PARAMETERS angstrom
+CELL_PARAMETERS bohr
  1.0 0.0 0.0
  0.0 1.0 0.0
  0.0 0.0 8.0
