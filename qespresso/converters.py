@@ -284,10 +284,10 @@ def get_specie_related_values(name, **kwargs):
     try:
         related_tag = kwargs['_related_tag']
         tag_data = kwargs[related_tag]
-        tag_specie = tag_data['specie']
+        tag_specie = tag_data['species']
         tag_values = tag_data['_text']
         atomic_species = kwargs['atomic_species']
-        species = atomic_species['specie']
+        species = atomic_species['species']
     except KeyError as err:
         key = str(err).strip("'")
         if key != '_text':
@@ -324,7 +324,7 @@ def get_starting_magnetization(name, **kwargs):
     """
     try:
         atomic_species = kwargs['atomic_species']
-        species = atomic_species['specie']
+        species = atomic_species['species']
     except KeyError as err:
         logger.error("Missing required arguments when building "
                      "parameter '%s'! %s" % (name, err))
