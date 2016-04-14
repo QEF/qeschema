@@ -171,11 +171,11 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
   <!-- INPUT TYPE -->
   <complexType name="atomic_speciesType">
     <sequence>
-      <element type="qes:specieType" name="specie" maxOccurs="unbounded"/>
+      <element type="qes:speciesType" name="species" maxOccurs="unbounded"/>
     </sequence>
     <attribute type="positiveInteger" name="ntyp"/>
   </complexType>
-  <complexType name="specieType">
+  <complexType name="speciesType">
     <sequence>
       <element type="double" name="mass" minOccurs="0" />
       <element type="string" name="pseudo_file"/>
