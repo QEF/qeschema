@@ -22,10 +22,10 @@
       <print_every>100000</print_every>
     </control_variables>
     <atomic_species ntyp="1">
-      <specie name="Al">
+      <species name="Al">
         <mass>0.1000000E+01</mass>
         <pseudo_file>Al.pz-vbc.UPF</pseudo_file>
-      </specie>
+      </species>
     </atomic_species>
     <atomic_structure nat="7" alat="5.303300000000000E+000">
       <atomic_positions>

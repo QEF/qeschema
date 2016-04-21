@@ -187,7 +187,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
   </complexType>
   <complexType name="atomic_structureType">
     <sequence>
-     <choice>
+      <choice>
          <element type="qes:atomic_positionsType" name="atomic_positions"  minOccurs="0" />
          <element type="qes:wyckoff_positionsType" name="wyckoff_positions" minOccurs="0" />
       </choice>

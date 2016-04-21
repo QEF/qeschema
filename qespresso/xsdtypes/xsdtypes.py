@@ -62,6 +62,8 @@ _ALL_TAG = '{%s}%s' % (XSD_NAMESPACE_PATH, 'all')                       # Unorde
 _CHOICE_TAG = '{%s}%s' % (XSD_NAMESPACE_PATH, 'choice')                 # One element in a group
 _SIMPLE_CONTENT_TAG = '{%s}%s' % (XSD_NAMESPACE_PATH, 'simpleContent')
 _COMPLEX_CONTENT_TAG = '{%s}%s' % (XSD_NAMESPACE_PATH, 'complexContent')
+_GROUP_TAG = '{%s}%s' % (XSD_NAMESPACE_PATH, 'group')
+_ATTRIBUTE_GROUP_TAG = '{%s}%s' % (XSD_NAMESPACE_PATH, 'attributeGroup')
 
 _ENUMERATION_TAG = '{%s}%s' % (XSD_NAMESPACE_PATH, 'enumeration')
 _LENGTH_TAG = '{%s}%s' % (XSD_NAMESPACE_PATH, 'length')
@@ -313,9 +315,9 @@ class XSDComplexType(XSDSimpleType):
     A class for represent XSD schema simple type.
     """
     def __init__(self, base_type, elem, name=None, is_list=False, validators=None,
-                 enumeration=None, elements=None, attributes=None):
+                 enumeration=None, content_model=None, attributes=None):
         super(XSDComplexType, self).__init__(base_type, elem, name, is_list, validators, enumeration)
-        self.elements = elements or OrderedDict()
+        self.content_model = content_model or XSDGroup()
         self.attributes = attributes or OrderedDict()
 
 
@@ -393,6 +395,31 @@ class XSDAttribute(object):
             return self.attrib['default']
         except KeyError:
             return None
+
+
+class XSDGroup(list):
+
+    def __init__(self, name=None, group_type=None, attrib=None, *args, **kwargs):
+        self.name = name
+        self.group_type = group_type
+        self.attrib = attrib or {}
+        """Attributes of element declaration (eg. minOccurs, default ...)"""
+        super(XSDGroup, self).__init__(*args, **kwargs)
+
+    def get_min_occurs(self):
+        if 'minOccurs' in self.attrib:
+            return int(self.attrib['minOccurs'])
+        else:
+            return 1
+
+    def get_max_occurs(self):
+        if 'maxOccurs' in self.attrib:
+            if self.attrib['maxOccurs'] == 'unbounded':
+                return None
+            else:
+                return int(self.attrib['maxOccurs'])
+        else:
+            return 1
 
 
 #
@@ -637,39 +664,33 @@ def xsd_complex_type_factory(elem, **kwargs):
         logger.debug("Parse local complexType: {0}".format(elem))
 
     logger.debug("Children: {0}".format(list(elem)))
-    content_model = elem[0]
+    content_node = elem[0]
 
     try:
         xsd_type = xsd_types[type_name]
     except KeyError:
-        elements = OrderedDict()
+        content_model = None
     else:
-        logger.debug("XSD type already exists: only update elements!")
-        elements = xsd_type.elements
+        content_model = xsd_type.content_model
+        if content_model:
+            logger.error("XSD type content model is already defined!")
 
     # The caller is xds_element_factory --> add sub-elements
-    if 'parent_path' in kwargs and content_model.tag in (_SEQUENCE_TAG, _ALL_TAG, _CHOICE_TAG):
-        logger.debug("Call from xsd_element_factory: parse elements declarations!")
-        for child in content_model:
-            if child.tag == _ELEMENT_TAG:
-                element_basename = child.attrib['name']
-                try:
-                    xsd_element = elements[element_basename]
-                    xsd_element_factory(child, xsd_element, **kwargs)
-                except KeyError:
-                    elements[element_basename] = xsd_element_factory(child, **kwargs)
+    if 'parent_path' in kwargs and content_node.tag in (_GROUP_TAG, _SEQUENCE_TAG, _ALL_TAG, _CHOICE_TAG):
+        logger.debug("Call from xsd_element_factory: parse content_model declarations!")
+        content_model = xsd_group_factory(content_node, **kwargs)
 
     if type_name in xsd_types:
         logger.debug("Return existing complex type '{0}'".format(type_name))
         return type_name, xsd_types[type_name]
 
-    if content_model.tag in (_SEQUENCE_TAG, _ALL_TAG, _CHOICE_TAG):
-        # Found a section containing element declarations
+    if content_node.tag in (_GROUP_TAG, _SEQUENCE_TAG, _ALL_TAG, _CHOICE_TAG):
+        # Found a section containing group declarations
         # is_list = content_model.tag == _SEQUENCE_TAG
         base_type = xsd_get_type('string', xsd_types)
-    elif content_model.tag in (_SIMPLE_CONTENT_TAG, _COMPLEX_CONTENT_TAG):
+    elif content_node.tag in (_SIMPLE_CONTENT_TAG, _COMPLEX_CONTENT_TAG):
         # Found content declaration
-        content_spec = content_model[0]
+        content_spec = content_node[0]
         try:
             base_type = xsd_get_type(content_spec.attrib['base'], xsd_types)
         except KeyError:
@@ -687,9 +708,9 @@ def xsd_complex_type_factory(elem, **kwargs):
             for child in content_spec:
                 if child.tag == _ATTRIBUTE_TAG:
                     attributes.update([xsd_attribute_type_factory(child, **kwargs)])
-    elif content_model.tag == _ATTRIBUTE_TAG:
+    elif content_node.tag == _ATTRIBUTE_TAG:
         # Found attribute declaration
-        attributes.update([xsd_attribute_type_factory(content_model, **kwargs)])
+        attributes.update([xsd_attribute_type_factory(content_node, **kwargs)])
 
     # Add other attribute declarations
     for attribute in elem[1:]:
@@ -700,8 +721,45 @@ def xsd_complex_type_factory(elem, **kwargs):
 
     logger.debug("Create instance for complex type '{0}' based on '{1}'".format(type_name, base_type))
     return type_name, xsd_type_class(
-        base_type, elem, type_name, is_list, elements=elements, attributes=attributes
+        base_type, elem, type_name, is_list, content_model=content_model, attributes=attributes
     )
+
+
+def xsd_group_factory(elem, **kwargs):
+    logger.debug("xsd_group_factory: elem.attrib={0}, kwargs={1}"
+                 .format(elem.attrib, kwargs.keys()))
+
+    if elem.tag == _GROUP_TAG:
+        name = elem.attrib.get('name')
+        ref = elem.attrib.get('ref')
+        if not name and not ref:
+            raise XMLSchemaValidationError("Missing both attributes 'name' and 'ref' in element: {}".format(elem))
+        elif name and ref:
+            raise XMLSchemaValidationError("Found both attributes 'name' and 'ref' in element: {}".format(elem))
+        elif ref:
+            xsd_groups = kwargs['xsd_groups']
+            try:
+                return xsd_groups[ref]
+            except KeyError:
+                raise XMLSchemaValidationError("Missing XSD group '{}'".format(ref))
+
+        content_model = elem[0]
+    else:
+        content_model = elem
+        name = None
+
+    if content_model.tag not in (_SEQUENCE_TAG, _ALL_TAG, _CHOICE_TAG):
+        raise ValueError("a sequence/all/choice element is needed: {0}".format(content_model))
+
+    group = XSDGroup(name, content_model.tag, elem.attrib)
+    for child in content_model:
+        if child.tag == _ELEMENT_TAG:
+            group.append(xsd_element_factory(child, **kwargs))
+        elif child.tag == _ALL_TAG:
+            raise XMLSchemaValidationError("'all' content type not allowed here: {}".format(elem))
+        elif child.tag in (_SEQUENCE_TAG, _CHOICE_TAG):
+            group.append(xsd_group_factory)
+    return group
 
 
 def xsd_element_factory(elem, xsd_element=None, **kwargs):
@@ -725,7 +783,7 @@ def xsd_element_factory(elem, xsd_element=None, **kwargs):
 
     # Get used parameters from the named arguments
     prefix = kwargs.get('prefix', '')
-    parent_path = kwargs.get('parent_path', None)
+    parent_path = kwargs.get('parent_path')
     xsd_types = kwargs.get('xsd_types', {})
     xsd_elements = kwargs.get('xsd_elements')
     xsd_element_class = kwargs.get('xsd_type_class', XSDElement)
@@ -769,7 +827,10 @@ def xsd_element_factory(elem, xsd_element=None, **kwargs):
     else:
         logger.debug("Link path '{0}' to existing element '{1}' ".format(element_path, element_name))
 
-    xsd_elements[element_path] = xsd_element
+    try:
+        xsd_elements[element_path] = xsd_element
+    except TypeError:
+        pass
     return xsd_element
 
 

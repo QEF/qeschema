@@ -15,6 +15,7 @@ import logging
 
 from .exceptions import FileFormatError, XMLSchemaValidationError
 from .xsdtypes import *
+from .xsdtypes import _ATTRIBUTE_TAG
 
 
 logger = logging.getLogger('qespresso')
@@ -58,8 +59,14 @@ class XMLSchema(object):
         self.attributes = {}
         "Map XSD global attributes to XSDType instance"
 
+        self.attribute_groups = {}
+        "Group XSD attributes definitions"
+
         self.elements = {}
         "Map XSD global elements to XSDType instance"
+
+        self.groups = {}
+        "Group XSD elements definitions"
 
         try:
             self._xsd = ElementTree.parse(xsd_file)
@@ -116,18 +123,52 @@ class XMLSchema(object):
             counter += 1
         logger.debug("%d global attributes added" % counter)
 
+        logger.debug("### Add attribute groups ###")
+        counter = 0
+        for elem in self.findall('./xsd:attributeGroup'):
+            try:
+                name = elem.attrib['name']
+            except KeyError:
+                raise XMLSchemaValidationError("Missing 'name' attribute for {}".format(elem))
+            if name in self.attribute_groups:
+                raise XMLSchemaValidationError("Duplicate attributeGroup: {}".format(name))
+
+            self.attribute_groups[name] = OrderedDict([
+                xsd_attribute_type_factory(child, xsd_types=self.types, prefix=prefix)
+                for child in elem if child.tag == _ATTRIBUTE_TAG
+            ])
+            counter += 1
+        logger.debug("%d attribute groups added" % counter)
+
         logger.debug("### Add global complex types ###")
         add_xsd_types_to_dict(self.findall('./xsd:complexType'), self.types,
                               xsd_complex_type_factory, xsd_types=self.types,
                               prefix=prefix, xsd_attributes=self.attributes)
 
-        logger.debug("### Add elements ###")
+        logger.debug("### Add content model groups ###")
         counter = 0
+        for elem in self.findall('./xsd:group'):
+            try:
+                name = elem.attrib['name']
+            except KeyError:
+                raise XMLSchemaValidationError("Missing 'name' attribute for {}".format(elem))
+            if name in self.groups:
+                raise XMLSchemaValidationError("Duplicate group: {}".format(name))
+
+            from .xsdtypes import xsd_group_factory
+            self.groups[name] = xsd_group_factory(
+                elem, xsd_groups=self.groups, xsd_types=self.types,
+                xsd_attributes=self.attributes, xsd_attribute_groups=self.attribute_groups
+            )
+            counter += 1
+        logger.debug("%d XSD named groups added" % counter)
+
+        logger.debug("### Add elements starting from root element(s) ###")
         for elem in self.findall('./xsd:element'):
             xsd_element_factory(elem, parent_path=None, prefix=prefix, xsd_elements=self.elements,
-                                xsd_types=self.types, xsd_attributes=self.attributes)
-            counter += 1
-        logger.debug("%d global elements added" % counter)
+                                xsd_types=self.types, xsd_attributes=self.attributes,
+                                xsd_attribute_groups=self.attribute_groups)
+        logger.debug("%d XSD elements added" % len(self.elements))
 
     def get_type(self, type_name):
         """
