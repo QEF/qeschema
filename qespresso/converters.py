@@ -20,9 +20,8 @@ except ImportError:
     # Use the Python's ElementTree as fallback (cElementTree name is deprecated)
     from xml.etree import ElementTree
 
-from .exceptions import ConfigError
 from qespresso.utils.mapping import BiunivocalMap
-from . import cards
+from . import cards, options
 
 logger = logging.getLogger('qespresso')
 
@@ -270,199 +269,6 @@ class RawInputConverter(Container):
         )
 
 
-#
-# Other derived values
-def get_specie_related_values(name, **kwargs):
-    """
-    Convert XML data for specie related options.
-    Map single values, vectors and matrices.
-
-    :param name: parameter name
-    :param kwargs:
-    :return: string
-    """
-    try:
-        related_tag = kwargs['_related_tag']
-        tag_data = kwargs[related_tag]
-        tag_specie = tag_data['species']
-        tag_values = tag_data['_text']
-        atomic_species = kwargs['atomic_species']
-        species = atomic_species['species']
-    except KeyError as err:
-        key = str(err).strip("'")
-        if key != '_text':
-            logger.error("Missing required arguments when building "
-                         "parameter '%s'! %s" % (name, key))
-        return []
-
-    specie_index = 1
-    for specie in species:
-        if specie['name'] == tag_specie:
-            break
-        specie_index += 1
-    else:
-        raise ConfigError("Unknown specie '%s' in tag '%s'" % (tag_specie, name))
-
-    if isinstance(tag_values, list):
-        lines = []
-        for k in range(len(tag_values)):
-            lines.append(' {0}({1},{2})={3}'.format(
-                name, k + 1, specie_index, tag_values[k]
-            ))
-        return lines
-    else:
-        return [' {0}({1})={2}'.format(name, specie_index, tag_values)]
-
-
-def get_starting_magnetization(name, **kwargs):
-    """
-    Build starting magnetization vector from species data.
-
-    :param name: parameter name
-    :param kwargs:
-    :return: string
-    """
-    try:
-        atomic_species = kwargs['atomic_species']
-        species = atomic_species['species']
-    except KeyError as err:
-        logger.error("Missing required arguments when building "
-                     "parameter '%s'! %s" % (name, err))
-        return []
-
-    lines = []
-    try:
-        lines.append(' {0}(1)={1}'.format(name, species.get('starting_magnetization', 0.0)))
-    except AttributeError:
-        k = 0
-        for specie in species:
-            k += 1
-            lines.append(' {0}({1})={2}'.format(
-                name, k, specie.get('starting_magnetization', 0.0)
-            ))
-    return lines
-
-
-def get_system_nspin(name, **kwargs):
-    """
-    Get the value for 'nspin' parameter of the SYSTEM namelist.
-
-    :param name:
-    :param kwargs:
-    :return:
-    """
-    try:
-        lsda = kwargs['lsda']
-        if lsda:
-            return [' nspin=2']
-
-        noncolin = kwargs['noncolin']
-        if noncolin:
-            return [' nspin=4']
-        else:
-            return [' nspin=1']
-    except KeyError as err:
-        logger.error("Missing required arguments when building "
-                     "parameter '%s'! %s" % (name, err))
-        return []
-
-
-def get_system_eamp(name, **kwargs):
-    """
-
-    :param name:
-    :param kwargs:
-    :return:
-    """
-    try:
-        electric_potential = kwargs['electric_potential']
-        electric_field_amplitude = kwargs['electric_field_amplitude']
-    except KeyError as err:
-        logger.error("Missing required arguments when building "
-                     "parameter '%s'! %s" % (name, err))
-        return []
-
-    if electric_potential == 'sawtooth_potential':
-        return [' eamp={0}'.format(electric_field_amplitude)]
-    else:
-        return []
-
-
-def get_electrons_efield(name, **kwargs):
-    """
-    :param name:
-    :param kwargs:
-    :return:
-    """
-    try:
-        electric_potential = kwargs['electric_potential']
-        electric_field_amplitude = kwargs['electric_field_amplitude']
-    except KeyError as err:
-        logger.error("Missing required arguments when building "
-                     "parameter '%s'! %s" % (name, err))
-        return []
-
-    if electric_potential == 'homogenous_field':
-        return [' efield={0}'.format(electric_field_amplitude)]
-    else:
-        return []
-
-
-def get_system_edir(name, **kwargs):
-    """
-    :param name:
-    :param kwargs:
-    :return:
-    """
-    try:
-        electric_potential = kwargs['electric_potential']
-        electric_field_direction = kwargs['electric_field_direction']
-    except KeyError as err:
-        logger.error("Missing required arguments when building "
-                     "parameter '%s'! %s" % (name, err))
-        return []
-
-    if electric_potential == 'sawtooth_potential':
-        return [' edir={0}'.format(electric_field_direction)]
-    else:
-        return []
-
-def get_electric_potential_related(name, **kwargs):
-    try:
-        electric_potential = kwargs['electric_potential']
-    except KeyError as err:
-        logger.error("Missing required arguments when building "
-                     "parameter '%s'! %s" % (name, err))
-        return []
-
-    if name == 'tefield':
-        return [' %s=%s' % (name, to_fortran(electric_potential == 'sawtooth_potential'))]
-    elif name == 'lelfield':
-        return [' %s=%s' % (name, to_fortran(electric_potential == 'homogenous_field'))]
-    elif name == 'lberry':
-        return [' %s=%s' % (name, to_fortran(electric_potential == 'Berry_Phase'))]
-    return []
-
-def get_control_gdir(name, **kwargs):
-    """
-    :param name:
-    :param kwargs:
-    :return:
-    """
-    try:
-        electric_potential = kwargs['electric_potential']
-        electric_field_direction = kwargs['electric_field_direction']
-    except KeyError as err:
-        logger.error("Missing required arguments when building "
-                     "parameter '%s'! %s" % (name, err))
-        return []
-
-    if electric_potential in ('homogenous_field', 'Berry_Phase'):
-        return [' gdir={0}'.format(electric_field_direction)]
-    else:
-        return []
-
-
 class PwInputConverter(RawInputConverter):
     """
     Builds a Fortran's namelist input for PWscf.
@@ -491,13 +297,13 @@ class PwInputConverter(RawInputConverter):
             'ntyp': 'SYSTEM[ntyp]',
             '_text': [
                 ("ATOMIC_SPECIES", cards.get_atomic_species_card, None),
-                ('SYSTEM[Hubbard_U]',get_specie_related_values),
-                ('SYSTEM[Hubbard_J0]',get_specie_related_values),
-                ('SYSTEM[Hubbard_alpha]',get_specie_related_values),
-                ('SYSTEM[Hubbard_beta]',get_specie_related_values),
-                ('SYSTEM[Hubbard_J]',get_specie_related_values),
-                ('SYSTEM[starting_ns_eigenvalue]',get_specie_related_values),
-                ('SYSTEM[starting_magnetization]', get_starting_magnetization, None),
+                ('SYSTEM[Hubbard_U]', options.get_specie_related_values),
+                ('SYSTEM[Hubbard_J0]', options.get_specie_related_values),
+                ('SYSTEM[Hubbard_alpha]', options.get_specie_related_values),
+                ('SYSTEM[Hubbard_beta]', options.get_specie_related_values),
+                ('SYSTEM[Hubbard_J]', options.get_specie_related_values),
+                ('SYSTEM[starting_ns_eigenvalue]', options.get_specie_related_values),
+                ('SYSTEM[starting_magnetization]', options.get_starting_magnetization, None),
             ]
         },
         'atomic_structure': {
@@ -528,22 +334,22 @@ class PwInputConverter(RawInputConverter):
             'dftU': {
                 'lda_plus_u_kind': 'SYSTEM[lda_plus_u_kind]',
                 'Hubbard_U': {
-                    '_text': ('SYSTEM[Hubbard_U]', get_specie_related_values, None),
+                    '_text': ('SYSTEM[Hubbard_U]', options.get_specie_related_values, None),
                 },
                 'Hubbard_J0': {
-                    '_text': ('SYSTEM[Hubbard_J0]', get_specie_related_values, None),
+                    '_text': ('SYSTEM[Hubbard_J0]', options.get_specie_related_values, None),
                 },
                 'Hubbard_alpha': {
-                    '_text': ('SYSTEM[Hubbard_alpha]', get_specie_related_values, None),
+                    '_text': ('SYSTEM[Hubbard_alpha]', options.get_specie_related_values, None),
                 },
                 'Hubbard_beta': {
-                    '_text': ('SYSTEM[Hubbard_beta]', get_specie_related_values, None),
+                    '_text': ('SYSTEM[Hubbard_beta]', options.get_specie_related_values, None),
                 },
                 'Hubbard_J': {
-                    '_text': ('SYSTEM[Hubbard_J]', get_specie_related_values, None),
+                    '_text': ('SYSTEM[Hubbard_J]', options.get_specie_related_values, None),
                 },
                 'starting_ns': {
-                    '_text': ('SYSTEM[starting_ns_eigenvalue]', get_specie_related_values, None),
+                    '_text': ('SYSTEM[starting_ns_eigenvalue]', options.get_specie_related_values, None),
                 },
                 'U_projection_type': 'SYSTEM[U_projection_type]',
             },
@@ -556,8 +362,8 @@ class PwInputConverter(RawInputConverter):
             }
         },
         'spin': {
-            'lsda': ("SYSTEM[nspin]", get_system_nspin, None),
-            'noncolin': [("SYSTEM[nspin]", get_system_nspin, None), "SYSTEM[noncolin]"],
+            'lsda': ("SYSTEM[nspin]", options.get_system_nspin, None),
+            'noncolin': [("SYSTEM[nspin]", options.get_system_nspin, None), "SYSTEM[noncolin]"],
             'spinorbit': "SYSTEM[lspinorb]"
         },
         'bands': {
@@ -569,7 +375,7 @@ class PwInputConverter(RawInputConverter):
             'tot_charge': "SYSTEM[tot_charge]",
             'occupations': {
                 '_text': "SYSTEM[occupations]",
-                'spin': ("SYSTEM[nspin]", get_system_nspin)
+                'spin': ("SYSTEM[nspin]", options.get_system_nspin)
             }
         },
         'basis': {
@@ -662,24 +468,24 @@ class PwInputConverter(RawInputConverter):
         'free_positions': [("ATOMIC_POSITIONS",), ("CELL_PARAMETERS",)],
         'electric_field': {
             'electric_potential': [
-                ("CONTROL[tefield]", get_electric_potential_related),
-                ("CONTROL[lelfield]", get_electric_potential_related),
-                ("CONTROL[lberry]", get_electric_potential_related),
-                ("SYSTEM[eamp]", get_system_eamp),
-                ("ELECTRONS[efield]", get_electrons_efield),
-                ("SYSTEM[edir]", get_system_edir),
-                ("CONTROL[gdir]", get_control_gdir)
+                ("CONTROL[tefield]", options.get_electric_potential_related),
+                ("CONTROL[lelfield]", options.get_electric_potential_related),
+                ("CONTROL[lberry]", options.get_electric_potential_related),
+                ("SYSTEM[eamp]", options.get_system_eamp),
+                ("ELECTRONS[efield]", options.get_electrons_efield),
+                ("SYSTEM[edir]", options.get_system_edir),
+                ("CONTROL[gdir]", options.get_control_gdir)
             ],
             'dipole_correction': "CONTROL[dipfield]",
             'electric_field_direction': [
-                ("SYSTEM[edir]", get_system_edir,),
-                ("CONTROL[gdir]", get_control_gdir),
+                ("SYSTEM[edir]", options.get_system_edir,),
+                ("CONTROL[gdir]", options.get_control_gdir),
             ],
             'potential_max_position': "SYSTEM[emaxpos]",
             'potential_decrease_width': "SYSTEM[eopreg]",
             'electric_field_amplitude': [
-                ("SYSTEM[eamp]", get_system_eamp,),
-                ("ELECTRONS[efield]", get_electrons_efield),
+                ("SYSTEM[eamp]", options.get_system_eamp,),
+                ("ELECTRONS[efield]", options.get_electrons_efield),
             ],
             'electric_field_vector': "ELECTRONS[efield_cart]",
             'nk_per_string': "CONTROL[nppstr]",
@@ -825,4 +631,3 @@ class NebInputConverter(RawInputConverter):
             input_namelists=tuple(),
             input_cards=tuple()
         )
-

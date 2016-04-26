@@ -758,7 +758,7 @@ def xsd_group_factory(elem, **kwargs):
         elif child.tag == _ALL_TAG:
             raise XMLSchemaValidationError("'all' content type not allowed here: {}".format(elem))
         elif child.tag in (_SEQUENCE_TAG, _CHOICE_TAG):
-            group.append(xsd_group_factory)
+            group.append(xsd_group_factory(child, **kwargs))
     return group
 
 
