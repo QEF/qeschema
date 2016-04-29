@@ -37,7 +37,7 @@
       </print_every>
     </control_variables>
     <atomic_species ntyp="3">
-      <specie name="O1">
+      <species name="O1">
         <mass>
        0.1000000E+01
         </mass>
@@ -45,8 +45,8 @@
         <starting_magnetization>
        0.0000000E+00
         </starting_magnetization>
-      </specie>
-      <specie name="Fe1">
+      </species>
+      <species name="Fe1">
         <mass>
        0.1000000E+01
         </mass>
@@ -54,8 +54,8 @@
         <starting_magnetization>
        0.5000000E+00
         </starting_magnetization>
-      </specie>
-      <specie name="Fe2">
+      </species>
+      <species name="Fe2">
         <mass>
        0.1000000E+01
         </mass>
@@ -63,7 +63,7 @@
         <starting_magnetization>
       -0.5000000E+00
         </starting_magnetization>
-      </specie>
+      </species>
     </atomic_species>
     <atomic_structure nat="4" alat="8.190000000000000E+000">
       <atomic_positions>
@@ -226,9 +226,9 @@ smearing
        0.0000000E+00
       </cell_factor>
       <free_cell>
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
+          1 1 1
+          1 1 1
+          1 1 1
       </free_cell>
     </cell_control>
     <symmetry_flags>

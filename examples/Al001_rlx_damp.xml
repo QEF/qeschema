@@ -37,12 +37,12 @@
       </print_every>
     </control_variables>
     <atomic_species ntyp="1">
-      <specie name="Al">
+      <species name="Al">
         <mass>
        0.1000000E+01
         </mass>
         <pseudo_file>Al.pz-vbc.UPF</pseudo_file>
-      </specie>
+      </species>
     </atomic_species>
     <atomic_structure nat="7" alat="5.303300000000000E+000">
       <atomic_positions>
@@ -170,9 +170,9 @@ false
        0.0000000E+00
       </cell_factor>
       <free_cell>
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
+          1 1 1
+          1 1 1
+          1 1 1
       </free_cell>
     </cell_control>
     <symmetry_flags>
@@ -196,13 +196,13 @@ false
       </use_all_frac>
     </symmetry_flags>
     <free_positions>
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
+        1 1 1
+        1 1 1
+        1 1 1
+        1 1 1
+        1 1 1
+        1 1 1
+        1 1 1
     </free_positions>
   </input>
 </qes:espresso>

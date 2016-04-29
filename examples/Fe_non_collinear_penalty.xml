@@ -39,7 +39,7 @@
       </print_every>
     </control_variables>
     <atomic_species ntyp="1">
-      <specie name="Fe">
+      <species name="Fe">
         <mass>
        0.5584700E+02
         </mass>
@@ -53,7 +53,7 @@
         <spin_phi>
        0.0000000E+00
         </spin_phi>
-      </specie>
+      </species>
     </atomic_species>
     <atomic_structure nat="1" alat="5.217000000000000E+000">
       <atomic_positions>
@@ -188,9 +188,9 @@ none
        0.0000000E+00
       </cell_factor>
       <free_cell>
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
+          1 1 1
+          1 1 1
+          1 1 1
       </free_cell>
     </cell_control>
     <symmetry_flags>

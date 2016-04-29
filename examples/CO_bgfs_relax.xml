@@ -37,18 +37,18 @@
       </print_every>
     </control_variables>
     <atomic_species ntyp="2">
-      <specie name="O">
+      <species name="O">
         <mass>
             0.1000000E+01
         </mass>
         <pseudo_file>O.pz-rrkjus.UPF</pseudo_file>
-      </specie>
-      <specie name="C">
+      </species>
+      <species name="C">
         <mass>
             0.1000000E+01
         </mass>
         <pseudo_file>C.pz-rrkjus.UPF</pseudo_file>
-      </specie>
+      </species>
     </atomic_species>
     <atomic_structure nat="2" alat="1.200000000000000E+001">
       <atomic_positions>
@@ -179,9 +179,9 @@
        0.0000000E+00
       </cell_factor>
       <free_cell>
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
+          1 1 1
+          1 1 1
+          1 1 1
       </free_cell>
     </cell_control>
     <symmetry_flags>
@@ -205,8 +205,8 @@
       </use_all_frac>
     </symmetry_flags>
     <free_positions>
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.0000000E+00       0.0000000E+00       0.0000000E+00
+          1 1 1
+          0 0 0
     </free_positions>
   </input>
 </qes:espresso>

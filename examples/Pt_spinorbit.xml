@@ -37,7 +37,7 @@
       </print_every>
     </control_variables>
     <atomic_species ntyp="1">
-      <specie name="Pt">
+      <species name="Pt">
         <mass>
        0.0000000E+00
         </mass>
@@ -51,7 +51,7 @@
         <spin_phi>
        0.0000000E+00
         </spin_phi>
-      </specie>
+      </species>
     </atomic_species>
     <atomic_structure nat="1" alat="7.420000000000000E+000">
       <atomic_positions>
@@ -151,9 +151,9 @@ Uniform grid with offset
        0.0000000E+00
       </cell_factor>
       <free_cell>
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
+          1 1 1
+          1 1 1
+          1 1 1
       </free_cell>
     </cell_control>
     <symmetry_flags>

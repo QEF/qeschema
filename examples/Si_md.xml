@@ -37,12 +37,12 @@
       </print_every>
     </control_variables>
     <atomic_species ntyp="1">
-      <specie name="Si">
+      <species name="Si">
         <mass>
        0.2808600E+02
         </mass>
         <pseudo_file>Si.pz-vbc.UPF</pseudo_file>
-      </specie>
+      </species>
     </atomic_species>
     <atomic_structure nat="8" alat="1.018000000000000E+001">
       <atomic_positions>
@@ -181,9 +181,9 @@ verlet
        0.0000000E+00
       </cell_factor>
       <free_cell>
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
+          1 1 1
+          1 1 1
+          1 1 1
       </free_cell>
     </cell_control>
     <symmetry_flags>
@@ -207,14 +207,14 @@ verlet
       </use_all_frac>
     </symmetry_flags>
     <free_positions>
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
+        1 1 1
+        1 1 1
+        1 1 1
+        1 1 1
+        1 1 1
+        1 1 1
+        1 1 1
+        1 1 1
     </free_positions>
   </input>
 </qes:espresso>
