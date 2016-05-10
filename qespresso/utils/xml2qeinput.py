@@ -26,8 +26,9 @@ def parse_args():
     parser.add_argument("-v", "--verbosity", action="count", default=1,
                         help="Increase output verbosity.")
     parser.add_argument('--output', metavar='OUTPUT-FILE', type=str,
-                        help="Write the input file for QE into a specific file "
-                             "instead of display it on screen.")
+                        help="Use another file name for the input file for QE instead of the default.")
+    parser.add_argument('--nofile', action="store_true", default=False,
+                        help="Dump the input file on the screen instead writing it on a file.")
     parser.add_argument('--xsd', metavar='XSD-FILE', type=str,
                         help='Use a specific XSD schema for XML translation.')
     parser.add_argument('xml_file', help="XML input filename.")
@@ -56,10 +57,15 @@ if __name__ == '__main__':
     xml_conf.read(args.xml_file)
     pw_in = xml_conf.get_qe_input()
 
-    if args.output:
+    if not args.nofile:
         import os
 
-        if os.path.isfile(args.output):
+        if args.output:
+            outfile = args.output
+        else:
+            outfile = '{}.in'.format(args.xml_file.rsplit('.', 1)[0])
+
+        if os.path.isfile(outfile):
             try:
                 choice = raw_input("File exists, overwrite? (y/n) ")
             except NameError:
@@ -68,10 +74,11 @@ if __name__ == '__main__':
             choice = 'y'
 
         if choice.lower() in ("yes", 'y'):
-            with open(args.output, mode='w') as f:
+            with open(outfile, mode='w') as f:
                 f.write(pw_in)
-                print("Input configuration written to file '%s' ..." % args.output)
-            sys.exit(0)
+                print("Input configuration written to file '%s' ..." % outfile)
+
+        sys.exit(0)
 
     print("=" * 13 + " START OF PW INPUT " + "=" * 13)
     print(pw_in)

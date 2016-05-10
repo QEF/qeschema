@@ -13,6 +13,7 @@ Data format converters for Quantum Espresso
 
 import logging
 import re
+import os.path
 
 try:
     import lxml.etree as ElementTree
@@ -499,13 +500,15 @@ class PwInputConverter(RawInputConverter):
         }
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         super(PwInputConverter, self).__init__(
             *conversion_maps_builder(self.PW_TEMPLATE_MAP),
             input_namelists=('CONTROL', 'SYSTEM', 'ELECTRONS', 'IONS', 'CELL'),
             input_cards=('ATOMIC_SPECIES', 'ATOMIC_POSITIONS', 'K_POINTS',
                          'CELL_PARAMETERS', 'ATOMIC_FORCES')
         )
+        if 'xml_file' in kwargs:
+            self._input['CONTROL']['input_xml_schema_file'] = u'\'{}\''.format(os.path.basename(kwargs['xml_file']))
         self._input['SYSTEM']['ibrav'] = 0
 
     def clear_input(self):
@@ -610,7 +613,7 @@ class PhononInputConverter(RawInputConverter):
         }
     }
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         super(PhononInputConverter, self).__init__(
             *conversion_maps_builder(self.PHONON_TEMPLATE_MAP),
             input_namelists=('INPUTPH',),

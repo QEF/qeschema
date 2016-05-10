@@ -59,7 +59,7 @@ class QeDocument(XmlDocument):
         if self._document is None:
             raise ConfigError("Configuration not loaded!")
 
-        qe_input = self.input_builder()
+        qe_input = self.input_builder(xml_file=self._config_file)
         schema = self.schema
         input_path = self.get_input_path()
         input_root = self.find(self.get_input_path())

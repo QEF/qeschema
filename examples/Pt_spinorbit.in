@@ -5,6 +5,7 @@
  dt=20.0
  etot_conv_thr=0.0001
  forc_conv_thr=0.001
+ input_xml_schema_file='Pt_spinorbit.xml'
  iprint=100000
  max_seconds=10000000
  outdir='/scratch/pdelugas/espresso-xsd/tempdir/'
