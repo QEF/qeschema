@@ -464,9 +464,9 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
         <attribute type="positiveInteger" name="nk1"/>
         <attribute type="positiveInteger" name="nk2"/>
         <attribute type="positiveInteger" name="nk3"/>
-        <attribute type="positiveInteger" name="k1"/>
-        <attribute type="positiveInteger" name="k2"/>
-        <attribute type="positiveInteger" name="k3"/>
+        <attribute type="nonNegativeInteger" name="k1"/>
+        <attribute type="nonNegativeInteger" name="k2"/>
+        <attribute type="nonNegativeInteger" name="k3"/>
       </extension>
     </simpleContent>
   </complexType>
