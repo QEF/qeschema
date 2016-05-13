@@ -29,11 +29,12 @@ def get_specie_related_values(name, **kwargs):
     :param kwargs:
     :return: string
     """
+    related_tag = kwargs['_related_tag']
+    tag_data = kwargs[related_tag]
+    tag_specie = tag_data['specie']
+    tag_values = tag_data['_text']
+
     try:
-        related_tag = kwargs['_related_tag']
-        tag_data = kwargs[related_tag]
-        tag_specie = tag_data['species']
-        tag_values = tag_data['_text']
         atomic_species = kwargs['atomic_species']
         species = atomic_species['species']
     except KeyError as err:

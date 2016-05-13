@@ -43,7 +43,7 @@ def conversion_maps_builder(template_map):
             raise TypeError("The first element must be a string! '{0}'".format(args))
         elif len(args) == 1:
             return args[0], None, None
-        elif len(args) == 2 and callable(args[1]):
+        elif len(args) == 2 and (callable(args[1]) or args[1] is None):
             return args[0], args[1], None
         elif len(args) == 3 and (callable(args[1]) or args[1] is None) \
                 and (callable(args[2]) or args[2] is None):
@@ -66,7 +66,7 @@ def conversion_maps_builder(template_map):
             if isinstance(item, tuple) or isinstance(item, list):
                 try:
                     variant_map[path_key] = _check_variant(*item)
-                    logger.debug("Added single-variant mapping: {0}".format(variant_map[path_key]))
+                    logger.debug("Added single-variant mapping: '{}'={}".format(path_key, variant_map[path_key]))
                 except TypeError:
                     variants = []
                     for variant in item:
@@ -77,7 +77,7 @@ def conversion_maps_builder(template_map):
                         else:
                             raise TypeError("Expect a tuple, list or string! {0}".format(variant))
                     variant_map[path_key] = tuple(variants)
-                    logger.debug("Added multi-variant mapping: {0}".format(variant_map[path_key]))
+                    logger.debug("Added multi-variant mapping: '{}'={}".format(path_key, variant_map[path_key]))
 
     invariant_map = BiunivocalMap()
     variant_map = dict()
@@ -205,7 +205,6 @@ class RawInputConverter(Container):
         logger.debug("Set {0}[{1}]={2}".format(namelist, name, self._input[namelist][name]))
 
     def add_kwarg(self, path, tag, node_dict):
-        arg_dict = node_dict.copy()
         if isinstance(self.variant_map[path][0], str):
             target_items = list([self.variant_map[path]])[:2]
         else:
@@ -214,6 +213,7 @@ class RawInputConverter(Container):
             logger.debug("Add argument to '{0}'".format(target))
             logger.debug("Argument's conversion function: {0}".format(_get_qe_input))
             group, name = self.target_pattern.match(target).groups()
+            arg_dict = node_dict.copy()
             if _get_qe_input is not None:
                 arg_dict.update({
                     '_get_qe_input': _get_qe_input,
@@ -235,14 +235,23 @@ class RawInputConverter(Container):
         for namelist in self.input_namelists:
             lines.append('&%s' % namelist)
             for name, value in sorted(_input[namelist].items(), key=lambda x: x[0].lower()):
+                logger.debug("Add input for parameter {}[{}] with value {}".format(namelist, name, value))
                 if isinstance(value, dict):
                     # Variant conversion: apply to_fortran_input function with saved arguments
-                    to_fortran_input = value['_get_qe_input']
+                    try:
+                        to_fortran_input = value['_get_qe_input']
+                    except KeyError:
+                        logger.debug(
+                            'No conversion function for parameter %s[%s], skip ... ' % (namelist, name)
+                        )
+                        continue
+
                     if callable(to_fortran_input):
                         lines.extend(to_fortran_input(name, **value))
                     else:
-                        logger.error('Parameter %s[%s] conversion function not found!' %
-                                     (namelist, name))
+                        logger.error(
+                            'Parameter %s[%s] conversion function is not callable!' % (namelist, name)
+                        )
                 else:
                     # Simple invariant conversion
                     lines.append(' {0}={1}'.format(name, value))
@@ -298,22 +307,20 @@ class PwInputConverter(RawInputConverter):
             'ntyp': 'SYSTEM[ntyp]',
             '_text': [
                 ("ATOMIC_SPECIES", cards.get_atomic_species_card, None),
-                ('SYSTEM[Hubbard_U]', options.get_specie_related_values),
-                ('SYSTEM[Hubbard_J0]', options.get_specie_related_values),
-                ('SYSTEM[Hubbard_alpha]', options.get_specie_related_values),
-                ('SYSTEM[Hubbard_beta]', options.get_specie_related_values),
-                ('SYSTEM[Hubbard_J]', options.get_specie_related_values),
-                ('SYSTEM[starting_ns_eigenvalue]', options.get_specie_related_values),
+                ('SYSTEM[Hubbard_U]',),
+                ('SYSTEM[Hubbard_J0]',),
+                ('SYSTEM[Hubbard_alpha]',),
+                ('SYSTEM[Hubbard_beta]',),
+                ('SYSTEM[Hubbard_J]',),
+                ('SYSTEM[starting_ns_eigenvalue]',),
                 ('SYSTEM[starting_magnetization]', options.get_starting_magnetization, None),
             ]
         },
         'atomic_structure': {
             'nat': 'SYSTEM[nat]',
             '_text': [
-                ("ATOMIC_POSITIONS",
-                 cards.get_atomic_positions_cell_card, None),
-                ("CELL_PARAMETERS",
-                 cards.get_cell_parameters_card, None)
+                ("ATOMIC_POSITIONS", cards.get_atomic_positions_cell_card, None),
+                ("CELL_PARAMETERS", cards.get_cell_parameters_card, None)
             ],
             'atomic_positions': ('ATOMIC_FORCES', cards.get_atomic_forces_card, None),
         },
@@ -364,7 +371,10 @@ class PwInputConverter(RawInputConverter):
         },
         'spin': {
             'lsda': ("SYSTEM[nspin]", options.get_system_nspin, None),
-            'noncolin': [("SYSTEM[nspin]", options.get_system_nspin, None), "SYSTEM[noncolin]"],
+            'noncolin': [
+                ("SYSTEM[nspin]", options.get_system_nspin, None),
+                "SYSTEM[noncolin]"
+            ],
             'spinorbit': "SYSTEM[lspinorb]"
         },
         'bands': {
@@ -439,8 +449,7 @@ class PwInputConverter(RawInputConverter):
             'cell_dynamics': "CELL[cell_dynamics]",
             'wmass': "CELL[wmass]",
             'cell_factor': "CELL[cell_factor]",
-            'free_cell': ("CELL_PARAMETERS",
-                          cards.get_cell_parameters_card, None),
+            'free_cell': ("CELL_PARAMETERS", cards.get_cell_parameters_card, None),
         },
         'symmetry_flags': {
             'nosym': "SYSTEM[nosym]",
@@ -464,8 +473,7 @@ class PwInputConverter(RawInputConverter):
             'qcutz': "SYSTEM[qcutz]",
             'q2sigma': "SYSTEM[q2sigma]"
         },
-        'external_atomic_forces': ('ATOMIC_FORCES',
-                                   cards.get_atomic_forces_card, None),
+        'external_atomic_forces': ('ATOMIC_FORCES', cards.get_atomic_forces_card, None),
         'free_positions': [("ATOMIC_POSITIONS",), ("CELL_PARAMETERS",)],
         'electric_field': {
             'electric_potential': [
