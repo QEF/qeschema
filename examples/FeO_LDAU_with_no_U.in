@@ -23,13 +23,6 @@
  ecutrho=240.0
  ecutwfc=30.0
  force_symmorphic=.false.
- Hubbard_alpha(3)=0.0
- Hubbard_beta(3)=0.0
- Hubbard_J(1,3)=0.0
- Hubbard_J(2,3)=0.0
- Hubbard_J(3,3)=0.0
- Hubbard_J0(3)=0.0
- Hubbard_U(3)=7.349865e-10
  ibrav=0
  input_dft='PZ'
  lda_plus_u_kind=0

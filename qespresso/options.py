@@ -22,17 +22,17 @@ logger = logging.getLogger('qespresso')
 # Other derived values
 def get_specie_related_values(name, **kwargs):
     """
-    Convert XML data for specie related options.
-    Map single values, vectors and matrices.
+    Convert XML data for specie related options. Map single values,
+    vectors and matrices. Skip 0 values for Hubbard parameters or
+    negative values for starting_ns eigenvalues. Skip entire vector
+    or matrix when
 
     :param name: parameter name
     :param kwargs:
     :return: string
     """
     related_tag = kwargs['_related_tag']
-    tag_data = kwargs[related_tag]
-    tag_specie = tag_data['specie']
-    tag_values = tag_data['_text']
+    related_data = kwargs[related_tag]
 
     try:
         atomic_species = kwargs['atomic_species']
@@ -44,23 +44,32 @@ def get_specie_related_values(name, **kwargs):
                          "parameter '%s'! %s" % (name, key))
         return []
 
-    specie_index = 1
-    for specie in species:
-        if specie['name'] == tag_specie:
-            break
-        specie_index += 1
-    else:
-        raise ConfigError("Unknown specie '%s' in tag '%s'" % (tag_specie, name))
+    lines = []
+    for value in iter(related_data if isinstance(related_data, list) else [related_data]):
+        tag_specie = value['specie']
+        tag_values = value['_text']
+        if value.get('label') == 'no Hubbard':
+            continue
 
-    if isinstance(tag_values, list):
-        lines = []
-        for k in range(len(tag_values)):
-            lines.append(' {0}({1},{2})={3}'.format(
-                name, k + 1, specie_index, tag_values[k]
-            ))
-        return lines
-    else:
-        return [' {0}({1})={2}'.format(name, specie_index, tag_values)]
+        specie_index = 1
+        for specie in species:
+            if specie['name'] == tag_specie:
+                break
+            specie_index += 1
+        else:
+            raise ConfigError("Unknown specie '%s' in tag '%s'" % (tag_specie, name))
+
+        if isinstance(tag_values, list):
+            for k in range(len(tag_values)):
+                # starting_ns case: skip negative values
+                if tag_values[k] < 0 or (name == 'Hubbard_J' and tag_values[k] == 0):
+                    continue
+                lines.append(' {0}({1},{2})={3}'.format(
+                    name, k + 1, specie_index, tag_values[k]
+                ))
+        elif tag_values > 0:
+            lines.append(' {0}({1})={2}'.format(name, specie_index, tag_values))
+    return lines
 
 
 def get_starting_magnetization(name, **kwargs):
@@ -125,6 +134,8 @@ def get_system_eamp(name, **kwargs):
     """
     try:
         electric_potential = kwargs['electric_potential']
+        if electric_potential in ('Berry_Phase', 'homogenous_field'):
+            return []
         electric_field_amplitude = kwargs['electric_field_amplitude']
     except KeyError as err:
         logger.error("Missing required arguments when building "
@@ -145,6 +156,8 @@ def get_electrons_efield(name, **kwargs):
     """
     try:
         electric_potential = kwargs['electric_potential']
+        if electric_potential in ('Berry_Phase', 'sawtooth_potential'):
+            return []
         electric_field_amplitude = kwargs['electric_field_amplitude']
     except KeyError as err:
         logger.error("Missing required arguments when building "

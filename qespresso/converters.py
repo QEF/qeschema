@@ -213,19 +213,27 @@ class RawInputConverter(Container):
             logger.debug("Add argument to '{0}'".format(target))
             logger.debug("Argument's conversion function: {0}".format(_get_qe_input))
             group, name = self.target_pattern.match(target).groups()
-            arg_dict = node_dict.copy()
-            if _get_qe_input is not None:
-                arg_dict.update({
-                    '_get_qe_input': _get_qe_input,
-                    '_related_tag': tag
-                })
             if name is not None:
-                if name in self._input[group]:
-                    self._input[group][name].update(arg_dict)
+                try:
+                    name_dict = self._input[group][name]
+                except KeyError:
+                    self._input[group][name] = node_dict.copy()
                 else:
-                    self._input[group][name] = arg_dict.copy()
+                    try:
+                        name_dict[tag].append(node_dict[tag])
+                    except AttributeError:
+                        name_dict[tag] = [self._input[group][name][tag], node_dict[tag]]
+                    except KeyError:
+                        name_dict.update(node_dict.copy())
+                if _get_qe_input is not None:
+                    self._input[group][name].update({
+                        '_get_qe_input': _get_qe_input,
+                        '_related_tag': tag
+                    })
             else:
-                self._input[group].update(arg_dict)
+                self._input[group].update(node_dict.copy())
+                if _get_qe_input is not None:
+                    self._input[group].update({'_get_qe_input': _get_qe_input})
 
     def get_qe_input(self):
         if all([not section for section in self._input.values()]):
