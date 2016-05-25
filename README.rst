@@ -10,7 +10,7 @@ Requirements
 
 * Python_ 2.7-3.5
 
-Optional (recommended):
+Optional (for schema validation):
 
 * lxml_ (additional Python library for processing XML amd HTML documents)
 

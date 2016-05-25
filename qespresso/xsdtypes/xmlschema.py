@@ -12,6 +12,7 @@ This module contains XMLSchema class for xsdtypes package
 """
 
 import logging
+from xml.etree import ElementTree
 
 from .exceptions import FileFormatError, XMLSchemaValidationError
 from .xsdtypes import *
@@ -19,13 +20,6 @@ from .xsdtypes import _ATTRIBUTE_TAG
 
 
 logger = logging.getLogger('qespresso')
-
-try:
-    import lxml.etree as ElementTree
-except ImportError:
-    # Use the Python's ElementTree as fallback
-    from xml.etree import ElementTree
-    logger.warning("lxml library is not installed, use the default XML library.")
 
 
 class XMLSchema(object):
@@ -331,8 +325,17 @@ class XMLSchema(object):
         :param xml_config:
         """
         try:
-            self._xml_schema.assertValid(xml_config)
+            import lxml.etree as ET
+        except ImportError:
+            logger.debug("")
+            return
+
+        xsd = ET.parse(self._xsd_file)
+        xml_schema = ET.XMLSchema(xsd)
+
+        try:
+            xml_schema.assertValid(xml_config.tostring())
         except AttributeError:
             logger.warning("XML Schema validation not available!")
-        except ElementTree.DocumentInvalid as e:
+        except ET.DocumentInvalid as e:
             raise XMLSchemaValidationError(e)

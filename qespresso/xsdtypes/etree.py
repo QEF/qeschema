@@ -12,30 +12,31 @@ This module contains XMLDocument class for xsdtypes package
 """
 
 import logging
+from xml.etree import ElementTree
 
 from ..utils.logger import set_logger
 
 logger = logging.getLogger('qespresso')
 
-try:
-    import lxml.etree as ElementTree
-except ImportError:
-    # Use the Python's ElementTree as fallback (cElementTree name is deprecated)
-    from xml.etree import ElementTree
-    logger.warning("Library lxml is not installed, use the default XML library.")
 
-
-def get_etree_node_path(node):
+def etree_iter_path(node, tag=None, path='.'):
     """
-    Return the complete relative path of the ElementTree node
+    A version of ElementTree node's iter function that return a couple
+    with node and his relative path.
 
     :param node:
+    :param tag:
+    :param path:
     :return:
     """
-    if node.getparent() is None:
-        return '.'
-    else:
-        return '%s/%s' % (get_etree_node_path(node.getparent()), node.tag)
+    if tag == "*":
+        tag = None
+    if tag is None or node.tag == tag:
+        yield node, path
+    for child in node:
+        _child_path = '%s/%s' % (path, child.tag)
+        for child, child_path in etree_iter_path(child, tag, path=_child_path):
+            yield child, child_path
 
 
 def etree_to_dict(etree, xml_schema, dict_class=dict, spaces_for_tab=4):
@@ -49,11 +50,10 @@ def etree_to_dict(etree, xml_schema, dict_class=dict, spaces_for_tab=4):
     return ret_dict
 
 
-def etree_node_to_dict(root_node, xml_schema, dict_class=dict, spaces_for_tab=4, use_defaults=True):
+def etree_node_to_dict(root_node, xml_schema, root_path='.', dict_class=dict, spaces_for_tab=4, use_defaults=True):
 
-    def _etree_node_to_dict(node):
+    def _etree_node_to_dict(node, node_path):
         node_dict = dict_class()
-        node_path = get_etree_node_path(node)
         logger.debug("Decode node '%s' with path '%s'" % (node.tag, node_path))
 
         if node.attrib:
@@ -74,7 +74,7 @@ def etree_node_to_dict(root_node, xml_schema, dict_class=dict, spaces_for_tab=4,
 
         for child in node:
             # recursively add the element's children
-            new_item = _etree_node_to_dict(child)
+            new_item = _etree_node_to_dict(child, node_path='%s/%s' % (node_path, child.tag))
             if child.tag in node_dict:
                 # found duplicate tag, force a list
                 if isinstance(node_dict[child.tag], list):
@@ -115,7 +115,7 @@ def etree_node_to_dict(root_node, xml_schema, dict_class=dict, spaces_for_tab=4,
 
         return node_dict
 
-    ret_dict = dict_class({root_node.tag: _etree_node_to_dict(root_node)})
+    ret_dict = dict_class({root_node.tag: _etree_node_to_dict(root_node, root_path)})
     return ret_dict
 
 

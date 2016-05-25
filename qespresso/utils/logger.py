@@ -11,6 +11,7 @@ import logging
 
 logger = logging.getLogger('qespresso')
 
+
 def set_logger(loglevel=1, logfile=None):
     """
     Setup a basic logger with an handler and a formatter, using a

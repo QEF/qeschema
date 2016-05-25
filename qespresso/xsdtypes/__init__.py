@@ -7,7 +7,7 @@
 # http://opensource.org/licenses/MIT.
 # Authors: Davide Brunato
 #
-from .etree import get_etree_node_path, etree_to_dict, etree_node_to_dict
+from .etree import etree_to_dict, etree_node_to_dict
 from .xsdtypes import *
 from .xmlschema import XMLSchema
 from .xmldocument import XmlDocument

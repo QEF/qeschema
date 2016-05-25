@@ -12,18 +12,12 @@ This module contains XMLDocument class for xsdtypes package
 """
 
 import logging
+from xml.etree import ElementTree
 
 from .exceptions import FileFormatError, XMLSchemaValidationError
 from .xmlschema import XMLSchema
 
 logger = logging.getLogger('qespresso')
-
-try:
-    import lxml.etree as ElementTree
-except ImportError:
-    # Use the Python's ElementTree as fallback (cElementTree name is deprecated)
-    from xml.etree import ElementTree
-    logger.warning("Library lxml is not installed, use the default XML library.")
 
 
 class XmlDocument(object):
@@ -32,7 +26,7 @@ class XmlDocument(object):
 
     A XSD schema is needed for checking types, validation of the configuration
     and for lookup of default values of the attributes. Full schema's validation
-    is disabled if lxml library is not installed.
+    is available only if lxml library is installed.
 
     Supported files data format for configuration are XML, YAML and JSON.
     """
@@ -73,7 +67,7 @@ class XmlDocument(object):
         else:
             self._config_file = filename
 
-        # Validation of the new ElementTree structure
+        # Validation of the new ElementTree structure (valid
         try:
             self.validate()
         except XMLSchemaValidationError as e:

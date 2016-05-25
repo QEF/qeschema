@@ -15,12 +15,6 @@ import logging
 import re
 import os.path
 
-try:
-    import lxml.etree as ElementTree
-except ImportError:
-    # Use the Python's ElementTree as fallback (cElementTree name is deprecated)
-    from xml.etree import ElementTree
-
 from qespresso.utils.mapping import BiunivocalMap
 from . import cards, options
 

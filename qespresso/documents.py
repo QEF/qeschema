@@ -12,7 +12,7 @@ import os.path
 
 from .converters import PwInputConverter, PhononInputConverter, NebInputConverter
 from .exceptions import ConfigError
-from .xsdtypes import etree_node_to_dict, get_etree_node_path, XmlDocument
+from .xsdtypes import etree_node_to_dict, XmlDocument
 
 logger = logging.getLogger('qespresso')
 
@@ -62,13 +62,12 @@ class QeDocument(XmlDocument):
         qe_input = self.input_builder(xml_file=self._config_file)
         schema = self.schema
         input_path = self.get_input_path()
-        input_root = self.find(self.get_input_path())
-
+        input_root = self.find(input_path)
+        from xsdtypes.etree import etree_iter_path
         # Extract values from input's subtree of the XML document
-        for elem in input_root.iter():
-            path = get_etree_node_path(elem)
+        for elem, path in etree_iter_path(input_root, path=input_path):
             rel_path = path.replace(input_path, '.')
-            node_dict = etree_node_to_dict(elem, schema, use_defaults=use_defaults)
+            node_dict = etree_node_to_dict(elem, schema, root_path=path, use_defaults=use_defaults)
             logger.debug("Add input for node '{0}' with dict '{1}'".format(elem.tag, node_dict))
 
             # Convert attributes

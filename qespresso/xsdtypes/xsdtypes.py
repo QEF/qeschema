@@ -20,13 +20,6 @@ from .exceptions import XMLSchemaValidationError, XMLDecodeError, XMLEncodeError
 
 logger = logging.getLogger('qespresso')
 
-try:
-    import lxml.etree as ElementTree
-except ImportError:
-    # Use the Python's ElementTree as fallback
-    from xml.etree import ElementTree
-    logger.warning("lxml library is not installed, use the default XML library.")
-
 
 def is_datetime(date_string, date_format='%Y-%m-%d'):
     """
