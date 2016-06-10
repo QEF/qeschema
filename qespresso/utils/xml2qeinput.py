@@ -31,6 +31,8 @@ def parse_args():
                         help="Dump the input file on the screen instead writing it on a file.")
     parser.add_argument('--xsd', metavar='XSD-FILE', type=str,
                         help='Use a specific XSD schema for XML translation.')
+    parser.add_argument("-y", "--yes", action="store_true", default=False,
+                        help="Automatically answer yes for all questions.")
     parser.add_argument('xml_file', help="XML input filename.")
     return parser.parse_args()
 
@@ -65,7 +67,7 @@ if __name__ == '__main__':
         else:
             outfile = '{}.in'.format(args.xml_file.rsplit('.', 1)[0])
 
-        if os.path.isfile(outfile):
+        if not args.yes and os.path.isfile(outfile):
             try:
                 choice = raw_input("File exists, overwrite? (y/n) ")
             except NameError:

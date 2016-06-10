@@ -13,6 +13,7 @@ import os.path
 from .converters import PwInputConverter, PhononInputConverter, NebInputConverter
 from .exceptions import ConfigError
 from .xsdtypes import etree_node_to_dict, XmlDocument
+from .xsdtypes.etree import etree_iter_path
 
 logger = logging.getLogger('qespresso')
 
@@ -63,7 +64,7 @@ class QeDocument(XmlDocument):
         schema = self.schema
         input_path = self.get_input_path()
         input_root = self.find(input_path)
-        from xsdtypes.etree import etree_iter_path
+
         # Extract values from input's subtree of the XML document
         for elem, path in etree_iter_path(input_root, path=input_path):
             rel_path = path.replace(input_path, '.')
@@ -80,7 +81,7 @@ class QeDocument(XmlDocument):
                 qe_input.set_path(path_key, elem.tag, node_dict)
 
             logger.debug("Convert element '%s'" % path)
-            path_key = '%s/_text' % rel_path if elem.attrib else rel_path
+            path_key = '%s/_text' % rel_path if schema.get_attributes(path) else rel_path
             if path_key not in qe_input:
                 logger.debug("Element's path '%s' not in converter!" % path_key)
                 continue

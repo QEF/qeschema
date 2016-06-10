@@ -90,7 +90,7 @@
       <tot_charge>
        0.0000000E+00
       </tot_charge>
-      <occupations spin="4">smearing</occupations>
+      <occupations>smearing</occupations>
     </bands>
     <basis>
       <ecutwfc>

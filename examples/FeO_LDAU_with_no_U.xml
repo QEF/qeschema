@@ -163,7 +163,7 @@
       <tot_charge>
        0.0000000E+00
       </tot_charge>
-      <occupations spin="2">
+      <occupations>
             smearing
       </occupations>
     </bands>

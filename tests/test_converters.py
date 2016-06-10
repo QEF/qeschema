@@ -33,7 +33,6 @@ def make_test_function(xml_file, ref_in_file):
                     break
                 else:
                     k += 1
-
         self.assertTrue(are_equals, xml_file)
     return test
 
