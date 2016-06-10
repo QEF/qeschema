@@ -378,7 +378,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
   <complexType name="occupationsType">
     <simpleContent>
       <extension base="string">
-        <attribute type="positiveInteger" name="spin"/>
+        <attribute type="positiveInteger" name="spin" use="optional"/>
       </extension>
     </simpleContent>
   </complexType>
