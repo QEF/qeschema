@@ -7,7 +7,7 @@ http://opensource.org/licenses/MIT.
 Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
 -->
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
-	xmlns:qes="http://www.quantum-espresso.org/ns/qes/qes-1.0" 
+	xmlns:qes="http://www.quantum-espresso.org/ns/qes/qes-1.0"
 	targetNamespace="http://www.quantum-espresso.org/ns/qes/qes-1.0">
   <!-- ESPRESSO (root element) -->
   <element name="espresso" type="qes:espressoType" />
@@ -502,7 +502,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
       <element type="string" name="pot_extrapolation"/>
       <element type="string" name="wfc_extrapolation"/>
       <element type="string" name="ion_temperature"/>
-      <element type="double" name="timestep" default="20.0" maxOccurs='1'/>     
+      <element type="double" name="timestep" default="20.0" maxOccurs='1'/>
       <element type="double" name="tempw"/>
       <element type="double" name="tolp"/>
       <element type="double" name="deltaT"/>
@@ -568,7 +568,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
        <element type="double"  name="electric_field_amplitude"      minOccurs="0" maxOccurs="1"/>
        <element type="qes:d3vectorType" name="electric_field_vector" minOccurs="0" maxOccurs="1"/>
        <element type="integer"          name="nk_per_string"  minOccurs="0"  maxOccurs="1"/>
-       <element type="integer"   name = "n_berry_cycles" minOccurs="0" maxOccurs="1"/> 
+       <element type="integer"   name = "n_berry_cycles" minOccurs="0" maxOccurs="1"/>
     </sequence>
   </complexType>
   <simpleType name="electric_potentialType">
@@ -577,7 +577,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
   	<enumeration value="homogenous_field"/>
         <enumeration value="Berry_Phase" />
      </restriction>
-  </simpleType>     
+  </simpleType>
   <complexType name="atomic_constraintsType" >
     <sequence>
        <element type="integer" name="num_of_constraints" minOccurs="1"  maxOccurs="1"/>
@@ -764,7 +764,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
   </simpleType>
   <simpleType name="doubleListType">
     <list itemType="double"/>
-  </simpleType>  
+  </simpleType>
   <complexType name="matrixType">
     <simpleContent>
       <extension base="qes:doubleListType" />

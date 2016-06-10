@@ -39,13 +39,12 @@ def etree_iter_path(node, tag=None, path='.'):
             yield child, child_path
 
 
-def etree_to_dict(etree, xml_schema, dict_class=dict, spaces_for_tab=4):
-
-    # if not isinstance(root_node, etree.Element):
-    #     raise TypeError('Expected ElementTree.Element')
+def etree_to_dict(etree, xml_schema, dict_class=dict, spaces_for_tab=4, use_defaults=True):
     set_logger(1)
     root_node = etree.getroot()
-    ret_dict = etree_node_to_dict(root_node, xml_schema, dict_class, spaces_for_tab)
+    ret_dict = etree_node_to_dict(
+        root_node, xml_schema, dict_class=dict_class, spaces_for_tab=spaces_for_tab, use_defaults=use_defaults
+    )
     set_logger(1)
     return ret_dict
 
