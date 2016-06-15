@@ -386,6 +386,7 @@ class PwInputConverter(RawInputConverter):
                 'degauss': "SYSTEM[degauss]"
             },
             'tot_charge': "SYSTEM[tot_charge]",
+            'tot_magnetization': "SYSTEM[tot_magnetization]",
             'occupations': {
                 '_text': "SYSTEM[occupations]"
             }
