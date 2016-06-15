@@ -94,7 +94,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
       <element type="qes:band_structureType" name="band_structure"/>
       <element type="qes:matrixType" name="forces" minOccurs="0"/>
       <element type="qes:matrixType" name="stress" minOccurs="0" />
-      <element type="string" name="electric_field" minOccurs="0" />
+      <element type="qes:outputElectricFieldType" name="electric_field" minOccurs="0" />
     </sequence>
   </complexType>
   <!-- CONTROL -->
@@ -193,8 +193,9 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
       </choice>
       <element type="qes:cellType" name="cell"/>
     </sequence>
-    <attribute type="positiveInteger" name="nat" use="optional"/>
+    <attribute type="positiveInteger" name="nat" />
     <attribute type="double" name="alat" use="optional"/>
+    <attribute type="positiveInteger" name="bravais_index" use="optional"/>
   </complexType>
   <complexType name="atomic_positionsType">
     <sequence>
@@ -206,14 +207,15 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
       <extension base="qes:d3vectorType">
     	<attribute type="string" name="name" />
     	<attribute type="string" name="position" use="optional" />
+        <attribute type="positiveInteger" name="index" use="optional"/>
       </extension>
     </simpleContent>
   </complexType>
   <complexType name="wyckoff_positionsType">
     <sequence>
-      <element type="qes:atomType" name="atom"/>
+      <element type="qes:atomType" name="atom" maxOccurs="unbounded" />
     </sequence>
-    <attribute type="unsignedByte" name="space_group" use="optional"/>
+    <attribute type="unsignedByte" name="space_group" />
     <attribute type="string" name="more_options" use="optional"/>
   </complexType>
   <complexType name="cellType">
@@ -323,6 +325,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
         <attribute type="string" name="specie"/>
         <attribute type="string" name="label"/>
         <attribute type="positiveInteger" name="spin"/>
+        <attribute type="positiveInteger" name="index"/>
       </extension>
     </simpleContent>
   </complexType>
@@ -356,6 +359,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
       <element type="positiveInteger" name="nbnd" minOccurs="0"/>
       <element type="qes:smearingType" name="smearing" minOccurs="0"/>
       <element type="double" name="tot_charge" minOccurs="0"/>
+      <element type="double" name="tot_magnetization" minOccurs="0"/>
       <element type="qes:occupationsType" name="occupations" minOccurs="0 "/>
       <element type="qes:inputOccupationsType" name="inputOccupations" minOccurs="0" maxOccurs="2" />
     </sequence>
@@ -533,7 +537,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
   <complexType name="boundary_conditionsType">
     <sequence>
       <element type="string" name="assume_isolated"/>
-      <element type="qes:esmType" name="esm"/>
+      <element type="qes:esmType" name="esm" minOccurs = "0"/>
     </sequence>
   </complexType>
   <complexType name="esmType">
@@ -622,6 +626,83 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
   </complexType>
 
   <!-- OUTPUT TYPE -->
+
+  <complexType name="outputElectricFieldType">
+    <sequence>
+      <element name="BerryPhase" type="qes:BerryPhaseOutputType" minOccurs="0"/>
+      <element name="finiteElectricFieldInfo" type="qes:finiteFieldOutType" minOccurs="0" />
+      <element name="dipoleInfo" type="qes:dipoleOutputType" minOccurs="0" />
+    </sequence>
+  </complexType>
+  <complexType name="BerryPhaseOutputType">
+    <sequence>
+      <element name="polarization" type="qes:polarizationType"  />
+      <element name="totalPhase" type="qes:phaseType"/>
+      <element name="ionicPolarization" type="qes:ionicPolarizationType" maxOccurs="unbounded"/>
+      <element name="electronicPolarization" type="qes:electronicPolarizationType" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+
+  <complexType name="dipoleOutputType">
+    <sequence>
+      <element type="positiveInteger" name="idir"/>
+      <element type="qes:scalarQuantityType" name = "dipole"/>
+      <element type="qes:scalarQuantityType" name = "ion_dipole"/>
+      <element type="qes:scalarQuantityType" name = "elec_dipole"/>
+      <element type="qes:scalarQuantityType" name="dipoleField"/>
+      <element type="qes:scalarQuantityType" name="potentialAmp"/>
+      <element type="qes:scalarQuantityType" name="totalLength"/>
+    </sequence>
+  </complexType>
+
+
+  <complexType name="finiteFieldOutType">
+    <sequence>
+      <element type="qes:d3vectorType" name="electronicDipole"/>
+      <element type="qes:d3vectorType" name="ionicDipole"/>
+    </sequence>
+  </complexType>
+
+ 
+
+  <complexType name="polarizationType">
+    <sequence>
+      <element type="qes:scalarQuantityType" name="polarization"/>
+      <element type="double" name="modulus" />
+      <element type="qes:d3vectorType" name="direction"/>
+   </sequence>
+  </complexType>
+
+
+  <complexType name="ionicPolarizationType">
+    <sequence>
+      <element name="ion" type="qes:atomType"/>
+      <element name="charge" type="double"/>
+      <element name="phase"  type="qes:phaseType"/>
+    </sequence>
+  </complexType>
+ 
+  <complexType name="electronicPolarizationType">
+    <sequence>
+      <element name="firstKeyPoint" type="qes:k_pointType"/>
+      <element name="spin" type="positiveInteger" minOccurs="0"/>
+      <element name="phase" type="qes:phaseType"/>
+    </sequence>
+  </complexType>
+
+  <complexType name="phaseType">
+    <simpleContent>
+      <extension base="double">
+        <attribute type="double" name="ionic" use="optional"/>
+        <attribute type="double" name="electronic" use="optional"/>
+        <attribute type="string" name="modulus" use="optional"/>
+      </extension>
+    </simpleContent>
+  </complexType>
+
+
+
+
   <complexType name="convergence_infoType">
     <sequence>
       <element type="qes:scf_convType" name="scf_conv"/>
@@ -698,6 +779,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
       <element type="double" name="etxc"  minOccurs="0"/>
       <element type="double" name="ewald" minOccurs="0"/>
       <element type="double" name="demet" minOccurs="0"/>
+      <element type="double" name="efieldcorr" minOccurs="0"/>
     </sequence>
   </complexType>
   <complexType name="band_structureType">
@@ -710,6 +792,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
       <element type="nonNegativeInteger" name="nbnd_dw" minOccurs="0" />
       <element type="double" name="nelec"/>
       <element type="double" name="fermi_energy" minOccurs="0" />
+      <element type="qes:vectorType" name="two_fermi_energies" minOccurs="0"/> 
       <element type="positiveInteger" name="nks"/>
       <element type="qes:ks_energiesType" name="ks_energies" maxOccurs="unbounded"/>
     </sequence>
@@ -730,13 +813,14 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
       </extension>
     </simpleContent>
   </complexType>
-  <simpleType name="statusType">
-      <restriction base="unsignedByte">
-   <enumeration value="0" />
-   <enumeration value="1" />
-   <enumeration value="2" />
-   <enumeration value="3" />
-   <enumeration value="255"/>
+
+ <simpleType name="statusType">
+      <restriction base="integer">
+         <enumeration value="0" />
+         <enumeration value="1" />
+         <enumeration value="2" />
+         <enumeration value="3" />
+         <enumeration value="255"/>
       </restriction>
   </simpleType>
   <!-- FPMD TYPES (ref: quantum-simulation.org) -->
@@ -773,6 +857,13 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
   <complexType name="integerMatrixType">
     <simpleContent>
       <extension base="qes:integerListType"/>
+    </simpleContent>
+  </complexType>
+  <complexType name="scalarQuantityType">
+    <simpleContent>
+      <extension base="double">
+        <attribute type="string" name="Units"/>
+      </extension>
     </simpleContent>
   </complexType>
 </schema>

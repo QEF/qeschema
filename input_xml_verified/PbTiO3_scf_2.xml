@@ -31,24 +31,24 @@
       </print_every>
     </control_variables>
     <atomic_species ntyp="3">
-      <specie name="Pb">
+      <species name="Pb">
         <mass>
        0.2072000E+03
         </mass>
         <pseudo_file>Pb.pz-d-van.UPF</pseudo_file>
-      </specie>
-      <specie name="Ti">
+      </species>
+      <species name="Ti">
         <mass>
        0.4786700E+02
         </mass>
         <pseudo_file>Ti.pz-sp-van_ak.UPF</pseudo_file>
-      </specie>
-      <specie name="O">
+      </species>
+      <species name="O">
         <mass>
        0.1599940E+02
         </mass>
         <pseudo_file>O.pz-van_ak.UPF</pseudo_file>
-      </specie>
+      </species>
     </atomic_species>
     <atomic_structure nat="5" alat="7.369900000000000E+000">
       <atomic_positions>
@@ -84,7 +84,7 @@
       <functional>PZ</functional>
     </dft>
     <spin>
-      <lsda>false</lsda>
+      <lsda>true</lsda>
       <noncolin>false</noncolin>
       <spinorbit>false</spinorbit>
     </spin>
@@ -95,7 +95,7 @@
       <tot_charge>
        0.0000000E+00
       </tot_charge>
-      <occupations spin="2">fixed</occupations>
+      <occupations spin="2" >smearing</occupations>
     </bands>
     <basis>
       <ecutwfc>
@@ -143,9 +143,9 @@
        0.0000000E+00
       </cell_factor>
       <free_cell>
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
+      1  1 1 
+      1  1 1 
+      1  1 1
       </free_cell>
     </cell_control>
     <symmetry_flags>

@@ -387,7 +387,7 @@ class PwInputConverter(RawInputConverter):
             },
             'tot_charge': "SYSTEM[tot_charge]",
             'occupations': {
-                '_text': "SYSTEM[occupations]",
+                '_text': "SYSTEM[occupations]"
             }
         },
         'basis': {
