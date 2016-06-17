@@ -341,10 +341,14 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
   <complexType name="vdWType">
     <sequence>
       <element type="string" name="vdw_corr"/>
-      <element type="double" name="london_s6"/>
-      <element type="double" name="london_rcut"/>
-      <element type="double" name="xdm_a1"/>
-      <element type="double" name="xdm_a2"/>
+      <element type="boolean" name = "non_local_dft"/>
+      <element type="double" name="london_s6" minOccurs="0"/>
+      <element type="double" name ="ts_vdw_econv_thr" minOccurs="0" maxOccurs="1"/>
+      <element type="boolean" name ="ts_vdw_isolated" minOccurs="0" maxOccurs="1"/>
+      <element type="double" name="london_rcut" minOccurs="0"/>
+      <element type="double" name="xdm_a1" minOccurs="0"/>
+      <element type="double" name="xdm_a2" minOccurs="0"/>
+      <element type="qes:HubbardCommonType" name = "london_c6" minOccurs="0" maxOccurs="unbounded"/>
     </sequence>
   </complexType>
   <complexType name="spinType">
