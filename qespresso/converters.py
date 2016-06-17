@@ -366,9 +366,14 @@ class PwInputConverter(RawInputConverter):
             'vdW': {
                 'vdw_corr': 'SYSTEM[vdw_corr]',
                 'london_s6': 'SYSTEM[london_s6]',
+                'ts_vdw_econv_thr': 'SYSTEM[ts_vdw_econv_thr]',
+                'ts_vdw_isolated': 'SYSTEM[ts_vdw_isolated]',
                 'london_rcut': 'SYSTEM[london_rcut]',
                 'xdm_a1': 'SYSTEM[xdm_a1]',
                 'xdm_a2': 'SYSTEM[xdm_a2]',
+                'london_c6': {
+                    '_text': ('SYSTEM[london_c6]', options.get_specie_related_values, None),
+                }
             }
         },
         'spin': {
