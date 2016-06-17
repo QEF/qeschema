@@ -341,7 +341,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
   <complexType name="vdWType">
     <sequence>
       <element type="string" name="vdw_corr"/>
-      <element type="boolean" name = "non_local_dft"/>
+      <element type="boolean" name = "non_local_dft" minOccurs = "0" />
       <element type="double" name="london_s6" minOccurs="0"/>
       <element type="double" name ="ts_vdw_econv_thr" minOccurs="0" maxOccurs="1"/>
       <element type="boolean" name ="ts_vdw_isolated" minOccurs="0" maxOccurs="1"/>
