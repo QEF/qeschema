@@ -111,6 +111,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
       <element type="boolean" name="wf_collect" default="false"/>
       <element type="qes:lowhighType" name="disk_io" default="low"/>
       <element type="positiveInteger" name="max_seconds"/>
+      <element type="positiveInteger" name="nstep" minOccurs="0"/>
       <element type="double" name="etot_conv_thr" default="1.0e-5"/>
       <element type="double" name="forc_conv_thr" default="1.0e-3"/>
       <element type="double" name="press_conv_thr"/>
@@ -341,7 +342,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
   <complexType name="vdWType">
     <sequence>
       <element type="string" name="vdw_corr"/>
-      <element type="boolean" name = "non_local_dft" minOccurs = "0" />
+      <element type="string" name = "non_local_term" minOccurs = "0" />
       <element type="double" name="london_s6" minOccurs="0"/>
       <element type="double" name ="ts_vdw_econv_thr" minOccurs="0" maxOccurs="1"/>
       <element type="boolean" name ="ts_vdw_isolated" minOccurs="0" maxOccurs="1"/>
@@ -482,6 +483,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
     <simpleContent>
       <extension base="qes:d3vectorType">
         <attribute type="double" name="weight" use="optional"/>
+        <attribute type="string" name="label" use = "optional"/>  
       </extension>
     </simpleContent>
   </complexType>
@@ -796,6 +798,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
       <element type="nonNegativeInteger" name="nbnd_dw" minOccurs="0" />
       <element type="double" name="nelec"/>
       <element type="double" name="fermi_energy" minOccurs="0" />
+      <element type="double" name="highestOccupiedLevel" minOccurs ="0"/> 
       <element type="qes:vectorType" name="two_fermi_energies" minOccurs="0"/> 
       <element type="positiveInteger" name="nks"/>
       <element type="qes:ks_energiesType" name="ks_energies" maxOccurs="unbounded"/>

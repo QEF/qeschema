@@ -303,6 +303,7 @@ class PwInputConverter(RawInputConverter):
             'press_conv_thr': "CELL[press_conv_thr]",
             'verbosity': "CONTROL[verbosity]",
             'print_every': "CONTROL[iprint]",
+            'nstep':       "CONTROL[nstep]",
         },
         # Card ATOMIC species with attributes
         'atomic_species': {
