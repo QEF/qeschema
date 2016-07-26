@@ -407,7 +407,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
       <element type="double" name="ecutwfc" />
       <element type="double" name="ecutrho" minOccurs="0" />
       <element type="qes:basisSetItemType" name="fft_grid" />
-      <element type="qes:basisSetItemType" name="fft_smoooth" minOccurs="0" />
+      <element type="qes:basisSetItemType" name="fft_smooth" minOccurs="0" />
       <element type="qes:basisSetItemType" name="fft_box" minOccurs="0" />
       <element type="positiveInteger" name="ngm" />
       <element type="positiveInteger" name="ngms" minOccurs="0" />
@@ -797,6 +797,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
       <element type="nonNegativeInteger" name="nbnd_up" minOccurs="0" />
       <element type="nonNegativeInteger" name="nbnd_dw" minOccurs="0" />
       <element type="double" name="nelec"/>
+      <element type="integer" name = "num_of_atomic_wfc" minOccurs = "0"/>
       <element type="double" name="fermi_energy" minOccurs="0" />
       <element type="double" name="highestOccupiedLevel" minOccurs ="0"/> 
       <element type="qes:vectorType" name="two_fermi_energies" minOccurs="0"/> 
