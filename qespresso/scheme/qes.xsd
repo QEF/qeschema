@@ -440,6 +440,8 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
       <element type="positiveInteger" name="mixing_ndim"/>
       <element type="positiveInteger" name="max_nstep"/>
       <element type="boolean" name="real_space_q"/>
+      <element type="boolean" name="tq_smoothing"/>
+      <element type="boolean" name="tbeta_smoothing"/>
       <element type="double" name="diago_thr_init"/>
       <element type="boolean" name="diago_full_acc"/>
       <element type="nonNegativeInteger" name="diago_cg_maxiter"/>
