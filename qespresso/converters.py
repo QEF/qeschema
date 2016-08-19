@@ -424,6 +424,8 @@ class PwInputConverter(RawInputConverter):
             'mixing_ndim': "ELECTRONS[mixing_ndim]",
             'max_nstep': "ELECTRONS[electron_maxstep]",
             'real_space_q': "ELECTRONS[tqr]",
+            'tq_smoothing': "ELECTRONS[tq_smoothing]",
+            'tbeta_smoothing': "ELECTRONS[tbeta_smoothing]",
             'diago_thr_init': "ELECTRONS[diago_thr_init]",
             'diago_full_acc': "ELECTRONS[diago_full_acc]",
             'diago_cg_maxiter': "ELECTRONS[diago_cg_maxiter]"
