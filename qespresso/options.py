@@ -226,3 +226,29 @@ def get_control_gdir(name, **kwargs):
         return [' gdir={0}'.format(electric_field_direction)]
     else:
         return []
+def get_cell_dofree(name, **kwargs):
+    """ 
+    :param name:
+    :param kwargs:
+    :return:
+    """
+    try:
+       fix_volume=kwargs['fix_volume']
+    except KeyError:
+       fix_volume = False
+    try:
+       fix_area = kwargs['fix_area']
+    except KeyError:
+       fix_area = False
+    try:
+       isotropic = kwargs['isotropic']
+    except KeyError:
+       isotropic = False
+    cell_dofree = "cell_dofree = 'all'" 
+    if ( (fix_volume and fix_area) or (fix_volume and isotropic ) or ( fix_area and isotropic)) :
+        logger.error("only one of fix_volume fix_area and isotropic can be true")
+        return [cell_dofree]
+    if fix_volume: cell_dofree = "cell_dofree = 'shape'"
+    if fix_area:   cell_dofree = "cell_dofree = '2Dshape'"
+    if isotropic:  cell_dofree = "cell_dofree = 'volume' "
+    return [cell_dofree]
