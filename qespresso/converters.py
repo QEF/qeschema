@@ -460,6 +460,9 @@ class PwInputConverter(RawInputConverter):
             'wmass': "CELL[wmass]",
             'cell_factor': "CELL[cell_factor]",
             'free_cell': ("CELL_PARAMETERS", cards.get_cell_parameters_card, None),
+            'fix_volume': ("CELL[cell_dofree]", options.get_cell_dofree, None ), 
+            'fix_area'  : ("CELL[cell_dofree]", options.get_cell_dofree, None ),
+            'isotropic' : ("CELL[cell_dofree]", options.get_cell_dofree, None ),
         },
         'symmetry_flags': {
             'nosym': "SYSTEM[nosym]",
