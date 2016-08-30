@@ -25,14 +25,6 @@ def parse_args():
     )
     parser.add_argument("-v", "--verbosity", action="count", default=1,
                         help="Increase output verbosity.")
-    parser.add_argument('--output', metavar='OUTPUT-FILE', type=str,
-                        help="Use another file name for the input file for QE instead of the default.")
-    parser.add_argument('--nofile', action="store_true", default=False,
-                        help="Dump the input file on the screen instead writing it on a file.")
-    parser.add_argument('--xsd', metavar='XSD-FILE', type=str,
-                        help='Use a specific XSD schema for XML translation.')
-    parser.add_argument("-y", "--yes", action="store_true", default=False,
-                        help="Automatically answer yes for all questions.")
     parser.add_argument('-in', required=True, help="XML input filename.")
     return parser.parse_args()
 
@@ -65,15 +57,6 @@ if __name__ == '__main__':
     input_fn_name, input_fn_ext = os.path.splitext(input_fn)
     outfile = input_fn_name + '.in'
 
-    choice = 'y'
-
-    if choice.lower() in ("yes", 'y'):
-        with open(outfile, mode='w') as f:
-            f.write(pw_in)
-            print("Input configuration written to file '%s' ..." % outfile)
-
-    sys.exit(0)
-
-    print("=" * 13 + " START OF PW INPUT " + "=" * 13)
-    print(pw_in)
-    print("=" * 13 + " END OF PW INPUT " + "=" * 13 + "\n")
+    with open(outfile, mode='w') as f:
+        f.write(pw_in)
+        print("Input configuration written to file '%s' ..." % outfile)
