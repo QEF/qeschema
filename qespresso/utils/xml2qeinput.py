@@ -33,7 +33,7 @@ def parse_args():
                         help='Use a specific XSD schema for XML translation.')
     parser.add_argument("-y", "--yes", action="store_true", default=False,
                         help="Automatically answer yes for all questions.")
-    parser.add_argument('-in', help="XML input filename.")
+    parser.add_argument('-in', required=True, help="XML input filename.")
     return parser.parse_args()
 
 
@@ -46,6 +46,7 @@ if __name__ == '__main__':
         sys.exit(1)
 
     args = parse_args()
+    print(args)
 
     if __package__ is None:
         from os import path
@@ -57,7 +58,7 @@ if __name__ == '__main__':
     qespresso.set_logger(args.verbosity)
 
     xml_conf = qespresso.PwDocument()
-    input_fn = args.__dict__['in']
+    input_fn = getattr(args, 'in')
     xml_conf.read(input_fn)
     pw_in = xml_conf.get_qe_input()
 
