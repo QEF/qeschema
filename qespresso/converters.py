@@ -459,7 +459,7 @@ class PwInputConverter(RawInputConverter):
             'cell_dynamics': "CELL[cell_dynamics]",
             'wmass': "CELL[wmass]",
             'cell_factor': "CELL[cell_factor]",
-            'pressure'  : "CELL[pressure]",
+            'pressure'  : "CELL[press]",
             'free_cell': ("CELL_PARAMETERS", cards.get_cell_parameters_card, None),
             'fix_volume': ("CELL[cell_dofree]", options.get_cell_dofree, None ), 
             'fix_area'  : ("CELL[cell_dofree]", options.get_cell_dofree, None ),
