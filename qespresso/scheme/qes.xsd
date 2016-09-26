@@ -547,6 +547,8 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
     <sequence>
       <element type="string" name="assume_isolated"/>
       <element type="qes:esmType" name="esm" minOccurs = "0"/>
+      <element type="boolean"     name="fcp_opt" minOccurs = "0"/>
+      <element type="double" name="fcp_mu" minOccurs ="0" /> 
     </sequence>
   </complexType>
   <complexType name="esmType">

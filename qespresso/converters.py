@@ -480,7 +480,9 @@ class PwInputConverter(RawInputConverter):
                 'nfit': "SYSTEM[esm_nfit]",
                 'w': "SYSTEM[esm_w]",
                 'efield': "SYSTEM[esm_efield]"
-            }
+            },
+            'fcp_opt': "CONTROL[lfcpopt]",
+            'fcp_mu' : "SYSTEM[fcp_mu]"
         },
         'ekin_functional': {
             'ecfixed': "SYSTEM[ecfixed]",
