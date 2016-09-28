@@ -76,6 +76,8 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
       <element type="qes:total_energyType" name="total_energy"/>
       <element type="qes:matrixType" name="forces"/>
       <element type="qes:matrixType" name="stress" minOccurs="0" />
+      <element type="double"         name="FCP_force" minOccurs="0"/>
+      <element type="double"         name="FCP_tot_charge" minOccurs ="0"/>
     </sequence>
     <attribute type="positiveInteger" name="n_step"/>
   </complexType>
@@ -95,6 +97,8 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
       <element type="qes:matrixType" name="forces" minOccurs="0"/>
       <element type="qes:matrixType" name="stress" minOccurs="0" />
       <element type="qes:outputElectricFieldType" name="electric_field" minOccurs="0" />
+      <element type="double"  name="FCP_force" minOccurs="0"/>
+      <element type="double"  name="FCP_tot_charge" minOccurs="0"/>
     </sequence>
   </complexType>
   <!-- CONTROL -->
@@ -791,6 +795,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
       <element type="double" name="ewald" minOccurs="0"/>
       <element type="double" name="demet" minOccurs="0"/>
       <element type="double" name="efieldcorr" minOccurs="0"/>
+      <element type="double" name="potentiostat_contr" minOccurs="0"/> 
     </sequence>
   </complexType>
   <complexType name="band_structureType">
