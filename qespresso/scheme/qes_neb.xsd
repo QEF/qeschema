@@ -84,7 +84,7 @@ Authors: Paolo Giannozzi, Pietro Delugas
         <sequence>
             <element name="StringMethod" type="qes:StringMethodType"/>
             <element type="qes:controlRestartModeType" name="restart_mode" maxOccurs="1" default="from_scratch"/>
-            <element name="NumOfImages" type="positiveInteger" maxOccurs="1" minOccurs="1"/>
+            <element name="NumOfImages" type="qes:integerListType" maxOccurs="1" minOccurs="1"/>
             <element name="OptimizationScheme" type="qes:OptimizationSchemeType" minOccurs="1" maxOccurs="1"/>
             <element name="ClimbingImage" type="qes:ClimbingImageType" maxOccurs="1" default="no-CI"/>
             <element name="EndImagesOptimizationFlag" type="boolean" maxOccurs="1" default="false"/>
@@ -129,8 +129,7 @@ Authors: Paolo Giannozzi, Pietro Delugas
         <sequence>
               <element type="qes:control_variablesType" name="control_variables"/>
               <element type="qes:atomic_speciesType" name="atomic_species"/>
-              <element type="qes:atomic_structureType" name="FirstImageAtomicStructure"/>
-              <element type="qes:atomic_structureType" name="LastImageAtomicStructure"/>
+              <element type="qes:atomic_structureType" name="NebImageAtomicStructure" minOccurs="2" maxOccurs="unbounded" />
               <element type="qes:dftType" name="dft"/>
               <element type="qes:spinType" name="spin"/>
               <element type="qes:bandsType" name="bands"/>
