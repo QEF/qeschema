@@ -8,17 +8,18 @@ Authors: Paolo Giannozzi, Pietro Delugas
 -->
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
         xmlns:qes="http://www.quantum-espresso.org/ns/qes/qes-1.0"
-        targetNamespace="http://www.quantum-espresso.org/ns/qes/qes-1.0">
+        xmlns:neb="http://www.quantum-espresso.org/ns/neb"
+        targetNamespace="http://www.quantum-espresso.org/ns/neb">
     <import id="qes" schemaLocation="./qes.xsd"/>
-    <element name="NebInput" type="qes:NebInputType"/>
-    <element name="NebRun" type="qes:NebRunType"/>
+    <element name="NebInput" type="neb:NebInputType"/>
+    <element name="NebRun" type="neb:NebRunType"/>
     <complexType name="NebRunType">
         <sequence>
             <element name="GeneralInfo" type="qes:general_infoType"/>
-            <element name="ParallelInfo" type="qes:ParallelInfoType" minOccurs="0"/>
-            <element name="Input" type="qes:NebInputType"/>
-            <element name="NebStep" type="qes:NebStepType" minOccurs="0" maxOccurs="unbounded" />
-            <element name="NebOutput" type="qes:NebOutputType" minOccurs="0" maxOccurs="1"/>
+            <element name="ParallelInfo" type="neb:ParallelInfoType" minOccurs="0"/>
+            <element name="Input" type="neb:NebInputType"/>
+            <element name="NebStep" type="neb:NebStepType" minOccurs="0" maxOccurs="unbounded" />
+            <element name="NebOutput" type="neb:NebOutputType" minOccurs="0" maxOccurs="1"/>
             <element type="nonNegativeInteger" name="CpuTime" minOccurs="0"/>
             <element type="qes:statusType" name="status" minOccurs="0" />
             <element type="qes:closedType" name="closed" minOccurs="0"/>
@@ -40,17 +41,17 @@ Authors: Paolo Giannozzi, Pietro Delugas
             <element name="Iteration" type="positiveInteger"/>
             <element name="ActivationEnergyForward" type="double" />
             <element name="ActivationEnergyBack" type="double"/>
-            <element name="Bead" type="qes:nebBeadType" maxOccurs="unbounded"/>
+            <element name="Bead" type="neb:nebBeadType" maxOccurs="unbounded"/>
             <element name="pathLength" type="double"/>
             <element name="InterBeadDistance" type="double"/>
         </sequence>
     </complexType>
     <complexType name="NebOutputType">
         <sequence>
-            <element name="FinalNebStep" type="qes:NebStepType"/>
-            <element name="NebControl" type="qes:NebPathInputType"  />
-            <element name="NebPlot" type="qes:PlotType"/>
-            <element name="FinalImageGradient" type="qes:ImageGradientType" maxOccurs="unbounded"/>
+            <element name="FinalNebStep" type="neb:NebStepType"/>
+            <element name="NebControl" type="neb:NebPathInputType"  />
+            <element name="NebPlot" type="neb:PlotType"/>
+            <element name="FinalImageGradient" type="neb:ImageGradientType" maxOccurs="unbounded"/>
         </sequence>
     </complexType>
     <complexType name="ImageGradientType">
@@ -76,17 +77,17 @@ Authors: Paolo Giannozzi, Pietro Delugas
     </complexType>
     <complexType name="NebInputType">
         <sequence>
-            <element name="NebPathInput" type="qes:NebPathInputType"/>
-            <element name="NebImagesInput"  type="qes:NebImagesInputType"/>
+            <element name="NebPathInput" type="neb:NebPathInputType"/>
+            <element name="NebImagesInput"  type="neb:NebImagesInputType"/>
         </sequence>
     </complexType>
     <complexType name="NebPathInputType">
         <sequence>
-            <element name="StringMethod" type="qes:StringMethodType"/>
+            <element name="StringMethod" type="neb:StringMethodType"/>
             <element type="qes:controlRestartModeType" name="restart_mode" maxOccurs="1" default="from_scratch"/>
-            <element name="NumOfImages" type="positiveInteger" maxOccurs="1" minOccurs="1"/>
-            <element name="OptimizationScheme" type="qes:OptimizationSchemeType" minOccurs="1" maxOccurs="1"/>
-            <element name="ClimbingImage" type="qes:ClimbingImageType" maxOccurs="1" default="no-CI"/>
+            <element name="NumOfImages" type="qes:integerListType" maxOccurs="1" minOccurs="1"/>
+            <element name="OptimizationScheme" type="neb:OptimizationSchemeType" minOccurs="1" maxOccurs="1"/>
+            <element name="ClimbingImage" type="neb:ClimbingImageType" maxOccurs="1" default="no-CI"/>
             <element name="EndImagesOptimizationFlag" type="boolean" maxOccurs="1" default="false"/>
             <element name="MinimumImageFlag" type="boolean" maxOccurs="1" default="false"/>
             <element name="temperature" type="double" minOccurs="0" maxOccurs="1" />
@@ -129,8 +130,7 @@ Authors: Paolo Giannozzi, Pietro Delugas
         <sequence>
               <element type="qes:control_variablesType" name="control_variables"/>
               <element type="qes:atomic_speciesType" name="atomic_species"/>
-              <element type="qes:atomic_structureType" name="FirstImageAtomicStructure"/>
-              <element type="qes:atomic_structureType" name="LastImageAtomicStructure"/>
+              <element type="qes:atomic_structureType" name="NebImageAtomicStructure" minOccurs="2" maxOccurs="unbounded" />
               <element type="qes:dftType" name="dft"/>
               <element type="qes:spinType" name="spin"/>
               <element type="qes:bandsType" name="bands"/>
