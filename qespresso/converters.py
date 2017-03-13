@@ -14,6 +14,7 @@ Data format converters for Quantum Espresso
 import logging
 import re
 import os.path
+import copy
 
 from qespresso.utils.mapping import BiunivocalMap
 from . import cards, options
@@ -651,11 +652,14 @@ class NebInputConverter(RawInputConverter):
     Convert to/from Fortran input for Phonon.
     """
     NEB_TEMPLATE_MAP = {
+
     }
 
     def __init__(self):
+        NEB_TEMPLATE_MAP = copy.copy(PwInputConverter.PW_TEMPLATE_MAP)
+        NEB_TEMPLATE_MAP.update(self.NEB_TEMPLATE_MAP)
         super(NebInputConverter, self).__init__(
-            *conversion_maps_builder(self.NEB_TEMPLATE_MAP),
+            *conversion_maps_builder(NEB_TEMPLATE_MAP),
             input_namelists=tuple(),
             input_cards=tuple()
         )
