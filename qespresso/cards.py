@@ -59,7 +59,7 @@ def get_atomic_positions_cell_card(name, **kwargs):
         return []
 
     # Find atoms
-    atomic_positions = atomic_structure.get('atomic_positions', {})
+    atomic_positions =  atomic_structure.get('atomic_positions', {})
     wyckoff_positions = atomic_structure.get('wyckoff_positions', {})
     try:
         is_wyckoff = False
@@ -124,6 +124,7 @@ def get_atomic_constraints_card(name, **kwargs):
             ' '.join([str(item) for item in constr_parms]),
             constr_target
         ))
+    return lines
 
 
 def get_k_points_card(name, **kwargs):
@@ -256,3 +257,88 @@ def get_qpoints_card(name, **kwargs):
             lines.append(' %s %s' % (vector, q_point['weight']))
 
     return lines
+
+def get_climbing_images(name, **kwargs):
+    manualImages = False
+    try:
+        if kwargs['climbingImage'] == 'manual' or kwargs['climbingImage'] == 'MANUAL':
+            manualImages = True
+    except KeyError:
+        manualImages = False
+    if manualImages:
+        if isinstance(kwargs['climbingImageIndex'],list):
+            line = [int(l) for l in kwargs['climbingImageIndex'] ]
+            fmt  = len(line)*' %d, '
+            line = fmt%tuple(line)
+        else:
+            line =' %d '%int(kwargs['climbingImageIndex'])
+        return line
+    return ''
+
+def get_neb_images_positions_card(name, **kwargs):
+    import pdb
+    pdb.set_trace()
+    try:
+        if not isinstance(kwargs['atomic_structure'],list):
+            print kwargs.keys()
+            logger.error("The atomic structures for first and last image should be provided")
+            return []
+    except KeyError:
+        logger.error("Missing atomic structure data in xml input!!!")
+        return []
+    first_positions = kwargs['atomic_structure'][0 ].get('atomic_positions',{})
+    last_positions  = kwargs['atomic_structure'][-1].get('atomic_positions',{})
+    if len(kwargs['atomic_structure']) > 2:
+        interm_pos = [ats.get('atomic_positions',{}) for ats in kwargs['atomic_structure'][1:-1] ]
+    else:
+        interm_pos = []
+
+    lines = [' %s '%'BEGIN POSITIONS']
+    lines.append(' %s '%'FIRST_IMAGE')
+    atoms = first_positions['atoms']
+
+    free_positions = kwargs.get('free_positions', [])
+    if free_positions and len(free_positions) != len(atoms):
+        logger.error("ATOMIC_POSITIONS: incorrect number of position constraints!")
+
+    lines.append ('%s { %s }' % ('ATOMIC_POSITIONS', 'bohr') )
+    for k in range(len(atoms)):
+        name = atoms[k]['name']
+        coords = ' '.join([str(value) for value in atoms[k]['_text']])
+        if k < len(free_positions):
+            free_pos = ' '.join([str(value) for value in free_positions[k]])
+            lines.append(' %s %s %s' % (name, coords, free_pos))
+        else:
+            lines.append(' %s %s' % (name, coords))
+
+    for inter in interm_pos:
+        atoms = inter['atoms']
+        lines.append(' %s '%'INTERMEDIATE_IMAGE')
+        lines.append( ' %s { %s }'% ('ATOMIC_POSITIONS','bohr') )
+        for k in range(len(atoms)):
+            name = atoms[k]['name']
+            coords = ' '.join([str(value) for value in atoms[k]['_text']])
+            if k < len(free_positions):
+                free_pos = ' '.join([str(value) for value in free_positions[k]])
+                lines.append(' %s %s %s' % (name, coords, free_pos))
+            else:
+                lines.append(' %s %s' % (name, coords))
+    atoms=last_positions['atoms']
+    lines.append(' %s '%'LAST_IMAGE')
+    lines.append(' %s { %s }'%('ATOMIC_POSITIONS', 'bohr') )
+    for k in range(len(atoms)):
+        name = atoms[k]['name']
+        coords = ' '.join([str(value) for value in atoms[k]['_text']])
+        if k < len(free_positions):
+            free_pos = ' '.join([str(value) for value in free_positions[k]])
+            lines.append(' %s %s %s' % (name, coords, free_pos))
+        else:
+            lines.append(' %s %s' % (name, coords))
+    lines.append( ' %s '%'END_POSITIONS')
+    return lines
+
+def get_neb_cell_parameters_card (name, **kwargs):
+    print ( kwargs)
+
+def get_neb_atomic_forces_card   (name, **kwargs):
+    print (kwargs)
