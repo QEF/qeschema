@@ -252,3 +252,7 @@ def get_cell_dofree(name, **kwargs):
     if fix_area:   cell_dofree = "cell_dofree = '2Dshape'"
     if isotropic:  cell_dofree = "cell_dofree = 'volume' "
     return [cell_dofree]
+
+def neb_set_system_nat(name, **kwargs):
+    return kwargs.keys()
+
