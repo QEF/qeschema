@@ -217,8 +217,6 @@ class RawInputConverter(Container):
         logger.debug("Set {0}[{1}]={2}".format(namelist, name, self._input[namelist][name]))
 
     def add_kwarg(self, path, tag, node_dict):
-        import pdb
-        pdb.set_trace()
         if isinstance(self.variant_map[path][0], str):
             target_items = list([self.variant_map[path]])[:2]
         else:
@@ -245,7 +243,12 @@ class RawInputConverter(Container):
                         '_related_tag': tag
                     })
             else:
-                self._input[group].update(node_dict.copy())
+                try:
+                    self._input[group][tag].append(node_dict[tag])
+                except AttributeError:
+                    self._input[group][tag] = [self._input[group][tag], node_dict[tag]]
+                except KeyError:
+                    self._input[group].update(node_dict.copy())
                 if _get_qe_input is not None:
                     self._input[group].update({'_get_qe_input': _get_qe_input})
 
@@ -695,12 +698,13 @@ class NebInputConverter(RawInputConverter):
         ENGINE_TEMPLATE_MAP = copy.deepcopy(PwInputConverter.PW_TEMPLATE_MAP)
         ENGINE_TEMPLATE_MAP['atomic_structure'] = {
             'nat': "SYSTEM[nat]",
-            '_text':[("CELL_PARAMETERS", cards.get_neb_cell_parameters_card, None),
-                     #("ATOMIC_POSITIONS", cards.get_neb_images_positions_card,None)
-                     ],
+            '_text': [
+                ("CELL_PARAMETERS", cards.get_neb_cell_parameters_card, None),
+                ("ATOMIC_POSITIONS", cards.get_neb_images_positions_card,None)
+            ],
             'atomic_positions': ('ATOMIC_FORCES', cards.get_atomic_forces_card,None)
         }
-        ENGINE_TEMPLATE_MAP['_text'] = ("ATOMIC_POSITIONS", cards.get_neb_images_positions_card,None )
+        # ENGINE_TEMPLATE_MAP['_text'] = ("ATOMIC_POSITIONS", cards.get_neb_images_positions_card,None )
         self.NEB_TEMPLATE_MAP.update({'engine': ENGINE_TEMPLATE_MAP} )
         super(NebInputConverter, self).__init__(
             *conversion_maps_builder(self.NEB_TEMPLATE_MAP),

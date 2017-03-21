@@ -52,7 +52,7 @@ if __name__ == '__main__':
     sys.path.insert(0, pkg_folder)
     import qespresso
 
-    test_files = glob.glob(os.path.join(rel_path, "examples/*.xml"))
+    test_files = glob.glob(os.path.join(rel_path, "examples/*/*.xml"))
     for xml_filename in test_files:
         qe_input_filename = '%s.in' % xml_filename[:-4]
         if not os.path.isfile(qe_input_filename):

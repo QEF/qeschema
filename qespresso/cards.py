@@ -280,7 +280,7 @@ def get_neb_images_positions_card(name, **kwargs):
     pdb.set_trace()
     try:
         if not isinstance(kwargs['atomic_structure'],list):
-            print kwargs.keys()
+            print(kwargs.keys())
             logger.error("The atomic structures for first and last image should be provided")
             return []
     except KeyError:
