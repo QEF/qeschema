@@ -23,7 +23,25 @@ logger = logging.getLogger('qespresso')
 
 def conversion_maps_builder(template_map):
     """
-    Build invariant and variant conversion maps from a template.
+    Build invariant and variant conversion maps from a template. The template
+    is a multilevel dictionary that reproduce the structure of the input data.
+    An entry maybe:
+
+      1) a string with the list and the option names (eg: "CONTROL[calculation]").
+         In this case the entry is mapped to this value, without modifications.
+
+      2) a tuple with three items:
+         - list and option names (eg: 'SYSTEM[Hubbard_U]');
+         - the function that has to be used to calculate the namelist option
+           value from XML value;
+         - the function that has to be used to calculate to calculate the XML
+           value data from namelist entry.
+
+      3) a list of tuples when the XML entry has to be used to calculate other
+         namelist or card's entries. Each tuple has the meaning of the previous
+         case. The second and third elements may be None or empty if the template
+         has another tuple with the same list and option names that indicate the
+         transformation functions associated.
 
     :param template_map: Template dictionary
     :return: A couple of dictionaries, the first for invariant
@@ -652,34 +670,37 @@ class NebInputConverter(RawInputConverter):
     """
     Convert to/from Fortran input for Phonon.
     """
-    NEB_TEMPLATE_MAP = { 'path' : {
-        'restartMode' :"PATH[restart_mode]",
-        'stringMethod':"PATH[string_method]",
-        'pathNstep'   :"PATH[nstep_path]",
-        'numOfImages' :"PATH[num_of_images]",
-        'optimizationScheme':"PATH[opt_scheme]",
-        'climbingImage' :["PATH[CI_scheme]",
-                          ("CLIMBING_IMAGES", cards.get_climbing_images)
-                          ],
-        'useMassesFlag' : "PATH[use_masses]",
-        'useFreezingFlag' : "PATH[use_freezing]",
-        'constantBiasFlag': "PATH[lfcpopt]",
-        'targetFermiEnergy' : "PATH[fcp_mu]",
-        'totChargeFirst' : "PATH[fcp_tot_charge_first]",
-        'totChargeLast'  : "PATH[fcp_tot_charge_last]",
-        'climbingImageIndex' :("CLIMBING_IMAGES",cards.get_climbing_images)
-    } }
+    NEB_TEMPLATE_MAP = {
+        'path' : {
+            'restartMode': "PATH[restart_mode]",
+            'stringMethod': "PATH[string_method]",
+            'pathNstep': "PATH[nstep_path]",
+            'numOfImages': "PATH[num_of_images]",
+            'optimizationScheme': "PATH[opt_scheme]",
+            'climbingImage': [
+                "PATH[CI_scheme]",
+                ("CLIMBING_IMAGES", cards.get_climbing_images, None)
+            ],
+            'useMassesFlag': "PATH[use_masses]",
+            'useFreezingFlag': "PATH[use_freezing]",
+            'constantBiasFlag': "PATH[lfcpopt]",
+            'targetFermiEnergy': "PATH[fcp_mu]",
+            'totChargeFirst': "PATH[fcp_tot_charge_first]",
+            'totChargeLast': "PATH[fcp_tot_charge_last]",
+            'climbingImageIndex': ("CLIMBING_IMAGES", cards.get_climbing_images, None)
+        }
+    }
 
     def __init__(self,**kwargs):
         ENGINE_TEMPLATE_MAP = copy.deepcopy(PwInputConverter.PW_TEMPLATE_MAP)
-        ENGINE_TEMPLATE_MAP['atomic_structure']={
+        ENGINE_TEMPLATE_MAP['atomic_structure'] = {
             'nat': "SYSTEM[nat]",
             '_text':[("CELL_PARAMETERS", cards.get_neb_cell_parameters_card, None),
                      #("ATOMIC_POSITIONS", cards.get_neb_images_positions_card,None)
                      ],
             'atomic_positions': ('ATOMIC_FORCES', cards.get_atomic_forces_card,None)
         }
-        ENGINE_TEMPLATE_MAP['_text'] = ("ATOMIC_POSITIONS",cards.get_neb_images_positions_card,None )
+        ENGINE_TEMPLATE_MAP['_text'] = ("ATOMIC_POSITIONS", cards.get_neb_images_positions_card,None )
         self.NEB_TEMPLATE_MAP.update({'engine': ENGINE_TEMPLATE_MAP} )
         super(NebInputConverter, self).__init__(
             *conversion_maps_builder(self.NEB_TEMPLATE_MAP),
