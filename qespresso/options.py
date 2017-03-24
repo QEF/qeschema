@@ -124,6 +124,9 @@ def get_system_nspin(name, **kwargs):
                      "parameter '%s'! %s" % (name, err))
         return []
 
+def set_ibrav_to_zero(name,**kwargs):
+    line = '  ibrav = 0'
+    return [line]
 
 def get_system_eamp(name, **kwargs):
     """
@@ -254,5 +257,22 @@ def get_cell_dofree(name, **kwargs):
     return [cell_dofree]
 
 def neb_set_system_nat(name, **kwargs):
-    return kwargs.keys()
+    """
+    Extract SYSTEM[nat] from the first element of the list of atomic_structure
+    :param name: Variable name
+    :param kwargs: list of dictionaries each containing an atomic_structure element
+    :return: list containin one string to be printed in system name list nat = nat_value
+    """
+    images = kwargs.get('atomic_structure', [])
+    if len(images) < 1:
+        logger.error('No atomic_structure element found !!!')
+        return  ''
+    image=images[0]
+    nat_value = int( image.get('nat',0) )
+    if nat_value <= 0:
+        logger.error("error reading nat value from atomic_structure !!!")
+        return ''
+    return [' nat = {0}'.format(nat_value)]
+
+
 

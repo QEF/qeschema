@@ -344,7 +344,7 @@ class PwInputConverter(RawInputConverter):
         },
         'atomic_structure': {
             'nat': 'SYSTEM[nat]',
-            '_text': [
+            '_text': [('SYSTEM[ibrav]', options.set_ibrav_to_zero, None ),
                 ("ATOMIC_POSITIONS", cards.get_atomic_positions_cell_card, None),
                 ("CELL_PARAMETERS", cards.get_cell_parameters_card, None)
             ],
@@ -557,11 +557,9 @@ class PwInputConverter(RawInputConverter):
         )
         if 'xml_file' in kwargs:
             self._input['CONTROL']['input_xml_schema_file'] = u'\'{}\''.format(os.path.basename(kwargs['xml_file']))
-        self._input['SYSTEM']['ibrav'] = 0
 
     def clear_input(self):
         super(PwInputConverter, self).clear_input()
-        self._input['SYSTEM']['ibrav'] = 0
 
 
 class PhononInputConverter(RawInputConverter):
@@ -680,6 +678,12 @@ class NebInputConverter(RawInputConverter):
             'pathNstep': "PATH[nstep_path]",
             'numOfImages': "PATH[num_of_images]",
             'optimizationScheme': "PATH[opt_scheme]",
+            'optimizationStepLength': "PATH[ds]",
+            'elasticConstMax' : "PATH[k_max]",
+            'elasticConstMin' : "PATH[k_min]",
+            'pathThreshold'   : "PATH[path_thr]",
+            'endImagesOptimizationFlag' : "PATH[first_last_opt]",
+            'temperature'  :              "PATH[temp_req]",
             'climbingImage': [
                 "PATH[CI_scheme]",
                 ("CLIMBING_IMAGES", cards.get_climbing_images, None)
@@ -697,8 +701,8 @@ class NebInputConverter(RawInputConverter):
     def __init__(self,**kwargs):
         ENGINE_TEMPLATE_MAP = copy.deepcopy(PwInputConverter.PW_TEMPLATE_MAP)
         ENGINE_TEMPLATE_MAP['atomic_structure'] = {
-            'nat': "SYSTEM[nat]",
-            '_text': [
+            'nat': ("SYSTEM[nat]", options.neb_set_system_nat,None),
+            '_text': [('SYSTEM[ibrav]', options.set_ibrav_to_zero, None),
                 ("CELL_PARAMETERS", cards.get_neb_cell_parameters_card, None),
                 ("ATOMIC_POSITIONS", cards.get_neb_images_positions_card,None)
             ],
@@ -709,6 +713,19 @@ class NebInputConverter(RawInputConverter):
         super(NebInputConverter, self).__init__(
             *conversion_maps_builder(self.NEB_TEMPLATE_MAP),
             input_namelists=('PATH','CONTROL','SYSTEM','ELECTRONS','IONS','CELL'),
-            input_cards=('CLIMBING_IMAGES', 'ATOMIC_POSITIONS', 'CELL_PARAMETERS', 'K_POINTS',
-                         'ATOMIC_SPECIES','ATOMIC_FORCES')
+            input_cards=('CLIMBING_IMAGES', 'ATOMIC_SPECIES','ATOMIC_POSITIONS', 'K_POINTS',
+                         'CELL_PARAMETERS', 'ATOMIC_FORCES')
         )
+
+    def get_qe_input(self):
+        """
+        Overrides method in RawInputConverter because few lines in between the namelists are requested for
+        the NEB input.
+        :return: a string containing the text input for NEB calculations
+        """
+        qe_input = super(NebInputConverter, self).get_qe_input().split('\n')
+        qe_input =['BEGIN','BEGIN_PATH_INPUT'] +qe_input
+        index = qe_input.index('&CONTROL')
+        qe_input = qe_input[:index]+['END_PATH_INPUT','BEGIN_ENGINE_INPUT']+qe_input[index:]
+        qe_input += ['END_ENGINE_INPUT', 'END']
+        return '\n'.join(qe_input)
