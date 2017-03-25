@@ -871,12 +871,24 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
   </simpleType>  
   <complexType name="matrixType">
     <simpleContent>
-      <extension base="qes:doubleListType" />
+      <extension base="qes:doubleListType">
+          <attribute name="rank" type="nonNegativeInteger" use="optional"/>
+          <attribute name="dim1" type="positiveInteger"    use="optional"/>
+          <attribute name="dim2" type="positiveInteger"    use="optional"/>
+          <attribute name="dim3" type="positiveInteger"    use="optional"/>
+          <attribute name="dim4" type="positiveInteger"    use="optional"/>
+      </extension>
     </simpleContent>
   </complexType>
   <complexType name="integerMatrixType">
     <simpleContent>
-      <extension base="qes:integerListType"/>
+      <extension base="qes:integerListType">
+          <attribute name="rank" type="nonNegativeInteger" use="optional"/>
+          <attribute name="dim1" type="positiveInteger"    use="optional"/>
+          <attribute name="dim2" type="positiveInteger"    use="optional"/>
+          <attribute name="dim3" type="positiveInteger"    use="optional"/>
+          <attribute name="dim4" type="positiveInteger"    use="optional"/>
+      </extension>
     </simpleContent>
   </complexType>
   <complexType name="scalarQuantityType">
