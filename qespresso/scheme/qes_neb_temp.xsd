@@ -576,18 +576,19 @@ Authors: Paolo Giannozzi, Pietro Delugas
   </complexType>
   <complexType name="electron_controlType">
     <sequence>
-      <element type="neb:diagoType" name="diagonalization"/>
-      <element type="neb:mixingModeType" name="mixing_mode"/>
-      <element type="double" name="mixing_beta"/>
-      <element type="double" name="conv_thr"/>
-      <element type="positiveInteger" name="mixing_ndim"/>
-      <element type="positiveInteger" name="max_nstep"/>
-      <element type="boolean" name="real_space_q"/>
-      <element type="boolean" name="tq_smoothing"/>
-      <element type="boolean" name="tbeta_smoothing"/>
-      <element type="double" name="diago_thr_init"/>
-      <element type="boolean" name="diago_full_acc"/>
-      <element type="nonNegativeInteger" name="diago_cg_maxiter"/>
+        <element type="neb:diagoType" name="diagonalization"/>
+        <element type="neb:mixingModeType" name="mixing_mode"/>
+        <element type="double" name="mixing_beta"/>
+        <element type="double" name="conv_thr"/>
+        <element type="positiveInteger" name="mixing_ndim"/>
+        <element type="positiveInteger" name="max_nstep"/>
+        <element type="boolean" name="real_space_q"/>
+        <element type="boolean" name="tq_smoothing"/>
+        <element type="boolean" name="tbeta_smoothing"/>
+        <element type="double" name="diago_thr_init"/>
+        <element type="boolean" name="diago_full_acc"/>
+        <element type="nonNegativeInteger" name="diago_cg_maxiter" minOccurs="0"/>
+        <element type="nonNegativeInteger" name="diago_david_ndim" minOccurs="0"/>
     </sequence>
   </complexType>
   <simpleType name="mixingModeType">
@@ -634,7 +635,7 @@ Authors: Paolo Giannozzi, Pietro Delugas
   </complexType>
   <complexType name="ion_controlType">
     <sequence>
-      <element type="string" name="ion_dynamics" />
+      <element type="string" name="ion_dynamics" minOccurs="0"/>
       <element type="double" name="upscale" minOccurs="0" />
       <element type="boolean" name="remove_rigid_rot" minOccurs="0" />
       <element type="boolean" name="refold_pos" minOccurs="0" />
@@ -666,8 +667,8 @@ Authors: Paolo Giannozzi, Pietro Delugas
   </complexType>
   <complexType name="cell_controlType">
     <sequence>
-      <element type="string" name="cell_dynamics"/>
-      <element type="double" name="pressure" default="0.0" /> 
+      <element type="string" name="cell_dynamics" minOccurs ="0"/>
+      <element type="double" name="pressure" default="0.0" minOccurs ="0" />
       <element type="double" name="wmass" minOccurs="0" />
       <element type="double" name="cell_factor" minOccurs="0" />
       <element type="boolean" name="fix_volume" minOccurs="0" />
@@ -1009,13 +1010,24 @@ Authors: Paolo Giannozzi, Pietro Delugas
   </simpleType>  
   <complexType name="matrixType">
     <simpleContent>
-      <extension base="neb:doubleListType" />
+      <extension base="neb:doubleListType">
+          <attribute name="rank" type="nonNegativeInteger" use="optional"/>
+          <attribute name="dim1" type="positiveInteger"    use="optional"/>
+          <attribute name="dim2" type="positiveInteger"    use="optional"/>
+          <attribute name="dim3" type="positiveInteger"    use="optional"/>
+          <attribute name="dim4" type="positiveInteger"    use="optional"/>
+      </extension>
     </simpleContent>
   </complexType>
   <complexType name="integerMatrixType">
     <simpleContent>
-      <extension base="neb:integerListType"/>
-    </simpleContent>
+      <extension base="neb:integerListType">
+          <attribute name="rank" type="nonNegativeInteger" use="optional"/>
+          <attribute name="dim1" type="positiveInteger"    use="optional"/>
+          <attribute name="dim2" type="positiveInteger"    use="optional"/>
+          <attribute name="dim3" type="positiveInteger"    use="optional"/>
+          <attribute name="dim4" type="positiveInteger"    use="optional"/>
+      </extension></simpleContent>
   </complexType>
   <complexType name="scalarQuantityType">
     <simpleContent>

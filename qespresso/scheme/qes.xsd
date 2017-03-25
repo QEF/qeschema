@@ -18,7 +18,6 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
       <element type="qes:inputType" name="input" />
       <element type="qes:stepType" name="step" minOccurs="0" maxOccurs="unbounded" />
       <element type="qes:outputType" name="output" minOccurs="0" />
-      <element type="qes:restartType" name="restart_info" minOccurs="0"/>
       <element type="qes:statusType" name="status" minOccurs="0" />
       <element type="nonNegativeInteger" name="cputime" minOccurs="0" />
       <element type="qes:closedType" name="closed" minOccurs="0" />
@@ -67,20 +66,6 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
       <element type="qes:electric_fieldType" name="electric_field" minOccurs="0" />
       <element type="qes:atomic_constraintsType" name="atomic_constraints" minOccurs="0" />
       <element type="qes:spin_constraintsType" name="spin_constraints" minOccurs="0" />
-    </sequence>
-  </complexType>
-  <!-- RESTART TYPE -->
-  <complexType name="restartType">
-    <sequence>
-      <element type="qes:control_variablesType" name="control_variables"/>
-      <element type="qes:dftType" name="dft"/>
-      <element type="qes:bandsType" name="bands"/>
-      <element type="qes:k_points_IBZType" name="k_points_IBZ"/>
-      <element type="qes:symmetry_flagsType" name="symmetry_flags" minOccurs="0" />
-      <element type="qes:boundary_conditionsType" name="boundary_conditions" minOccurs="0" />
-      <element type="qes:integerMatrixType" name="free_positions" minOccurs="0" />
-      <element type="qes:electric_fieldType" name="electric_field" minOccurs="0" />
-      <element type="qes:atomic_constraintsType" name="atomic_constraints" minOccurs="0" />
     </sequence>
   </complexType>
   <!-- STEP TYPE -->
@@ -463,7 +448,8 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
       <element type="boolean" name="tbeta_smoothing"/>
       <element type="double" name="diago_thr_init"/>
       <element type="boolean" name="diago_full_acc"/>
-      <element type="nonNegativeInteger" name="diago_cg_maxiter"/>
+      <element type="nonNegativeInteger" name="diago_cg_maxiter" minOccurs="0"/>
+      <element type="positiveInteger" name="diago_david_ndim"    minOccurs="0"/>
     </sequence>
   </complexType>
   <simpleType name="mixingModeType">
