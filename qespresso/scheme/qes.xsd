@@ -852,6 +852,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
        <length value="3"/>
     </restriction>
   </simpleType>
+
   <simpleType name="vectorType">
     <restriction>
        <simpleType>
@@ -868,29 +869,18 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
   </simpleType>
   <simpleType name="doubleListType">
     <list itemType="double"/>
-  </simpleType>  
+  </simpleType>
   <complexType name="matrixType">
     <simpleContent>
-      <extension base="qes:doubleListType">
-          <attribute name="rank" type="nonNegativeInteger" use="optional"/>
-          <attribute name="dim1" type="positiveInteger"    use="optional"/>
-          <attribute name="dim2" type="positiveInteger"    use="optional"/>
-          <attribute name="dim3" type="positiveInteger"    use="optional"/>
-          <attribute name="dim4" type="positiveInteger"    use="optional"/>
-      </extension>
+      <extension base="qes:doubleListType" />
     </simpleContent>
   </complexType>
   <complexType name="integerMatrixType">
     <simpleContent>
-      <extension base="qes:integerListType">
-          <attribute name="rank" type="nonNegativeInteger" use="optional"/>
-          <attribute name="dim1" type="positiveInteger"    use="optional"/>
-          <attribute name="dim2" type="positiveInteger"    use="optional"/>
-          <attribute name="dim3" type="positiveInteger"    use="optional"/>
-          <attribute name="dim4" type="positiveInteger"    use="optional"/>
-      </extension>
+      <extension base="qes:integerListType"/>
     </simpleContent>
   </complexType>
+
   <complexType name="scalarQuantityType">
     <simpleContent>
       <extension base="double">

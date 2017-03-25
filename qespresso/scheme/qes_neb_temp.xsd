@@ -991,49 +991,40 @@ Authors: Paolo Giannozzi, Pietro Delugas
        <length value="3"/>
     </restriction>
   </simpleType>
-  <simpleType name="vectorType">
-    <restriction>
-       <simpleType>
-         <list itemType="double"/>
-       </simpleType>
-    </restriction>
-  </simpleType>
-  <simpleType name="integerListType">
-    <restriction>
-       <simpleType>
-         <list itemType="integer"/>
-       </simpleType>
-    </restriction>
-  </simpleType>
-  <simpleType name="doubleListType">
-    <list itemType="double"/>
-  </simpleType>  
-  <complexType name="matrixType">
-    <simpleContent>
-      <extension base="neb:doubleListType">
-          <attribute name="rank" type="nonNegativeInteger" use="optional"/>
-          <attribute name="dim1" type="positiveInteger"    use="optional"/>
-          <attribute name="dim2" type="positiveInteger"    use="optional"/>
-          <attribute name="dim3" type="positiveInteger"    use="optional"/>
-          <attribute name="dim4" type="positiveInteger"    use="optional"/>
-      </extension>
-    </simpleContent>
-  </complexType>
-  <complexType name="integerMatrixType">
-    <simpleContent>
-      <extension base="neb:integerListType">
-          <attribute name="rank" type="nonNegativeInteger" use="optional"/>
-          <attribute name="dim1" type="positiveInteger"    use="optional"/>
-          <attribute name="dim2" type="positiveInteger"    use="optional"/>
-          <attribute name="dim3" type="positiveInteger"    use="optional"/>
-          <attribute name="dim4" type="positiveInteger"    use="optional"/>
-      </extension></simpleContent>
-  </complexType>
-  <complexType name="scalarQuantityType">
-    <simpleContent>
-      <extension base="double">
-        <attribute type="string" name="Units"/>
-      </extension>
-    </simpleContent>
-  </complexType>
+
+    <simpleType name="vectorType">
+        <restriction>
+            <simpleType>
+                <list itemType="double"/>
+            </simpleType>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="integerListType">
+        <restriction>
+            <simpleType>
+                <list itemType="integer"/>
+            </simpleType>
+        </restriction>
+    </simpleType>
+    <simpleType name="doubleListType">
+        <list itemType="double"/>
+    </simpleType>
+    <complexType name="matrixType">
+        <simpleContent>
+            <extension base="neb:doubleListType" />
+        </simpleContent>
+    </complexType>
+    <complexType name="integerMatrixType">
+        <simpleContent>
+            <extension base="neb:integerListType"/>
+        </simpleContent>
+    </complexType>
+    <complexType name="scalarQuantityType">
+        <simpleContent>
+            <extension base="double">
+                <attribute type="string" name="Units"/>
+            </extension>
+        </simpleContent>
+    </complexType>
 </schema>
