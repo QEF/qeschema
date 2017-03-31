@@ -358,12 +358,12 @@ class PwInputConverter(RawInputConverter):
                     'nqx2': 'SYSTEM[nqx2]',
                     'nqx3': 'SYSTEM[nqx3]'
                 },
-                'ecutfock': 'SYSTEM[ecutfock]',
+                'ecutfock': ('SYSTEM[ecutfock]',options.Ha2Ry, None),
                 'exx_fraction': 'SYSTEM[exx_fraction]',
                 'screening_parameter': 'SYSTEM[screening_parameter]',
                 'exxdiv_treatment': 'SYSTEM[exxdiv_treatment]',
                 'x_gamma_extrapolation': 'SYSTEM[x_gamma_extrapolation]',
-                'ecutvcut': 'SYSTEM[ecutvcut]',
+                'ecutvcut': ('SYSTEM[ecutvcut]', options.Ha2Ry, None)
             },
             'dftU': {
                 'lda_plus_u_kind': 'SYSTEM[lda_plus_u_kind]',

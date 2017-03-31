@@ -274,5 +274,10 @@ def neb_set_system_nat(name, **kwargs):
         return ''
     return [' nat = {0}'.format(nat_value)]
 
-
+def Ha2Ry(name, **kwargs):
+    import pdb
+    pdb.set_trace()
+    related_tag = kwargs['_related_tag']
+    value = kwargs[related_tag]*2.e0
+    return [' {} = {:12.8}'.format(name,value)]
 
