@@ -13,8 +13,7 @@ import logging
 from .documents import QeDocument, PwDocument, PhononDocument, NebDocument
 from .converters import RawInputConverter, PwInputConverter, PhononInputConverter, NebInputConverter
 from .exceptions import ConfigError
-from .xsdtypes import XSD_BUILTIN_TYPES, XMLSchema
-from .utils.logger import set_logger
+from .utils import set_logger
 
 logger = logging.getLogger('qespresso')
 set_logger(1)

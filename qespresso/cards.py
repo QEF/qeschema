@@ -59,7 +59,7 @@ def get_atomic_positions_cell_card(name, **kwargs):
         return []
 
     # Find atoms
-    atomic_positions =  atomic_structure.get('atomic_positions', {})
+    atomic_positions = atomic_structure.get('atomic_positions', {})
     wyckoff_positions = atomic_structure.get('wyckoff_positions', {})
     try:
         is_wyckoff = False
@@ -85,9 +85,9 @@ def get_atomic_positions_cell_card(name, **kwargs):
     # Add atomic positions
     lines = ['%s %s' % (name, 'crystal_sg' if is_wyckoff else 'bohr')]
     for k in range(len(atoms)):
-        sp_name = '{:4}'.format( atoms[k]['name'] )
+        sp_name = '{:4}'.format(atoms[k]['name'])
         coords = '{:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k]['_text'])
-        #coords = ' '.join([str(value) for value in atoms[k]['_text']])
+        # coords = ' '.join([str(value) for value in atoms[k]['_text']])
         if k < len(free_positions):
             #free_pos = ' '.join([str(value) for value in free_positions[k]])
             free_pos = '{:4d}{:4d}{:4d}'.format(*[int(value) for value in free_positions[k]])
@@ -137,7 +137,7 @@ def get_k_points_card(name, **kwargs):
     :param kwargs: Dictionary with converted data from XML file
     :return: List of strings
     """
-    k_point = nk = monkhorst_pack= None
+    k_point = nk = monkhorst_pack = None
     gamma_only = kwargs.get('gamma_only', False)
     try:
         if not gamma_only:
@@ -227,7 +227,7 @@ def get_cell_parameters_card(name, **kwargs):
 
 
 #
-# Phonon Card
+# Phonon Cards
 #
 def get_qpoints_card(name, **kwargs):
     """
@@ -260,6 +260,7 @@ def get_qpoints_card(name, **kwargs):
 
     return lines
 
+
 def get_climbing_images(name, **kwargs):
     manualImages = False
     try:
@@ -268,14 +269,15 @@ def get_climbing_images(name, **kwargs):
     except KeyError:
         manualImages = False
     if manualImages:
-        if isinstance(kwargs['climbingImageIndex'],list):
-            line = [int(l) for l in kwargs['climbingImageIndex'] ]
-            fmt  = len(line)*' %d, '
-            line = fmt%tuple(line)
+        if isinstance(kwargs['climbingImageIndex'], list):
+            line = [int(l) for l in kwargs['climbingImageIndex']]
+            fmt  = len(line) * ' %d, '
+            line = fmt % tuple(line)
         else:
-            line =' %d '%int(kwargs['climbingImageIndex'])
+            line =' %d ' % int(kwargs['climbingImageIndex'])
         return line
     return ''
+
 
 def get_neb_images_positions_card(name, **kwargs):
     """

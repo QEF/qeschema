@@ -15,7 +15,7 @@ import logging
 import re
 import os.path
 
-from qespresso.utils.mapping import BiunivocalMap
+from .utils import BiunivocalMap
 from . import cards, options
 
 logger = logging.getLogger('qespresso')
@@ -344,7 +344,8 @@ class PwInputConverter(RawInputConverter):
         },
         'atomic_structure': {
             'nat': 'SYSTEM[nat]',
-            '_text': [('SYSTEM[ibrav]', options.set_ibrav_to_zero, None ),
+            '_text': [
+                ('SYSTEM[ibrav]', options.set_ibrav_to_zero, None),
                 ("ATOMIC_POSITIONS", cards.get_atomic_positions_cell_card, None),
                 ("CELL_PARAMETERS", cards.get_cell_parameters_card, None)
             ],
@@ -358,7 +359,7 @@ class PwInputConverter(RawInputConverter):
                     'nqx2': 'SYSTEM[nqx2]',
                     'nqx3': 'SYSTEM[nqx3]'
                 },
-                'ecutfock': ('SYSTEM[ecutfock]',options.Ha2Ry, None),
+                'ecutfock': ('SYSTEM[ecutfock]', options.Ha2Ry, None),
                 'exx_fraction': 'SYSTEM[exx_fraction]',
                 'screening_parameter': 'SYSTEM[screening_parameter]',
                 'exxdiv_treatment': 'SYSTEM[exxdiv_treatment]',
@@ -421,7 +422,7 @@ class PwInputConverter(RawInputConverter):
             }
         },
         'basis': {
-            'gamma_only':('K_POINTS', cards.get_k_points_card, None),
+            'gamma_only': ('K_POINTS', cards.get_k_points_card, None),
             'ecutwfc': "SYSTEM[ecutwfc]",
             'ecutrho': "SYSTEM[ecutrho]",
             'fft_grid': {
@@ -483,11 +484,11 @@ class PwInputConverter(RawInputConverter):
             'cell_dynamics': "CELL[cell_dynamics]",
             'wmass': "CELL[wmass]",
             'cell_factor': "CELL[cell_factor]",
-            'pressure'  : "CELL[press]",
+            'pressure': "CELL[press]",
             'free_cell': ("CELL_PARAMETERS", cards.get_cell_parameters_card, None),
-            'fix_volume': ("CELL[cell_dofree]", options.get_cell_dofree, None ), 
-            'fix_area'  : ("CELL[cell_dofree]", options.get_cell_dofree, None ),
-            'isotropic' : ("CELL[cell_dofree]", options.get_cell_dofree, None ),
+            'fix_volume': ("CELL[cell_dofree]", options.get_cell_dofree, None),
+            'fix_area': ("CELL[cell_dofree]", options.get_cell_dofree, None),
+            'isotropic': ("CELL[cell_dofree]", options.get_cell_dofree, None),
         },
         'symmetry_flags': {
             'nosym': "SYSTEM[nosym]",
@@ -506,7 +507,7 @@ class PwInputConverter(RawInputConverter):
                 'efield': "SYSTEM[esm_efield]"
             },
             'fcp_opt': "CONTROL[lfcpopt]",
-            'fcp_mu' : "SYSTEM[fcp_mu]"
+            'fcp_mu': "SYSTEM[fcp_mu]"
         },
         'ekin_functional': {
             'ecfixed': "SYSTEM[ecfixed]",
@@ -672,18 +673,18 @@ class NebInputConverter(RawInputConverter):
     Convert to/from Fortran input for Phonon.
     """
     NEB_TEMPLATE_MAP = {
-        'path' : {
+        'path': {
             'restartMode': "PATH[restart_mode]",
             'stringMethod': "PATH[string_method]",
             'pathNstep': "PATH[nstep_path]",
             'numOfImages': "PATH[num_of_images]",
             'optimizationScheme': "PATH[opt_scheme]",
             'optimizationStepLength': "PATH[ds]",
-            'elasticConstMax' : "PATH[k_max]",
-            'elasticConstMin' : "PATH[k_min]",
-            'pathThreshold'   : "PATH[path_thr]",
-            'endImagesOptimizationFlag' : "PATH[first_last_opt]",
-            'temperature'  :              "PATH[temp_req]",
+            'elasticConstMax': "PATH[k_max]",
+            'elasticConstMin': "PATH[k_min]",
+            'pathThreshold': "PATH[path_thr]",
+            'endImagesOptimizationFlag': "PATH[first_last_opt]",
+            'temperature': "PATH[temp_req]",
             'climbingImage': [
                 "PATH[CI_scheme]",
                 ("CLIMBING_IMAGES", cards.get_climbing_images, None)
@@ -698,22 +699,23 @@ class NebInputConverter(RawInputConverter):
         }
     }
 
-    def __init__(self,**kwargs):
-        ENGINE_TEMPLATE_MAP = copy.deepcopy(PwInputConverter.PW_TEMPLATE_MAP)
-        ENGINE_TEMPLATE_MAP['atomic_structure'] = {
-            'nat': ("SYSTEM[nat]", options.neb_set_system_nat,None),
-            '_text': [('SYSTEM[ibrav]', options.set_ibrav_to_zero, None),
+    def __init__(self, **kwargs):
+        engine_template_map = copy.deepcopy(PwInputConverter.PW_TEMPLATE_MAP)
+        engine_template_map['atomic_structure'] = {
+            'nat': ("SYSTEM[nat]", options.neb_set_system_nat, None),
+            '_text': [
+                ('SYSTEM[ibrav]', options.set_ibrav_to_zero, None),
                 ("CELL_PARAMETERS", cards.get_neb_cell_parameters_card, None),
-                ("ATOMIC_POSITIONS", cards.get_neb_images_positions_card,None)
+                ("ATOMIC_POSITIONS", cards.get_neb_images_positions_card, None)
             ],
-            'atomic_positions': ('ATOMIC_FORCES', cards.get_atomic_forces_card,None)
+            'atomic_positions': ('ATOMIC_FORCES', cards.get_atomic_forces_card, None)
         }
-        # ENGINE_TEMPLATE_MAP['_text'] = ("ATOMIC_POSITIONS", cards.get_neb_images_positions_card,None )
-        self.NEB_TEMPLATE_MAP.update({'engine': ENGINE_TEMPLATE_MAP} )
+        # engine_template_map['_text'] = ("ATOMIC_POSITIONS", cards.get_neb_images_positions_card,None )
+        self.NEB_TEMPLATE_MAP.update({'engine': engine_template_map})
         super(NebInputConverter, self).__init__(
             *conversion_maps_builder(self.NEB_TEMPLATE_MAP),
-            input_namelists=('PATH','CONTROL','SYSTEM','ELECTRONS','IONS','CELL'),
-            input_cards=('CLIMBING_IMAGES', 'ATOMIC_SPECIES','ATOMIC_POSITIONS', 'K_POINTS',
+            input_namelists=('PATH', 'CONTROL', 'SYSTEM', 'ELECTRONS', 'IONS', 'CELL'),
+            input_cards=('CLIMBING_IMAGES', 'ATOMIC_SPECIES', 'ATOMIC_POSITIONS', 'K_POINTS',
                          'CELL_PARAMETERS', 'ATOMIC_FORCES')
         )
 
@@ -724,8 +726,8 @@ class NebInputConverter(RawInputConverter):
         :return: a string containing the text input for NEB calculations
         """
         qe_input = super(NebInputConverter, self).get_qe_input().split('\n')
-        qe_input =['BEGIN','BEGIN_PATH_INPUT'] +qe_input
+        qe_input = ['BEGIN', 'BEGIN_PATH_INPUT'] + qe_input
         index = qe_input.index('&CONTROL')
-        qe_input = qe_input[:index]+['END_PATH_INPUT','BEGIN_ENGINE_INPUT']+qe_input[index:]
+        qe_input = qe_input[:index] + ['END_PATH_INPUT', 'BEGIN_ENGINE_INPUT'] + qe_input[index:]
         qe_input += ['END_ENGINE_INPUT', 'END']
         return '\n'.join(qe_input)

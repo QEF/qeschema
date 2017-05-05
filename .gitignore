@@ -4,4 +4,5 @@
 *~
 *.swp
 .idea/
+qespresso/xmlschema
 forgen.py

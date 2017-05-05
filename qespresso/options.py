@@ -13,8 +13,6 @@ Conversion functions for Quantum Espresso input options.
 import logging
 from .exceptions import ConfigError
 
-# from .utils import set_logger
-
 logger = logging.getLogger('qespresso')
 
 
@@ -124,9 +122,11 @@ def get_system_nspin(name, **kwargs):
                      "parameter '%s'! %s" % (name, err))
         return []
 
-def set_ibrav_to_zero(name,**kwargs):
+
+def set_ibrav_to_zero(name, **kwargs):
     line = '  ibrav = 0'
     return [line]
+
 
 def get_system_eamp(name, **kwargs):
     """
@@ -229,6 +229,8 @@ def get_control_gdir(name, **kwargs):
         return [' gdir={0}'.format(electric_field_direction)]
     else:
         return []
+
+
 def get_cell_dofree(name, **kwargs):
     """ 
     :param name:
@@ -236,25 +238,26 @@ def get_cell_dofree(name, **kwargs):
     :return:
     """
     try:
-       fix_volume=kwargs['fix_volume']
+        fix_volume = kwargs['fix_volume']
     except KeyError:
-       fix_volume = False
+        fix_volume = False
     try:
-       fix_area = kwargs['fix_area']
+        fix_area = kwargs['fix_area']
     except KeyError:
-       fix_area = False
+        fix_area = False
     try:
-       isotropic = kwargs['isotropic']
+        isotropic = kwargs['isotropic']
     except KeyError:
-       isotropic = False
+        isotropic = False
     cell_dofree = "cell_dofree = 'all'" 
-    if ( (fix_volume and fix_area) or (fix_volume and isotropic ) or ( fix_area and isotropic)) :
+    if ((fix_volume and fix_area) or (fix_volume and isotropic) or (fix_area and isotropic)) :
         logger.error("only one of fix_volume fix_area and isotropic can be true")
         return [cell_dofree]
     if fix_volume: cell_dofree = "cell_dofree = 'shape'"
     if fix_area:   cell_dofree = "cell_dofree = '2Dshape'"
     if isotropic:  cell_dofree = "cell_dofree = 'volume' "
     return [cell_dofree]
+
 
 def neb_set_system_nat(name, **kwargs):
     """
@@ -266,18 +269,18 @@ def neb_set_system_nat(name, **kwargs):
     images = kwargs.get('atomic_structure', [])
     if len(images) < 1:
         logger.error('No atomic_structure element found !!!')
-        return  ''
-    image=images[0]
-    nat_value = int( image.get('nat',0) )
+        return ''
+    image = images[0]
+    nat_value = int(image.get('nat', 0))
     if nat_value <= 0:
         logger.error("error reading nat value from atomic_structure !!!")
         return ''
     return [' nat = {0}'.format(nat_value)]
+
 
 def Ha2Ry(name, **kwargs):
     import pdb
     pdb.set_trace()
     related_tag = kwargs['_related_tag']
     value = kwargs[related_tag]*2.e0
-    return [' {} = {:12.8}'.format(name,value)]
-
+    return [' {} = {:12.8}'.format(name, value)]
