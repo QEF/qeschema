@@ -108,6 +108,7 @@ Created by Mauro Palumbo
                      minOccurs="0" />
             <!-- q-points mesh or list -->
             <element type="qes_ph:q_pointsType" name="q_points" minOccurs="0" />
+            <element type="qes_ph:d3vectorType" name="xq_dir" minOccurs="0"/>
         </sequence>
     </complexType> 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
