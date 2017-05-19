@@ -89,7 +89,7 @@ Created by Mauro Palumbo
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->    
   <!-- INPUTPH TYPE-->
     <complexType name="inputPHType">
-        <sequence>
+        <all>
             <element type="qes_ph:scf_phType" name="scf_ph" minOccurs="0" />
             <element type="qes_ph:filesType" name="files" minOccurs="0" />
             <element type="qes_ph:control_phType" name="control_ph" minOccurs="0" />
@@ -108,7 +108,8 @@ Created by Mauro Palumbo
                      minOccurs="0" />
             <!-- q-points mesh or list -->
             <element type="qes_ph:q_pointsType" name="q_points" minOccurs="0" />
-        </sequence>
+            <element type="qes_ph:d3vectorType" name="xq" minOccurs="0"/>
+        </all>
     </complexType> 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <complexType name="scf_phType">
@@ -123,18 +124,18 @@ Created by Mauro Palumbo
     </complexType>
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <complexType name="filesType">
-        <sequence>
+        <all>
             <element type="string" name="prefix" default="pwscf" minOccurs="0" />
             <element type="string" name="outdir" default="./" minOccurs="0" /> 
             <element type="string" name="fildyn" default="matdyn" minOccurs="0" />    
             <element type="string" name="fildrho" default="" minOccurs="0" />  
             <element type="string" name="fildvscf" default="" minOccurs="0" /> 
             <element type="boolean" name="lqdir" default="false" minOccurs="0" /> 
-        </sequence>
+        </all>
     </complexType>
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <complexType name="control_phType">
-        <sequence>
+        <all>
             <element type="boolean" name="ldisp" default="false" minOccurs="0" /> 
             <element type="boolean" name="epsil" default="false" minOccurs="0" />     
             <element type="boolean" name="trans" default="true" minOccurs="0" />          
@@ -144,7 +145,7 @@ Created by Mauro Palumbo
             <element type="boolean" name="fpol" default="false" minOccurs="0" />  
             <element type="boolean" name="lraman" default="false" minOccurs="0" />
             <element type="boolean" name="search_sym" default="true" minOccurs="0"/> 
-        </sequence>
+        </all>
     </complexType>
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <complexType name="control_jobType">
@@ -173,14 +174,15 @@ Created by Mauro Palumbo
     <complexType name="miscellaneaType">
         <sequence>             
             <!-- if amass is not present, should be taked from pw in the code -->                    
-            <element type="qes_ph:amassType" name="amass" minOccurs="0" />
+            <element type="qes_ph:amassType" name="amass" minOccurs="0" maxOccurs="unbounded" />
             <element type="double" name="start_magnetization" minOccurs="0" />  
             <element type="nonNegativeInteger" name="verbosity" default="0" 
                  minOccurs="0" />
             <element type="boolean" name="reduce_io" default="false" minOccurs="0"/>
             <element type="boolean" name="low_directory_check" default="false" 
                  minOccurs="0" />
-            <element type="boolean" name="nogg" default="false" minOccurs="0" />   
+            <element type="boolean" name="nogg" default="false" minOccurs="0" />
+            <element type="qes_ph:monkhorst_packType" name="nscf_MPgrid" minOccurs="0"/>
         </sequence>
     </complexType>
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -217,7 +219,9 @@ Created by Mauro Palumbo
     <complexType name="electron_phonon_optionsType">
         <sequence>
             <element type="qes_ph:electron_phononType" name="electron_phonon"
-                 minOccurs="0" />    
+                 minOccurs="0" />
+            <element type="double" name="sigma"   minOccurs="0"/>
+            <element type="integer" name="nsigma" minOccurs="0"/>
         <element type="qes_ph:dvscf_starType" name="dvscf_star" minOccurs="0" />
         <element type="qes_ph:drho_starType" name="drho_star" minOccurs="0" />
         </sequence>
@@ -270,10 +274,9 @@ Created by Mauro Palumbo
     <complexType name="q_pointsType">
         <sequence>
             <!-- monkhorst_pack -->
-            <element type="qes_ph:q_monkhorst_packType" name="monkhorst_pack"
+            <element type="qes_ph:q_monkhorst_packType" name="grid"
                minOccurs="0" maxOccurs="1"/>
             <!-- monkhorst_pack grid, ex. 3 3 3 -->
-            <element type="positiveInteger" name="nq"/>
             <!-- Alternatively, a list of nqs q-points... (optionally with weight as attribute) -->
             <element type="nonNegativeInteger" name="nqs" default="1" minOccurs="0" />
             <element type="qes_ph:q_points_listType" name="q_points_list" minOccurs="0" />
@@ -312,9 +315,9 @@ Created by Mauro Palumbo
                 <attribute type="positiveInteger" name="nk1"/>
                 <attribute type="positiveInteger" name="nk2"/>
                 <attribute type="positiveInteger" name="nk3"/>
-                <attribute type="boolean" name="k1"/>
-                <attribute type="boolean" name="k2"/>
-                <attribute type="boolean" name="k3"/>
+                <attribute type="nonNegativeInteger" name="k1"/>
+                <attribute type="nonNegativeInteger" name="k2"/>
+                <attribute type="nonNegativeInteger" name="k3"/>
             </extension>
         </simpleContent>
     </complexType>
