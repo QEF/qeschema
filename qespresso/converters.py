@@ -658,6 +658,7 @@ class PhononInputConverter(RawInputConverter):
                 'nq3': "INPUTPH[nq3]"
             },
             'q_points_list': ('qPointsSpecs', cards.get_qpoints_card, None),
+            'nqs': ('qPointsSpecs', cards.get_qpoints_card, None)
         }
     }
 
@@ -667,7 +668,6 @@ class PhononInputConverter(RawInputConverter):
             input_namelists=('INPUTPH',),
             input_cards=('qPointsSpecs',)
         )
-
 
 
 class NebInputConverter(RawInputConverter):
