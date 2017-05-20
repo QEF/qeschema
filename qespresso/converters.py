@@ -581,7 +581,7 @@ class PhononInputConverter(RawInputConverter):
             'lqdir': "INPUTPH[lqdir]"
         },
         'control_ph': {
-            'ldisp': "INPUTPH[ldisp]",
+            'ldisp': ["INPUTPH[ldisp]",('qPointsSpecs', cards.get_qpoints_card, None)],
             'epsil': "INPUTPH[epsil]",
             'trans': "INPUTPH[trans]",
             'zeu': "INPUTPH[zeu]",

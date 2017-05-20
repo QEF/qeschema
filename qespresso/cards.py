@@ -242,6 +242,13 @@ def get_qpoints_card(name, **kwargs):
     :return:
     """
     try:
+        ldisp = kwargs['ldisp']
+    except KeyError:
+        ldisp = False
+    if ldisp:
+        return []
+
+    try:
         qplot = kwargs['qplot']
     except KeyError:
         qplot = False
