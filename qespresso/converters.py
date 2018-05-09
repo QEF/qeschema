@@ -20,7 +20,6 @@ from . import cards, options
 
 logger = logging.getLogger('qespresso')
 
-
 def conversion_maps_builder(template_map):
     """
     Build invariant and variant conversion maps from a template. The template
@@ -288,13 +287,12 @@ class RawInputConverter(Container):
             logger.debug("Card arguments: {0}".format(card_args))
             if '_get_qe_input' not in card_args or \
                     not callable(card_args['_get_qe_input']):
-                raise ValueError("Missing conversion function for card '%s'" % card)
+                logger.error("Missing conversion function for card '%s'" % card)
             _get_qe_input = card_args.get('_get_qe_input', None)
             if callable(_get_qe_input):
                 lines.extend(_get_qe_input(card, **card_args))
             else:
                 logger.error('Card conversion function not found!')
-
         return '\n'.join(lines)
 
     def clear_input(self):
@@ -568,6 +566,7 @@ class PhononInputConverter(RawInputConverter):
     Convert to/from Fortran input for Phonon.
     """
     PHONON_TEMPLATE_MAP = {
+        'xq':('qPointsSpecs',cards.get_qpoints_card, None),
         'scf_ph': {
             'tr2_ph': "INPUTPH[tr2_ph]",
             'niter_ph': "INPUTPH[niter_ph]",
@@ -583,7 +582,7 @@ class PhononInputConverter(RawInputConverter):
             'lqdir': "INPUTPH[lqdir]"
         },
         'control_ph': {
-            'ldisp': [('qPointsSpecs', cards.get_qpoints_card, None), "INPUTPH[ldisp]"],
+            'ldisp': ["INPUTPH[ldisp]",('qPointsSpecs', cards.get_qpoints_card, None)],
             'epsil': "INPUTPH[epsil]",
             'trans': "INPUTPH[trans]",
             'zeu': "INPUTPH[zeu]",
@@ -607,14 +606,19 @@ class PhononInputConverter(RawInputConverter):
             'q_in_band_form': "INPUTPH[q_in_band_form]"
         },
         'miscellanea': {
-            'amass': {
-                        # 'atom': "??",
-                        '_text': "INPUTPH[amass]"
-                    },
+            'amass':{'_text':("INPUTPH[amass]",options.setOneAmassLine, None)},
             'verbosity': "INPUTPH[verbosity]",
             'reduce_io': "INPUTPH[reduce_io]",
             'low_directory_check': "INPUTPH[low_directory_check]",
-            'nogg': "INPUTPH[nogg]"
+            'nogg': "INPUTPH[nogg]",
+            'nscf_MPgrid':{
+                            'nk1': "INPUTPH[nk1]",
+                            'nk2': "INPUTPH[nk2]",
+                            'nk3': "INPUTPH[nk3]",
+                            'k1':  "INPUTPH[k1]",
+                            'k2':  "INPUTPH[k2]",
+                            'k3':  "INPUTPH[k3]"
+                          }
         },
         'irr_repr': {
             'start_q': "INPUTPH[start_q]",
@@ -636,11 +640,11 @@ class PhononInputConverter(RawInputConverter):
                 'pat': "INPUTPH[dvscf_star%pat]"
             },
             'drho_star': {
-                'open': "INPUTPH[drho_star%open]",
-                'dir': "INPUTPH[drho_star%dir]",
-                'ext': "INPUTPH[drho_star%ext]",
+                'open':  "INPUTPH[drho_star%open]",
+                'dir':   "INPUTPH[drho_star%dir]",
+                'ext':   "INPUTPH[drho_star%ext]",
                 'basis': "INPUTPH[drho_star%basis]",
-                'pat': "INPUTPH[drho_star%pat]"
+                'pat':   "INPUTPH[drho_star%pat]"
             }
         },
         'lraman_options': {
@@ -649,14 +653,13 @@ class PhononInputConverter(RawInputConverter):
             'dek': "INPUTPH[dek]",
         },
         'q_points': {
-            'monkhorst_pack': {
+            'grid': {
                 'nq1': "INPUTPH[nq1]",
                 'nq2': "INPUTPH[nq2]",
                 'nq3': "INPUTPH[nq3]"
             },
-            'nqs': ['qPointsSpecs'],
             'q_points_list': ('qPointsSpecs', cards.get_qpoints_card, None),
-            'nq': ['qPointsSpecs']
+            'nqs': ('qPointsSpecs', cards.get_qpoints_card, None)
         }
     }
 
