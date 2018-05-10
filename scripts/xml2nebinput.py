@@ -25,7 +25,7 @@ def parse_args():
     )
     parser.add_argument("-v", "--verbosity", action="count", default=1,
                         help="Increase output verbosity.")
-    parser.add_argument('-in', required=True, help="XML input filename.")
+    parser.add_argument('-in', metavar='FILE', required=True, help="XML input filename.")
     return parser.parse_args()
 
 

@@ -1,26 +1,26 @@
 <qes:espresso xmlns:qes="http://www.quantum-espresso.org/ns/qes/qes-1.0"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes-1.0 ../../qexsd/schemas/qes.xsd">
+              xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes-1.0 ../../../qexsd/schemas/qes.xsd">
   <input>
     <control_variables>
-      <title>FeO_LDA+U=0</title>
+      <title>FeO_LDA+U</title>
       <calculation>scf</calculation>
       <restart_mode>from_scratch</restart_mode>
       <prefix>feo_af</prefix>
       <pseudo_dir>/scratch/pdelugas/espresso-xsd/pseudo/</pseudo_dir>
       <outdir>/scratch/pdelugas/espresso-xsd/tempdir/</outdir>
       <stress>
-            true
+          true
       </stress>
       <forces>
-            true
+         true
       </forces>
       <wf_collect>
-            false
+         false
       </wf_collect>
       <disk_io>low</disk_io>
       <max_seconds>
-    10000000
+         10000000
       </max_seconds>
       <etot_conv_thr>
        0.1000000E-03
@@ -100,10 +100,10 @@
        0.0000000E+00
         </Hubbard_U>
         <Hubbard_U specie="Fe1" label="no Hubbard">
-       0.7349865E-09
+       0.3160442E+00
         </Hubbard_U>
         <Hubbard_U specie="Fe2" label="no Hubbard">
-       0.7349865E-09
+       0.3160442E+00
         </Hubbard_U>
         <Hubbard_J0 specie="O1" label="no Hubbard">
        0.0000000E+00
@@ -149,10 +149,10 @@
         true
       </lsda>
       <noncolin>
-          false
+        false
       </noncolin>
       <spinorbit>
-          false
+            false
       </spinorbit>
     </spin>
     <bands>
@@ -163,9 +163,7 @@
       <tot_charge>
        0.0000000E+00
       </tot_charge>
-      <occupations>
-            smearing
-      </occupations>
+      <occupations>smearing</occupations>
     </bands>
     <basis>
       <ecutwfc>
@@ -191,7 +189,7 @@
          100
       </max_nstep>
       <real_space_q>
-          false
+         false
       </real_space_q>
         <tq_smoothing>false</tq_smoothing>
         <tbeta_smoothing>false</tbeta_smoothing>
@@ -199,7 +197,7 @@
        0.0000000E+00
       </diago_thr_init>
       <diago_full_acc>
-            false
+         false
       </diago_full_acc>
       <diago_cg_maxiter>
           20
@@ -207,22 +205,21 @@
     </electron_control>
     <k_points_IBZ>
       <monkhorst_pack nk1="2" nk2="2" nk3="2" k1="0" k2="0" k3="0">
-Monckhort-Pack
+              Monckhort-Pack
       </monkhorst_pack>
     </k_points_IBZ>
     <ion_control>
-      <ion_dynamics>
-none
-      </ion_dynamics>
+      <ion_dynamics>none</ion_dynamics>
       <remove_rigid_rot>
-        false
+         false
       </remove_rigid_rot>
       <refold_pos>
-        false
+         false
       </refold_pos>
     </ion_control>
     <cell_control>
       <cell_dynamics>none</cell_dynamics>
+        <pressure>0.0</pressure>
       <wmass>
        0.3645777E+04
       </wmass>
@@ -240,19 +237,19 @@ none
         false
       </nosym>
       <nosym_evc>
-        false
+          false
       </nosym_evc>
       <noinv>
         false
       </noinv>
       <no_t_rev>
-        false
+         false
       </no_t_rev>
       <force_symmorphic>
-        false
+          false
       </force_symmorphic>
       <use_all_frac>
-        false
+         false
       </use_all_frac>
     </symmetry_flags>
   </input>

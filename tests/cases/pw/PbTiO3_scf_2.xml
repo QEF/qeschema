@@ -1,16 +1,16 @@
 <qes:espresso xmlns:qes="http://www.quantum-espresso.org/ns/qes/qes-1.0"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes-1.0 espresso.xsd">
+              xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes-1.0 ../../../qexsd/schemas/qes.xsd">
   <input>
     <control_variables>
       <title></title>
       <calculation>scf</calculation>
       <restart_mode>from_scratch</restart_mode>
-      <prefix>silicon</prefix>
+      <prefix>pwscf</prefix>
       <pseudo_dir>/scratch/pdelugas/espresso-xsd/pseudo/</pseudo_dir>
       <outdir>/scratch/pdelugas/espresso-xsd/tempdir/</outdir>
-      <stress>true</stress>
-      <forces>true</forces>
+      <stress>false</stress>
+      <forces>false</forces>
       <wf_collect>false</wf_collect>
       <disk_io>low</disk_io>
       <max_seconds>
@@ -30,32 +30,53 @@
       100000
       </print_every>
     </control_variables>
-    <atomic_species ntyp="1">
-      <specie name="Si">
+    <atomic_species ntyp="3">
+      <species name="Pb">
         <mass>
-       0.2808600E+02
+       0.2072000E+03
         </mass>
-        <pseudo_file>Si.pz-vbc.UPF</pseudo_file>
-      </specie>
+        <pseudo_file>Pb.pz-d-van.UPF</pseudo_file>
+      </species>
+      <species name="Ti">
+        <mass>
+       0.4786700E+02
+        </mass>
+        <pseudo_file>Ti.pz-sp-van_ak.UPF</pseudo_file>
+      </species>
+      <species name="O">
+        <mass>
+       0.1599940E+02
+        </mass>
+        <pseudo_file>O.pz-van_ak.UPF</pseudo_file>
+      </species>
     </atomic_species>
-    <atomic_structure nat="2" alat="7.212489168102785E+000">
+    <atomic_structure nat="5" alat="7.369900000000000E+000">
       <atomic_positions>
-        <atom name="Si">
-       0.0000000E+00       0.0000000E+00       0.0000000E+00
+        <atom name="Pb">
+       0.0000000E+00       0.0000000E+00       0.7369900E-01
         </atom>
-        <atom name="Si">
-       0.2550000E+01       0.2550000E+01       0.2550000E+01
+        <atom name="Ti">
+       0.3684950E+01       0.3684950E+01       0.3684950E+01
+        </atom>
+        <atom name="O">
+       0.0000000E+00       0.3684950E+01       0.3684950E+01
+        </atom>
+        <atom name="O">
+       0.3684950E+01       0.3684950E+01       0.0000000E+00
+        </atom>
+        <atom name="O">
+       0.3684950E+01       0.0000000E+00       0.3684950E+01
         </atom>
       </atomic_positions>
       <cell>
         <a1>
-      -0.5100000E+01       0.0000000E+00       0.5100000E+01
+       0.7369900E+01       0.0000000E+00       0.0000000E+00
         </a1>
         <a2>
-       0.0000000E+00       0.5100000E+01       0.5100000E+01
+       0.0000000E+00       0.7369900E+01       0.0000000E+00
         </a2>
         <a3>
-      -0.5100000E+01       0.5100000E+01       0.0000000E+00
+       0.0000000E+00       0.0000000E+00       0.7369900E+01
         </a3>
       </cell>
     </atomic_structure>
@@ -63,29 +84,32 @@
       <functional>PZ</functional>
     </dft>
     <spin>
-      <lsda>false</lsda>
+      <lsda>true</lsda>
       <noncolin>false</noncolin>
       <spinorbit>false</spinorbit>
     </spin>
     <bands>
+      <nbnd>
+          25
+      </nbnd>
       <tot_charge>
        0.0000000E+00
       </tot_charge>
-      <occupations spin="2">fixed</occupations>
+      <occupations spin="2" >smearing</occupations>
     </bands>
     <basis>
       <ecutwfc>
-       0.1800000E+02
+       0.3000000E+02
       </ecutwfc>
     </basis>
     <electron_control>
-      <diagonalization>cg</diagonalization>
+      <diagonalization>davidson</diagonalization>
       <mixing_mode>plain</mixing_mode>
       <mixing_beta>
-       0.7000000E+00
+       0.3000000E+00
       </mixing_beta>
       <conv_thr>
-       0.1000000E-07
+       0.1000000E-11
       </conv_thr>
       <mixing_ndim>
            8
@@ -103,39 +127,7 @@
       </diago_cg_maxiter>
     </electron_control>
     <k_points_IBZ>
-      <nk>
-          10
-      </nk>
-      <k_point weight="1.000000000000000E+000">
-       0.1250000E+00       0.1250000E+00       0.1250000E+00
-      </k_point>
-      <k_point weight="3.000000000000000E+000">
-       0.1250000E+00       0.1250000E+00       0.3750000E+00
-      </k_point>
-      <k_point weight="3.000000000000000E+000">
-       0.1250000E+00       0.1250000E+00       0.6250000E+00
-      </k_point>
-      <k_point weight="3.000000000000000E+000">
-       0.1250000E+00       0.1250000E+00       0.8750000E+00
-      </k_point>
-      <k_point weight="3.000000000000000E+000">
-       0.1250000E+00       0.3750000E+00       0.3750000E+00
-      </k_point>
-      <k_point weight="6.000000000000000E+000">
-       0.1250000E+00       0.3750000E+00       0.6250000E+00
-      </k_point>
-      <k_point weight="6.000000000000000E+000">
-       0.1250000E+00       0.3750000E+00       0.8750000E+00
-      </k_point>
-      <k_point weight="3.000000000000000E+000">
-       0.1250000E+00       0.6250000E+00       0.6250000E+00
-      </k_point>
-      <k_point weight="1.000000000000000E+000">
-       0.3750000E+00       0.3750000E+00       0.3750000E+00
-      </k_point>
-      <k_point weight="3.000000000000000E+000">
-       0.3750000E+00       0.3750000E+00       0.6250000E+00
-      </k_point>
+      <monkhorst_pack nk1="4" nk2="4" nk3="4" k1="1" k2="1" k3="1">Uniform grid with offset</monkhorst_pack>
     </k_points_IBZ>
     <ion_control>
       <ion_dynamics>none</ion_dynamics>
@@ -145,15 +137,15 @@
     <cell_control>
       <cell_dynamics>none</cell_dynamics>
       <wmass>
-       0.5119765E+05
+       0.2762270E+06
       </wmass>
       <cell_factor>
        0.0000000E+00
       </cell_factor>
       <free_cell>
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
-       0.1000000E+01       0.1000000E+01       0.1000000E+01
+      1  1 1 
+      1  1 1 
+      1  1 1
       </free_cell>
     </cell_control>
     <symmetry_flags>

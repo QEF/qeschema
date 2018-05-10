@@ -1,46 +1,29 @@
 <qes:espresso xmlns:qes="http://www.quantum-espresso.org/ns/qes/qes-1.0"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes-1.0 ../../qexsd/schemas/qes.xsd">
-  <input>
+              xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes-1.0 ../../../qexsd/schemas/qes.xsd">
+    <input>
     <control_variables>
-      <title> Al001 relaxation with damped dynamics </title>
+      <title>
+      </title>
       <calculation>relax</calculation>
       <restart_mode>from_scratch</restart_mode>
       <prefix>Al</prefix>
       <pseudo_dir>/scratch/pdelugas/espresso-xsd/pseudo</pseudo_dir>
       <outdir>/scratch/pdelugas/espresso-xsd/tempdir</outdir>
-      <stress>
-          false
-      </stress>
-      <forces>
-         false
-      </forces>
-      <wf_collect>
-         false
-      </wf_collect>
+      <stress>false</stress>
+      <forces>false</forces>
+      <wf_collect>0</wf_collect>
       <disk_io>low</disk_io>
-      <max_seconds>
-    10000000
-      </max_seconds>
-      <etot_conv_thr>
-       0.1000000E-03
-      </etot_conv_thr>
-      <forc_conv_thr>
-       0.1000000E-02
-      </forc_conv_thr>
-      <press_conv_thr>
-       0.5000000E+00
-      </press_conv_thr>
-      <verbosity>low</verbosity>
-      <print_every>
-      100000
-      </print_every>
+      <max_seconds>10000000</max_seconds>
+      <etot_conv_thr>0.1000000E-03</etot_conv_thr>
+      <forc_conv_thr>0.1000000E-02</forc_conv_thr>
+      <press_conv_thr>0.5000000E+00</press_conv_thr>
+      <verbosity>high</verbosity>
+      <print_every>100000</print_every>
     </control_variables>
     <atomic_species ntyp="1">
       <species name="Al">
-        <mass>
-       0.1000000E+01
-        </mass>
+        <mass>0.1000000E+01</mass>
         <pseudo_file>Al.pz-vbc.UPF</pseudo_file>
       </species>
     </atomic_species>
@@ -85,13 +68,13 @@
     </dft>
     <spin>
       <lsda>
-         false
+          false
       </lsda>
       <noncolin>
-        false
+          false
       </noncolin>
       <spinorbit>
-        false
+          false
       </spinorbit>
     </spin>
     <bands>
@@ -113,7 +96,7 @@
        0.3000000E+00
       </mixing_beta>
       <conv_thr>
-       0.1000000E-06
+       0.1000000E-05
       </conv_thr>
       <mixing_ndim>
            8
@@ -122,7 +105,7 @@
          100
       </max_nstep>
       <real_space_q>
-         false
+          false
       </real_space_q>
         <tq_smoothing>false</tq_smoothing>
         <tbeta_smoothing>false</tbeta_smoothing>
@@ -130,7 +113,7 @@
        0.0000000E+00
       </diago_thr_init>
       <diago_full_acc>
-         false
+          false
       </diago_full_acc>
       <diago_cg_maxiter>
           20
@@ -152,17 +135,42 @@
     </k_points_IBZ>
     <ion_control>
       <ion_dynamics>
-damp
+bfgs
       </ion_dynamics>
+      <upscale>
+       0.1000000E+03
+      </upscale>
       <remove_rigid_rot>
-false
+          false
       </remove_rigid_rot>
       <refold_pos>
-           false
+          false
       </refold_pos>
+      <bfgs>
+        <ndim>
+           3
+        </ndim>
+        <trust_radius_min>
+       0.1000000E-03
+        </trust_radius_min>
+        <trust_radius_max>
+       0.8000000E+00
+        </trust_radius_max>
+        <trust_radius_init>
+       0.5000000E+00
+        </trust_radius_init>
+        <w1>
+       0.1000000E-01
+        </w1>
+        <w2>
+       0.5000000E+00
+        </w2>
+      </bfgs>
     </ion_control>
     <cell_control>
-      <cell_dynamics>none</cell_dynamics>
+      <cell_dynamics>
+none
+      </cell_dynamics>
         <pressure>0.0</pressure>
       <wmass>
        0.6380110E+04
@@ -181,19 +189,19 @@ false
           false
       </nosym>
       <nosym_evc>
-        false
+          false
       </nosym_evc>
       <noinv>
-        false
+          false
       </noinv>
       <no_t_rev>
-         false
+          false
       </no_t_rev>
       <force_symmorphic>
-        false
+          false
       </force_symmorphic>
       <use_all_frac>
-         false
+          false
       </use_all_frac>
     </symmetry_flags>
     <free_positions>

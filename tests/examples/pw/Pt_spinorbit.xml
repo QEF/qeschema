@@ -1,24 +1,22 @@
 <qes:espresso xmlns:qes="http://www.quantum-espresso.org/ns/qes/qes-1.0"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes-1.0 ../../qexsd/schemas/qes.xsd">
+              xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes-1.0 ../../../qexsd/schemas/qes.xsd">
   <input>
     <control_variables>
-      <title>
-
-      </title>
+      <title>Pt_fullyRelativistic</title>
       <calculation>scf</calculation>
       <restart_mode>from_scratch</restart_mode>
-      <prefix>fe</prefix>
+      <prefix>Pt</prefix>
       <pseudo_dir>/scratch/pdelugas/espresso-xsd/pseudo/</pseudo_dir>
       <outdir>/scratch/pdelugas/espresso-xsd/tempdir/</outdir>
       <stress>
-        false
+        true
       </stress>
       <forces>
-         false
+        true
       </forces>
       <wf_collect>
-         false
+        false
       </wf_collect>
       <disk_io>low</disk_io>
       <max_seconds>
@@ -39,37 +37,37 @@
       </print_every>
     </control_variables>
     <atomic_species ntyp="1">
-      <species name="Fe">
+      <species name="Pt">
         <mass>
-       0.5584700E+02
+       0.0000000E+00
         </mass>
-        <pseudo_file>Fe.pz-nd-rrkjus.UPF</pseudo_file>
+        <pseudo_file>Pt.rel-pz-n-rrkjus.UPF</pseudo_file>
         <starting_magnetization>
-       0.5000000E+00
+       0.0000000E+00
         </starting_magnetization>
         <spin_teta>
-       0.1483530E+01
+       0.0000000E+00
         </spin_teta>
         <spin_phi>
        0.0000000E+00
         </spin_phi>
       </species>
     </atomic_species>
-    <atomic_structure nat="1" alat="5.217000000000000E+000">
+    <atomic_structure nat="1" alat="7.420000000000000E+000">
       <atomic_positions>
-        <atom name="Fe">
+        <atom name="Pt">
        0.0000000E+00       0.0000000E+00       0.0000000E+00
         </atom>
       </atomic_positions>
       <cell>
         <a1>
-       0.5000000E+00       0.5000000E+00       0.5000000E+00
+      -0.5000000E+00       0.0000000E+00       0.5000000E+00
         </a1>
         <a2>
-      -0.5000000E+00       0.5000000E+00       0.5000000E+00
+       0.0000000E+00       0.5000000E+00       0.5000000E+00
         </a2>
         <a3>
-      -0.5000000E+00      -0.5000000E+00       0.5000000E+00
+      -0.5000000E+00       0.5000000E+00       0.0000000E+00
         </a3>
       </cell>
     </atomic_structure>
@@ -78,17 +76,17 @@
     </dft>
     <spin>
       <lsda>
-         false
+        false
       </lsda>
       <noncolin>
-         false
+        false
       </noncolin>
       <spinorbit>
-        false
+        true
       </spinorbit>
     </spin>
     <bands>
-      <smearing degauss="5.000000000000000E-002">mv</smearing>
+      <smearing degauss="2.000000000000000E-002">mp</smearing>
       <tot_charge>
        0.0000000E+00
       </tot_charge>
@@ -96,17 +94,17 @@
     </bands>
     <basis>
       <ecutwfc>
-       0.2500000E+02
+       0.3000000E+02
       </ecutwfc>
       <ecutrho>
-       0.2000000E+03
+       0.2500000E+03
       </ecutrho>
     </basis>
     <electron_control>
       <diagonalization>davidson</diagonalization>
       <mixing_mode>plain</mixing_mode>
       <mixing_beta>
-       0.2000000E+00
+       0.7000000E+00
       </mixing_beta>
       <conv_thr>
        0.1000000E-07
@@ -118,7 +116,7 @@
          100
       </max_nstep>
       <real_space_q>
-         false
+        false
       </real_space_q>
         <tq_smoothing>false</tq_smoothing>
         <tbeta_smoothing>false</tbeta_smoothing>
@@ -126,66 +124,31 @@
        0.0000000E+00
       </diago_thr_init>
       <diago_full_acc>
-         false
+        false
       </diago_full_acc>
       <diago_cg_maxiter>
           20
       </diago_cg_maxiter>
     </electron_control>
     <k_points_IBZ>
-      <nk>
-          11
-      </nk>
-      <k_point weight="1.000000000000000E+000">
-       0.6250000E-01       0.6250000E-01       0.6250000E-01
-      </k_point>
-      <k_point weight="3.000000000000000E+000">
-       0.6250000E-01       0.6250000E-01       0.1875000E+00
-      </k_point>
-      <k_point weight="3.000000000000000E+000">
-       0.6250000E-01       0.6250000E-01       0.3125000E+00
-      </k_point>
-      <k_point weight="3.000000000000000E+000">
-       0.6250000E-01       0.6250000E-01       0.4375000E+00
-      </k_point>
-      <k_point weight="3.000000000000000E+000">
-       0.6250000E-01       0.6250000E-01       0.5625000E+00
-      </k_point>
-      <k_point weight="3.000000000000000E+000">
-       0.6250000E-01       0.6250000E-01       0.6875000E+00
-      </k_point>
-      <k_point weight="3.000000000000000E+000">
-       0.6250000E-01       0.6250000E-01       0.8125000E+00
-      </k_point>
-      <k_point weight="3.000000000000000E+000">
-       0.6250000E-01       0.6250000E-01       0.9375000E+00
-      </k_point>
-      <k_point weight="3.000000000000000E+000">
-       0.6250000E-01       0.1875000E+00       0.1875000E+00
-      </k_point>
-      <k_point weight="6.000000000000000E+000">
-       0.6250000E-01       0.1875000E+00       0.3125000E+00
-      </k_point>
-      <k_point weight="6.000000000000000E+000">
-       0.6250000E-01       0.1875000E+00       0.4375000E+00
-      </k_point>
+      <monkhorst_pack nk1="4" nk2="4" nk3="4" k1="1" k2="1" k3="1">
+Uniform grid with offset
+      </monkhorst_pack>
     </k_points_IBZ>
     <ion_control>
-      <ion_dynamics>
-none
-      </ion_dynamics>
+      <ion_dynamics>none</ion_dynamics>
       <remove_rigid_rot>
-            false
+        false
       </remove_rigid_rot>
       <refold_pos>
-             false
+            false
       </refold_pos>
     </ion_control>
     <cell_control>
       <cell_dynamics>none</cell_dynamics>
         <pressure>0.0</pressure>
       <wmass>
-       0.5090143E+05
+       0.1778027E+06
       </wmass>
       <cell_factor>
        0.0000000E+00
@@ -198,10 +161,10 @@ none
     </cell_control>
     <symmetry_flags>
       <nosym>
-          false
+        false
       </nosym>
       <nosym_evc>
-           false
+        false
       </nosym_evc>
       <noinv>
         false
@@ -210,20 +173,11 @@ none
         false
       </no_t_rev>
       <force_symmorphic>
-         false
+        false
       </force_symmorphic>
       <use_all_frac>
         false
       </use_all_frac>
     </symmetry_flags>
-    <spin_constraints>
-      <spin_constraints>atomic</spin_constraints>
-      <lagrange_multiplier>
-       0.1000000E+01
-      </lagrange_multiplier>
-      <target_magnetization>
-       0.0000000E+00       0.0000000E+00       0.0000000E+00
-      </target_magnetization>
-    </spin_constraints>
   </input>
 </qes:espresso>

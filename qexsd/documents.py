@@ -11,7 +11,7 @@ import logging
 import os.path
 from xml.etree import ElementTree
 import xmlschema
-from xmlschema.exceptions import XMLSchemaValidationError
+from xmlschema import XMLSchemaValidationError
 
 from .converters import PwInputConverter, PhononInputConverter, NebInputConverter
 from .exceptions import ConfigError
