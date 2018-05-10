@@ -14,7 +14,7 @@ import logging
 
 # from .utils import set_logger
 
-logger = logging.getLogger('qespresso')
+logger = logging.getLogger('qexsd')
 
 
 #

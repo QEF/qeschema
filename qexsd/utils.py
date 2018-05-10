@@ -10,7 +10,7 @@
 import logging
 from collections import MutableMapping
 
-logger = logging.getLogger('qespresso')
+logger = logging.getLogger('qexsd')
 
 
 def set_logger(loglevel=1, logfile=None):

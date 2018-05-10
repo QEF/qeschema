@@ -8,7 +8,7 @@
 # Authors: Davide Brunato, Giovanni Borghi
 #
 """
-Convert from XML input  to Fortran input
+Convert from XML input to Fortran input
 """
 
 import sys
@@ -44,25 +44,24 @@ if __name__ == '__main__':
         from os import path
         sys.path.append(path.dirname(path.dirname(path.dirname(path.abspath(__file__)))))
 
-    import qespresso
+    import qexsd
     import os
     import xml.etree.ElementTree as Etree
 
-    qespresso.set_logger(args.verbosity)
+    qexsd.set_logger(args.verbosity)
 
     input_fn = getattr(args, 'in')
     tree = Etree.parse(input_fn)
     root = tree.getroot()
     elementName = root.tag.split('}')[-1]
     if elementName == 'espresso':
-        xml_conf = qespresso.PwDocument()
+        xml_conf = qexsd.PwDocument()
     elif elementName == 'nebRun':
-        xml_conf = qespresso.NebDocument()
+        xml_conf = qexsd.NebDocument()
     elif elementName =='espressoph':
-        xml_conf = qespresso.PhononDocument()
+        xml_conf = qexsd.PhononDocument()
     else:
-        sys.stderr.write("Could not find correct XML in %s, exiting...\n"
-                         % input_fn)
+        sys.stderr.write("Could not find correct XML in %s, exiting...\n" % input_fn)
         sys.exit(1)
 
     root = None

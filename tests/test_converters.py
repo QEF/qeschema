@@ -18,7 +18,7 @@ class InputConversionTestCase(unittest.TestCase):
 
 def make_test_function(xml_file, ref_in_file):
     def test(self):
-        xml_conf = qespresso.PwDocument()
+        xml_conf = qexsd.PwDocument()
         xml_conf.read(xml_file)
         qe_input = xml_conf.get_qe_input().split('\n')
         with open(ref_in_file, 'r') as qe_input_file:
@@ -50,7 +50,7 @@ if __name__ == '__main__':
         pkg_folder = os.path.realpath(rel_path)
 
     sys.path.insert(0, pkg_folder)
-    import qespresso
+    import qexsd
 
     test_files = glob.glob(os.path.join(rel_path, "examples/*/*.xml"))
     for xml_filename in test_files:

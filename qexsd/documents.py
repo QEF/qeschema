@@ -17,7 +17,7 @@ from .converters import PwInputConverter, PhononInputConverter, NebInputConverte
 from .exceptions import ConfigError
 from .utils import etree_iter_path
 
-logger = logging.getLogger('qespresso')
+logger = logging.getLogger('qexsd')
 
 
 class XmlDocument(object):
@@ -323,7 +323,7 @@ class PwDocument(QeDocument):
     def __init__(self):
         self._input_tag = 'input'
         super(PwDocument, self).__init__(
-            xsd_file='%s/scheme/qes.xsd' % os.path.dirname(os.path.abspath(__file__)),
+            xsd_file='%s/schemas/qes.xsd' % os.path.dirname(os.path.abspath(__file__)),
             input_builder=PwInputConverter
         )
 
@@ -338,7 +338,7 @@ class PhononDocument(QeDocument):
     def __init__(self):
         self._input_tag = 'input'
         super(PhononDocument, self).__init__(
-            xsd_file='%s/scheme/ph_temp.xsd' % os.path.dirname(os.path.abspath(__file__)),
+            xsd_file='%s/schemas/ph_temp.xsd' % os.path.dirname(os.path.abspath(__file__)),
             input_builder=PhononInputConverter
         )
 
@@ -361,7 +361,7 @@ class NebDocument(QeDocument):
     def __init__(self):
         self._input_tag = 'input'
         super(NebDocument, self).__init__(
-            xsd_file='%s/scheme/qes_neb_temp.xsd' % os.path.dirname(os.path.abspath(__file__)),
+            xsd_file='%s/schemas/qes_neb_temp.xsd' % os.path.dirname(os.path.abspath(__file__)),
             input_builder=NebInputConverter
         )
 

@@ -1,8 +1,10 @@
 *.pyc
 *.pyo
-*.f90
 *~
 *.swp
+.tox/
+*.egg-info
 .idea/
-qespresso/xmlschema
-forgen.py
+.project
+dist/
+build/

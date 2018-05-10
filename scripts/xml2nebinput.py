@@ -44,12 +44,12 @@ if __name__ == '__main__':
         from os import path
         sys.path.append(path.dirname(path.dirname(path.dirname(path.abspath(__file__)))))
 
-    import qespresso
+    import qexsd
     import os
 
-    qespresso.set_logger(args.verbosity)
+    qexsd.set_logger(args.verbosity)
 
-    xml_conf = qespresso.NebDocument()
+    xml_conf = qexsd.NebDocument()
     input_fn = getattr(args, 'in')
     xml_conf.read(input_fn)
     neb_in = xml_conf.get_qe_input()

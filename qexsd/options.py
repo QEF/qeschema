@@ -13,7 +13,7 @@ Conversion functions for Quantum Espresso input options.
 import logging
 from .exceptions import ConfigError
 
-logger = logging.getLogger('qespresso')
+logger = logging.getLogger('qexsd')
 
 
 #

@@ -8,13 +8,10 @@ and Optimization).
 Requirements
 ------------
 
-* Python_ 2.7-3.5
-
-Optional (for schema validation):
-
-* lxml_ (additional Python library for processing XML amd HTML documents)
+* Python_ 2.7-3.7
+* xmlschema_ (Python library for processing XML Schema based documents)
 
 .. _Python: http://www.python.org/
-.. _lxml: http://lxml.de
+.. _xmlschema: https://github.com/brunato/xmlschema
 
 

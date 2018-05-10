@@ -15,11 +15,10 @@ from .converters import RawInputConverter, PwInputConverter, PhononInputConverte
 from .exceptions import ConfigError
 from .utils import set_logger
 
-logger = logging.getLogger('qespresso')
+logger = logging.getLogger('qexsd')
 set_logger(1)
 
 __all__ = [
-    'set_logger', 'ConfigError',
-    'QeDocument', 'PWConfiguration', 'PhononDocument',
+    'set_logger', 'ConfigError', 'QeDocument', 'PhononDocument',
     'RawInputConverter', 'PwInputConverter', 'PhononInputConverter'
 ]

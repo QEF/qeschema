@@ -18,7 +18,7 @@ import os.path
 from .utils import BiunivocalMap
 from . import cards, options
 
-logger = logging.getLogger('qespresso')
+logger = logging.getLogger('qexsd')
 
 def conversion_maps_builder(template_map):
     """
