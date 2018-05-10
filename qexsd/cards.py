@@ -37,10 +37,10 @@ def get_atomic_species_card(name, **kwargs):
 
     lines = [name]
     try:
-        lines.append(' {0} {1} {2}'.format(species['name'], species['mass'], species['pseudo_file']))
+        lines.append(' {0} {1} {2}'.format(species['@name'], species['mass'], species['pseudo_file']))
     except TypeError:
         for specie in species:
-            lines.append(' {0} {1} {2}'.format(specie['name'], specie['mass'], specie['pseudo_file']))
+            lines.append(' {0} {1} {2}'.format(specie['@name'], specie['mass'], specie['pseudo_file']))
     return lines
 
 
@@ -91,12 +91,10 @@ def get_atomic_positions_cell_card(name, **kwargs):
     # Add atomic positions
     lines = ['%s %s' % (name, 'crystal_sg' if is_wyckoff else 'bohr')]
     for k in range(len(atoms)):
-        line = '{:4}'.format( atoms[k]['name'] )
-        line += ' {:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k]['_text'])
-        #coords = ' '.join([str(value) for value in atoms[k]['_text']])
+        line = '{:4}'.format( atoms[k]['@name'] )
+        line += ' {:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k]['$'])
 
         if free_positions:
-            #free_pos = ' '.join([str(value) for value in free_positions[k]])
             line += ' {:4d}{:4d}{:4d}'.format(*map(int, free_positions[k]))
 
         lines.append(line)
@@ -170,8 +168,8 @@ def get_k_points_card(name, **kwargs):
         lines.append(' %d' % nk)
         for point in k_point:
             lines.append(' {0} {1}'.format(
-                ' '.join([str(value) for value in point['_text']]),
-                point['weight'])
+                ' '.join([str(value) for value in point['$']]),
+                point['@weight'])
             )
     elif k_attrib == 'automatic':
         lines.append(' %(nk1)s %(nk2)s %(nk3)s %(k1)s %(k2)s %(k3)s' % monkhorst_pack)
@@ -268,12 +266,13 @@ def get_qpoints_card(name, **kwargs):
         try:
             nqs = kwargs['nqs']
         except KeyError:
-            raise RuntimeWarning("qplot was set to true in input but no value for nqs was provided assumint nqs = 1")
             nqs = 1
+            raise RuntimeWarning("qplot was set to true in input but no value for nqs was provided assumint nqs = 1")
+
         lines.append('{:4d}'.format(nqs))
         q_points_list = kwargs['q_points_list']['q_point']
         for q_point in q_points_list:
-            vector = ' '.join([str(coord) for coord in q_point['_text']])
+            vector = ' '.join([str(coord) for coord in q_point['$']])
             lines.append(' %s %s' % (vector, q_point['weight']))
     return lines
 
@@ -336,7 +335,7 @@ def get_neb_images_positions_card(name, **kwargs):
     lines.append ('%s { %s }' % ('ATOMIC_POSITIONS', 'bohr') )
     for k in range(len(atoms)):
         sp_name = '{:4}'.format(atoms[k]['name'])
-        coords = '{:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k]['_text'])
+        coords = '{:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k]['$'])
         if k < len(free_positions):
             free_pos = '{:4d}{:4d}{:4d}'.format(*[int(value) for value in free_positions[k]])
             lines.append('%s %s %s' % (sp_name, coords, free_pos))
@@ -352,7 +351,7 @@ def get_neb_images_positions_card(name, **kwargs):
         lines.append('%s { %s }'% ('ATOMIC_POSITIONS','bohr') )
         for k in range(len(atoms)):
             sp_name = '{:4}'.format(atoms[k]['name'])
-            coords = '{:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k]['_text'])
+            coords = '{:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k]['$'])
             if k < len(free_positions):
                 free_pos = '{:4d}{:4d}{:4d}'.format(*[int(value) for value in free_positions[k]])
                 lines.append('%s %s %s' % (sp_name, coords, free_pos))
@@ -365,7 +364,7 @@ def get_neb_images_positions_card(name, **kwargs):
     lines.append('%s { %s }'%('ATOMIC_POSITIONS', 'bohr') )
     for k in range(len(atoms)):
         sp_name = '{:4}'.format(atoms[k]['name'])
-        coords = '{:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k]['_text'])
+        coords = '{:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k]['$'])
         if k < len(free_positions):
             free_pos = '{:4d}{:4d}{:4d}'.format(*[int(value) for value in free_positions[k]])
             lines.append('%s %s %s' % (sp_name, coords, free_pos))

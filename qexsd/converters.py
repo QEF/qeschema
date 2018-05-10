@@ -177,13 +177,12 @@ class RawInputConverter(Container):
                              "one element! {0}".format(node_dict))
         logger.debug("Set input with path '{0}' and node dict '{1}'".format(path, node_dict))
         _path, _, keyword = path.rpartition('/')
-
         value = node_dict[tag]
         if isinstance(value, dict) and keyword != tag:
             try:
                 value = value[keyword]
             except KeyError:
-                if keyword == '_text':
+                if keyword == '$':
                     value = node_dict[tag]
                 else:
                     raise ValueError(
@@ -328,8 +327,8 @@ class PwInputConverter(RawInputConverter):
         },
         # Card ATOMIC species with attributes
         'atomic_species': {
-            'ntyp': 'SYSTEM[ntyp]',
-            '_text': [
+            '@ntyp': 'SYSTEM[ntyp]',
+            '$': [
                 ("ATOMIC_SPECIES", cards.get_atomic_species_card, None),
                 ('SYSTEM[Hubbard_U]',),
                 ('SYSTEM[Hubbard_J0]',),
@@ -341,8 +340,8 @@ class PwInputConverter(RawInputConverter):
             ]
         },
         'atomic_structure': {
-            'nat': 'SYSTEM[nat]',
-            '_text': [
+            '@nat': 'SYSTEM[nat]',
+            '$': [
                 ('SYSTEM[ibrav]', options.set_ibrav_to_zero, None),
                 ("ATOMIC_POSITIONS", cards.get_atomic_positions_cell_card, None),
                 ("CELL_PARAMETERS", cards.get_cell_parameters_card, None)
@@ -353,9 +352,9 @@ class PwInputConverter(RawInputConverter):
             'functional': "SYSTEM[input_dft]",
             'hybrid': {
                 'qpoint_grid': {
-                    'nqx1': 'SYSTEM[nqx1]',
-                    'nqx2': 'SYSTEM[nqx2]',
-                    'nqx3': 'SYSTEM[nqx3]'
+                    '@nqx1': 'SYSTEM[nqx1]',
+                    '@nqx2': 'SYSTEM[nqx2]',
+                    '@nqx3': 'SYSTEM[nqx3]'
                 },
                 'ecutfock': ('SYSTEM[ecutfock]', options.Ha2Ry, None),
                 'exx_fraction': 'SYSTEM[exx_fraction]',
@@ -367,22 +366,22 @@ class PwInputConverter(RawInputConverter):
             'dftU': {
                 'lda_plus_u_kind': 'SYSTEM[lda_plus_u_kind]',
                 'Hubbard_U': {
-                    '_text': ('SYSTEM[Hubbard_U]', options.get_specie_related_values, None),
+                    '$': ('SYSTEM[Hubbard_U]', options.get_specie_related_values, None),
                 },
                 'Hubbard_J0': {
-                    '_text': ('SYSTEM[Hubbard_J0]', options.get_specie_related_values, None),
+                    '$': ('SYSTEM[Hubbard_J0]', options.get_specie_related_values, None),
                 },
                 'Hubbard_alpha': {
-                    '_text': ('SYSTEM[Hubbard_alpha]', options.get_specie_related_values, None),
+                    '$': ('SYSTEM[Hubbard_alpha]', options.get_specie_related_values, None),
                 },
                 'Hubbard_beta': {
-                    '_text': ('SYSTEM[Hubbard_beta]', options.get_specie_related_values, None),
+                    '$': ('SYSTEM[Hubbard_beta]', options.get_specie_related_values, None),
                 },
                 'Hubbard_J': {
-                    '_text': ('SYSTEM[Hubbard_J]', options.get_specie_related_values, None),
+                    '$': ('SYSTEM[Hubbard_J]', options.get_specie_related_values, None),
                 },
                 'starting_ns': {
-                    '_text': ('SYSTEM[starting_ns_eigenvalue]', options.get_specie_related_values, None),
+                    '$': ('SYSTEM[starting_ns_eigenvalue]', options.get_specie_related_values, None),
                 },
                 'U_projection_type': 'SYSTEM[U_projection_type]',
             },
@@ -395,7 +394,7 @@ class PwInputConverter(RawInputConverter):
                 'xdm_a1': 'SYSTEM[xdm_a1]',
                 'xdm_a2': 'SYSTEM[xdm_a2]',
                 'london_c6': {
-                    '_text': ('SYSTEM[london_c6]', options.get_specie_related_values, None),
+                    '$': ('SYSTEM[london_c6]', options.get_specie_related_values, None),
                 }
             }
         },
@@ -410,13 +409,13 @@ class PwInputConverter(RawInputConverter):
         'bands': {
             'nbnd': "SYSTEM[nbnd]",
             'smearing': {
-                '_text': "SYSTEM[smearing]",
+                '$': "SYSTEM[smearing]",
                 'degauss': "SYSTEM[degauss]"
             },
             'tot_charge': "SYSTEM[tot_charge]",
             'tot_magnetization': "SYSTEM[tot_magnetization]",
             'occupations': {
-                '_text': "SYSTEM[occupations]"
+                '$': "SYSTEM[occupations]"
             }
         },
         'basis': {
@@ -606,7 +605,7 @@ class PhononInputConverter(RawInputConverter):
             'q_in_band_form': "INPUTPH[q_in_band_form]"
         },
         'miscellanea': {
-            'amass':{'_text':("INPUTPH[amass]",options.setOneAmassLine, None)},
+            'amass':{'$':("INPUTPH[amass]",options.setOneAmassLine, None)},
             'verbosity': "INPUTPH[verbosity]",
             'reduce_io': "INPUTPH[reduce_io]",
             'low_directory_check': "INPUTPH[low_directory_check]",
@@ -706,14 +705,13 @@ class NebInputConverter(RawInputConverter):
         engine_template_map = copy.deepcopy(PwInputConverter.PW_TEMPLATE_MAP)
         engine_template_map['atomic_structure'] = {
             'nat': ("SYSTEM[nat]", options.neb_set_system_nat, None),
-            '_text': [
+            '$': [
                 ('SYSTEM[ibrav]', options.set_ibrav_to_zero, None),
                 ("CELL_PARAMETERS", cards.get_neb_cell_parameters_card, None),
                 ("ATOMIC_POSITIONS", cards.get_neb_images_positions_card, None)
             ],
             'atomic_positions': ('ATOMIC_FORCES', cards.get_atomic_forces_card, None)
         }
-        # engine_template_map['_text'] = ("ATOMIC_POSITIONS", cards.get_neb_images_positions_card,None )
         self.NEB_TEMPLATE_MAP.update({'engine': engine_template_map})
         super(NebInputConverter, self).__init__(
             *conversion_maps_builder(self.NEB_TEMPLATE_MAP),

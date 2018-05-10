@@ -123,7 +123,7 @@ def get_system_nspin(name, **kwargs):
 
 
 def set_ibrav_to_zero(name, **kwargs):
-    line = '  ibrav = 0'
+    line = ' ibrav=0'
     return [line]
 
 

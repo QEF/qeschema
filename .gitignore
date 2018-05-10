@@ -2,6 +2,7 @@
 *.pyo
 *~
 *.swp
+*.in
 .tox/
 *.egg-info
 .idea/

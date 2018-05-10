@@ -234,8 +234,9 @@ class QeDocument(XmlDocument):
         with open(filename, mode='w+') as f:
             f.write(self.get_qe_input())
 
-    def get_input_path(self):
-        raise NotImplemented("This is an abstract implementation, use a subclass!")
+    @property
+    def input_tag(self):
+        return 'input'
 
     def get_qe_input(self, use_defaults=True):
         if self._document is None:
@@ -243,28 +244,35 @@ class QeDocument(XmlDocument):
 
         qe_input = self.input_builder(xml_file=self._config_file)
         schema = self.schema
-        input_path = self.get_input_path()
+        input_path = '//%s' % self.input_tag
         input_root = self.find(input_path)
 
         # Extract values from input's subtree of the XML document
         for elem, path in etree_iter_path(input_root, path=input_path):
             rel_path = path.replace(input_path, '.')
             xsd_element = schema.find(path)
-            # node_dict = etree_node_to_dict(elem, schema, root_path=path, use_defaults=use_defaults)
-            node_dict = xsd_element.decode(elem, use_defaults=use_defaults)
+            if xsd_element is None:
+                logger.error("%r doesn't match any element!" % path)
+                continue
+            else:
+                value = xsd_element.decode(elem, use_defaults=use_defaults)
+                if isinstance(value, str):
+                    value = value.strip()
+                node_dict = {elem.tag: value}
+
             logger.debug("Add input for node '{0}' with dict '{1}'".format(elem.tag, node_dict))
 
             # Convert attributes
             for attr_name, value in elem.attrib.items():
                 logger.debug("Convert attribute '%s' of element '%s'" % (attr_name, path))
-                path_key = '%s/%s' % (rel_path, attr_name)
+                path_key = '%s/@%s' % (rel_path, attr_name)
                 if path_key not in qe_input:
                     logger.debug("Attribute's path '%s' not in converter!" % path_key)
                     continue
                 qe_input.set_path(path_key, elem.tag, node_dict)
 
             logger.debug("Convert element '%s'" % path)
-            path_key = '%s/_text' % rel_path if schema.get_attributes(path) else rel_path
+            path_key = '%s/$' % rel_path if xsd_element.attributes else rel_path
             if path_key not in qe_input:
                 logger.debug("Element's path '%s' not in converter!" % path_key)
                 continue
@@ -297,7 +305,7 @@ class QeDocument(XmlDocument):
 
                 default_value = schema.get_element_default(path)
                 if default_value is not None:
-                    path_key = '%s/_text' % rel_path if xsd_attributes else rel_path
+                    path_key = '%s/$' % rel_path if xsd_attributes else rel_path
                     xsd_type = schema.get_element_type(path)
                     value = xsd_type.decode(default_value)
                     defaults_dict[path_key.rsplit("/")[-1]] = value
@@ -307,13 +315,6 @@ class QeDocument(XmlDocument):
                     qe_input.set_path(path_key, tag, defaults_dict)
 
         return qe_input.get_qe_input()
-
-    def load_fortran_input(self, filename):
-        if self._document is None:
-            raise ConfigError("Configuration not loaded!")
-
-        # fortran_input = self.input_builder()
-        return None
 
 
 class PwDocument(QeDocument):
@@ -327,9 +328,6 @@ class PwDocument(QeDocument):
             input_builder=PwInputConverter
         )
 
-    def get_input_path(self):
-        return './input'
-
 
 class PhononDocument(QeDocument):
     """
@@ -342,8 +340,9 @@ class PhononDocument(QeDocument):
             input_builder=PhononInputConverter
         )
 
-    def get_input_path(self):
-        return './inputPH'
+    @property
+    def input_tag(self):
+        return 'inputPH'
 
     def get_qe_input(self, use_defaults=False):
         """
@@ -364,6 +363,3 @@ class NebDocument(QeDocument):
             xsd_file='%s/schemas/qes_neb_temp.xsd' % os.path.dirname(os.path.abspath(__file__)),
             input_builder=NebInputConverter
         )
-
-    def get_input_path(self):
-        return './input'
