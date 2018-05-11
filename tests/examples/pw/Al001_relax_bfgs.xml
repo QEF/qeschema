@@ -204,7 +204,7 @@ none
           false
       </use_all_frac>
     </symmetry_flags>
-    <free_positions>
+    <free_positions rank="2" dims="3 7">
         1 1 1
         1 1 1
         1 1 1

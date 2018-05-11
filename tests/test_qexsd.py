@@ -84,7 +84,6 @@ if __name__ == '__main__':
         if not os.path.isfile(qe_input_filename):
             continue
         test_func = make_test_function(xml_filename, qe_input_filename)
-        #test_name = os.path.basename(xml_filename[:-4])
         test_name = os.path.relpath(xml_filename)
         klassname = 'Test_{0}'.format(test_name)
         globals()[klassname] = type(
