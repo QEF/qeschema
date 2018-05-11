@@ -38,7 +38,7 @@ if __name__ == '__main__':
         sys.exit(1)
 
     args = parse_args()
-    print(args)
+    print("Create Fortran input from XML file %r ...\n" % getattr(args, 'in'))
 
     if __package__ is None:
         from os import path
