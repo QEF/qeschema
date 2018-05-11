@@ -333,6 +333,7 @@ Authors: Paolo Giannozzi, Pietro Delugas
     <sequence>
       <choice minOccurs="1" maxOccurs="1">
          <element type="neb:atomic_positionsType" name="atomic_positions" minOccurs="0"  />
+          <element type="neb:atomic_positionsType" name="crystal_positions" minOccurs="0"/>
          <element type="neb:wyckoff_positionsType" name="wyckoff_positions" minOccurs="0" />
       </choice>
       <element type="neb:cellType" name="cell"/>
@@ -391,6 +392,7 @@ Authors: Paolo Giannozzi, Pietro Delugas
     <enumeration value="SOGGA"/>
     <enumeration value="EV93"/>
     <enumeration value="B3LYP"/>
+    <enumeration value="GauPBE"/>
     <enumeration value="PBE0"/>
     <enumeration value="HSE"/>
     <enumeration value="VDW-DF"/>
@@ -1012,12 +1014,20 @@ Authors: Paolo Giannozzi, Pietro Delugas
     </simpleType>
     <complexType name="matrixType">
         <simpleContent>
-            <extension base="neb:doubleListType" />
+            <extension base="neb:doubleListType">
+                <attribute name="rank" type="integer" use="optional"/>
+                <attribute name="dims" type="neb:integerListType" use="optional"/>
+                <attribute name="order" type="string" use="optional"/>
+            </extension>
         </simpleContent>
     </complexType>
     <complexType name="integerMatrixType">
         <simpleContent>
-            <extension base="neb:integerListType"/>
+            <extension base="neb:integerListType">
+                <attribute name="order" type="string" use="optional"/>
+                <attribute name="dims" type="neb:integerListType" use="optional"/>
+                <attribute name="rank" type="integer" use="optional"/>
+            </extension>
         </simpleContent>
     </complexType>
     <complexType name="scalarQuantityType">

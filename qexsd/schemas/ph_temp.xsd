@@ -563,6 +563,8 @@ Created by Mauro Palumbo
                      minOccurs="0" />
             <element type="qes_ph:wyckoff_positionsType" name="wyckoff_positions"
                      minOccurs="0" />
+            <element type="qes_ph:atomic_positionsType" name="crystal_positions"
+                     minOccurs="0" />
             <element type="qes_ph:cellType" name="cell"/>
         </sequence>
         <attribute type="positiveInteger" name="nat" use="optional"/>
