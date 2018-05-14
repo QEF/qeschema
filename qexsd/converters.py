@@ -512,7 +512,9 @@ class PwInputConverter(RawInputConverter):
             'q2sigma': "SYSTEM[q2sigma]"
         },
         'external_atomic_forces': ('ATOMIC_FORCES', cards.get_atomic_forces_card, None),
-        'free_positions': [("ATOMIC_POSITIONS",), ("CELL_PARAMETERS",)],
+        'free_positions':{
+            '$': [("ATOMIC_POSITIONS", cards.get_atomic_positions_cell_card, None),
+                            ("CELL_PARAMETERS",)]},
         'electric_field': {
             'electric_potential': [
                 ("CONTROL[tefield]", options.get_electric_potential_related),

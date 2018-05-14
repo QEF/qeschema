@@ -42,7 +42,7 @@ if __name__ == '__main__':
 
     if __package__ is None:
         from os import path
-        sys.path.append(path.dirname(path.dirname(path.dirname(path.abspath(__file__)))))
+        sys.path.append(path.abspath(path.dirname(__file__)+'/../'))
 
     import qexsd
     import os

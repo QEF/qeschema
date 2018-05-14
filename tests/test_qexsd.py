@@ -56,8 +56,8 @@ class ConverterTestCase(unittest.TestCase):
         xml_filename = os.path.join(self.test_dir, 'examples/pw/script_test_case.xml')
         in_filename = xml_filename[:-4] + '.in'
         if os.path.isfile(in_filename):
-            print("Removing existing .in file %r ..." % in_filename)
-        os.system('xml2qeinput.py -in %s' % xml_filename)
+            print("Removing existing .in file %r ..." % in_filename) 
+        os.system('../scripts/xml2qeinput.py -in %s' % xeml_filename)
         self.assertTrue(os.path.isfile(in_filename), 'Test file .in missing!')
 
 

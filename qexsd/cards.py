@@ -78,14 +78,16 @@ def get_atomic_positions_cell_card(name, **kwargs):
             atoms = [atoms]
 
     # Check atoms with position constraints
-    free_positions = kwargs.get('free_positions', [])
+    free_positions = kwargs.get('free_positions')
+    if free_positions: free_positions=free_positions.get('$',[])
 
     if free_positions:
         # Cover the case when free positions are provided for only one atom
-        if type(free_positions[0]) not in (list, tuple):
+        if type(free_positions )  not in (list, tuple):
             free_positions = [free_positions]
 
-        if len(free_positions) != len(atoms):
+
+        if len(free_positions) != 3 * len(atoms):
             logger.error("ATOMIC_POSITIONS: incorrect number of position constraints!")
 
     # Add atomic positions
@@ -94,9 +96,8 @@ def get_atomic_positions_cell_card(name, **kwargs):
         line = '{:4}'.format( atoms[k]['@name'] )
         line += ' {:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k]['$'])
 
-        if free_positions:
-            line += ' {:4d}{:4d}{:4d}'.format(*map(int, free_positions[k]))
-
+        if free_positions and free_positions[3*k]+free_positions[3*k+1]+free_positions[3*k+2] != 3:
+            line += ' {:4d}{:4d}{:4d}'.format(*map(int, free_positions[3*k:3*k+3]))
         lines.append(line)
 
     return lines
@@ -172,7 +173,7 @@ def get_k_points_card(name, **kwargs):
                 point['@weight'])
             )
     elif k_attrib == 'automatic':
-        lines.append(' %(nk1)s %(nk2)s %(nk3)s %(k1)s %(k2)s %(k3)s' % monkhorst_pack)
+        lines.append(' %(@nk1)s %(@nk2)s %(@nk3)s %(@k1)s %(@k2)s %(@k3)s' % monkhorst_pack)
 
     return lines
 
