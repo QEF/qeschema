@@ -1,8 +1,6 @@
 &CONTROL
  calculation='scf'
- dipfield=.false.
  disk_io='low'
- dt=20.0
  etot_conv_thr=0.0001
  forc_conv_thr=0.001
  input_xml_schema_file='Fe_noncolin.xml'
@@ -50,6 +48,8 @@
  mixing_beta=0.2
  mixing_mode='plain'
  mixing_ndim=8
+ tbeta_smoothing=.false.
+ tq_smoothing=.false.
  tqr=.false.
 /
 &IONS
@@ -60,13 +60,14 @@
 &CELL
  cell_dynamics='none'
  cell_factor=0.0
+ press=0.0
  press_conv_thr=0.5
  wmass=50901.43
 /
 ATOMIC_SPECIES
  Fe 55.847 Fe.pz-nd-rrkjus.UPF
 ATOMIC_POSITIONS bohr
- Fe 0.0 0.0 0.0
+Fe     0.00000000    0.00000000    0.00000000
 K_POINTS
  11
  0.0625 0.0625 0.0625 1.0
@@ -81,6 +82,6 @@ K_POINTS
  0.0625 0.1875 0.3125 6.0
  0.0625 0.1875 0.4375 6.0
 CELL_PARAMETERS bohr
- 0.5 0.5 0.5
- -0.5 0.5 0.5
- -0.5 -0.5 0.5
+  0.50000000   0.50000000   0.50000000 
+ -0.50000000   0.50000000   0.50000000 
+ -0.50000000  -0.50000000   0.50000000 

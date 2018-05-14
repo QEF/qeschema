@@ -1,8 +1,6 @@
 &CONTROL
  calculation='bands'
- dipfield=.false.
  disk_io='low'
- dt=20.0
  etot_conv_thr=0.0001
  forc_conv_thr=0.001
  input_xml_schema_file='Al_bands.xml'
@@ -33,6 +31,7 @@
  nosym_evc=.false.
  nspin=1
  ntyp=1
+ occupations='fixed'
  starting_magnetization(1)=0.0
  use_all_frac=.false.
 /
@@ -46,6 +45,8 @@
  mixing_beta=0.7
  mixing_mode='plain'
  mixing_ndim=8
+ tbeta_smoothing=.false.
+ tq_smoothing=.false.
  tqr=.false.
 /
 &IONS
@@ -56,13 +57,14 @@
 &CELL
  cell_dynamics='none'
  cell_factor=0.0
+ press=0.0
  press_conv_thr=0.5
  wmass=24590.77
 /
 ATOMIC_SPECIES
  Al 26.98 Al.pz-vbc.UPF
 ATOMIC_POSITIONS bohr
- Al 0.0 0.0 0.0
+Al     0.00000000    0.00000000    0.00000000
 K_POINTS
  28
  0.0 0.0 0.0 1.0
@@ -94,6 +96,6 @@ K_POINTS
  0.4 0.4 0.4 1.0
  0.5 0.5 0.5 1.0
 CELL_PARAMETERS bohr
- -0.5 0.0 0.5
- 0.0 0.5 0.5
- -0.5 0.5 0.0
+ -0.50000000   0.00000000   0.50000000 
+  0.00000000   0.50000000   0.50000000 
+ -0.50000000   0.50000000   0.00000000 

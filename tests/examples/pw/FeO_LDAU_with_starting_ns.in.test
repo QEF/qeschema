@@ -1,8 +1,6 @@
 &CONTROL
  calculation='scf'
- dipfield=.false.
  disk_io='low'
- dt=20.0
  etot_conv_thr=0.0001
  forc_conv_thr=0.001
  input_xml_schema_file='FeO_LDAU_with_starting_ns.xml'
@@ -12,7 +10,7 @@
  prefix='pwscf'
  pseudo_dir='/u/cm/pdelugas/espresso/pseudo/'
  restart_mode='from_scratch'
- title=''
+ title='uffa'
  tprnfor=.false.
  tstress=.false.
  verbosity='low'
@@ -59,6 +57,8 @@
  mixing_beta=0.3
  mixing_mode='plain'
  mixing_ndim=8
+ tbeta_smoothing=.false.
+ tq_smoothing=.false.
  tqr=.false.
 /
 &IONS
@@ -69,6 +69,7 @@
 &CELL
  cell_dynamics='none'
  cell_factor=0.0
+ press=0.0
  press_conv_thr=0.5
  wmass=3645.777
 /
@@ -77,13 +78,13 @@ ATOMIC_SPECIES
  Fe1 1.0 Fe.pz-nd-rrkjus.UPF
  Fe2 1.0 Fe.pz-nd-rrkjus.UPF
 ATOMIC_POSITIONS bohr
- O1 4.095 4.095 4.095
- O1 12.285 12.285 12.285
- Fe1 0.0 0.0 0.0
- Fe2 8.19 8.19 8.19
+O1     4.09500000    4.09500000    4.09500000
+O1    12.28500000   12.28500000   12.28500000
+Fe1    0.00000000    0.00000000    0.00000000
+Fe2    8.19000000    8.19000000    8.19000000
 K_POINTS automatic
  2 2 2 0 0 0
 CELL_PARAMETERS bohr
- 4.095 4.095 8.19
- 4.095 8.19 4.095
- 8.19 4.095 4.095
+  4.09500000   4.09500000   8.19000000 
+  4.09500000   8.19000000   4.09500000 
+  8.19000000   4.09500000   4.09500000 

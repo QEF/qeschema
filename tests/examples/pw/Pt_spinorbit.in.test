@@ -17,6 +17,7 @@
  wf_collect=.false.
 /
 &SYSTEM
+ degauss=0.02
  ecutrho=250.0
  ecutwfc=30.0
  force_symmorphic=.false.

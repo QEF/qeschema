@@ -1,8 +1,6 @@
 &CONTROL
  calculation='relax'
- dipfield=.false.
  disk_io='low'
- dt=20.0
  etot_conv_thr=0.0001
  forc_conv_thr=0.001
  input_xml_schema_file='CO_bgfs_relax.xml'
@@ -49,6 +47,8 @@
  mixing_beta=0.7
  mixing_mode='plain'
  mixing_ndim=8
+ tbeta_smoothing=.false.
+ tq_smoothing=.false.
  tqr=.false.
 /
 &IONS
@@ -66,6 +66,7 @@
 &CELL
  cell_dynamics='none'
  cell_factor=0.0
+ press=0.0
  press_conv_thr=0.5
  wmass=1822.888
 /
@@ -73,12 +74,10 @@ ATOMIC_SPECIES
  O 1.0 O.pz-rrkjus.UPF
  C 1.0 C.pz-rrkjus.UPF
 ATOMIC_POSITIONS bohr
- C 0.188 0.0 0.0 1 1 1
- O 0.0 0.0 0.0 0 0 0
-K_POINTS
- 1
- 0.0 0.0 0.0 1.0
+C      0.18800000    0.00000000    0.00000000
+O      0.00000000    0.00000000    0.00000000    0   0   0
+K_POINTS gamma
 CELL_PARAMETERS bohr
- 1.0 0.0 0.0
- 0.0 1.0 0.0
- 0.0 0.0 1.0
+  1.00000000   0.00000000   0.00000000 
+  0.00000000   1.00000000   0.00000000 
+  0.00000000   0.00000000   1.00000000 

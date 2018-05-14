@@ -1,8 +1,6 @@
 &CONTROL
  calculation='scf'
- dipfield=.false.
  disk_io='low'
- dt=20.0
  etot_conv_thr=0.0001
  forc_conv_thr=0.001
  input_xml_schema_file='PbTiO3_scf.xml'
@@ -50,6 +48,8 @@
  mixing_beta=0.3
  mixing_mode='plain'
  mixing_ndim=8
+ tbeta_smoothing=.false.
+ tq_smoothing=.false.
  tqr=.false.
 /
 &IONS
@@ -60,6 +60,7 @@
 &CELL
  cell_dynamics='none'
  cell_factor=0.0
+ press=0.0
  press_conv_thr=0.5
  wmass=276227.0
 /
@@ -68,14 +69,14 @@ ATOMIC_SPECIES
  Ti 47.867 Ti.pz-sp-van_ak.UPF
  O 15.9994 O.pz-van_ak.UPF
 ATOMIC_POSITIONS bohr
- Pb 0.0 0.0 0.001356871
- Ti 0.06784353 0.06784353 0.06784353
- O 0.0 0.06784353 0.06784353
- O 0.06784353 0.06784353 0.0
- O 0.06784353 0.0 0.06784353
+Pb     0.00000000    0.00000000    0.00135687
+Ti     0.06784353    0.06784353    0.06784353
+O      0.00000000    0.06784353    0.06784353
+O      0.06784353    0.06784353    0.00000000
+O      0.06784353    0.00000000    0.06784353
 K_POINTS automatic
  4 4 4 1 1 1
 CELL_PARAMETERS bohr
- 1.0 0.0 0.0
- 0.0 1.0 0.0
- 0.0 0.0 1.0
+  1.00000000   0.00000000   0.00000000 
+  0.00000000   1.00000000   0.00000000 
+  0.00000000   0.00000000   1.00000000 

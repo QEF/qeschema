@@ -1,8 +1,6 @@
 &CONTROL
  calculation='scf'
- dipfield=.false.
  disk_io='low'
- dt=20.0
  etot_conv_thr=0.0001
  forc_conv_thr=0.001
  input_xml_schema_file='FeO_LDAU_with_no_U.xml'
@@ -23,6 +21,8 @@
  ecutrho=240.0
  ecutwfc=30.0
  force_symmorphic=.false.
+ Hubbard_U(2)=7.349865e-10
+ Hubbard_U(3)=7.349865e-10
  ibrav=0
  input_dft='PZ'
  lda_plus_u_kind=0
@@ -55,6 +55,8 @@
  mixing_beta=0.3
  mixing_mode='plain'
  mixing_ndim=8
+ tbeta_smoothing=.false.
+ tq_smoothing=.false.
  tqr=.false.
 /
 &IONS
@@ -65,6 +67,7 @@
 &CELL
  cell_dynamics='none'
  cell_factor=0.0
+ press=0.0
  press_conv_thr=0.5
  wmass=3645.777
 /
@@ -73,13 +76,13 @@ ATOMIC_SPECIES
  Fe1 1.0 Fe.pz-nd-rrkjus.UPF
  Fe2 1.0 Fe.pz-nd-rrkjus.UPF
 ATOMIC_POSITIONS bohr
- O1 0.5 0.5 0.5
- O1 1.5 1.5 1.5
- Fe1 0.0 0.0 0.0
- Fe2 1.0 1.0 1.0
+O1     0.50000000    0.50000000    0.50000000
+O1     1.50000000    1.50000000    1.50000000
+Fe1    0.00000000    0.00000000    0.00000000
+Fe2    1.00000000    1.00000000    1.00000000
 K_POINTS automatic
  2 2 2 0 0 0
 CELL_PARAMETERS bohr
- 0.5 0.5 1.0
- 0.5 1.0 0.5
- 1.0 0.5 0.5
+  0.50000000   0.50000000   1.00000000 
+  0.50000000   1.00000000   0.50000000 
+  1.00000000   0.50000000   0.50000000 

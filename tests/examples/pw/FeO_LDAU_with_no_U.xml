@@ -223,13 +223,14 @@ none
     </ion_control>
     <cell_control>
       <cell_dynamics>none</cell_dynamics>
+      <pressure>0.00</pressure>
       <wmass>
        0.3645777E+04
       </wmass>
       <cell_factor>
        0.0000000E+00
       </cell_factor>
-      <free_cell>
+      <free_cell rank="2" dims="3 3">
           1 1 1
           1 1 1
           1 1 1

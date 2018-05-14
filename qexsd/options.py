@@ -43,14 +43,14 @@ def get_specie_related_values(name, **kwargs):
 
     lines = []
     for value in iter(related_data if isinstance(related_data, list) else [related_data]):
-        tag_specie = value['specie']
-        tag_values = value['_text']
+        tag_specie = value['@specie']
+        tag_values = value['$']
         if value.get('label') == 'no Hubbard':
             continue
 
         specie_index = 1
         for specie in species:
-            if specie['name'] == tag_specie:
+            if specie['@name'] == tag_specie:
                 break
             specie_index += 1
         else:

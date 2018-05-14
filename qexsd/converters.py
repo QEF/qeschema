@@ -410,7 +410,7 @@ class PwInputConverter(RawInputConverter):
             'nbnd': "SYSTEM[nbnd]",
             'smearing': {
                 '$': "SYSTEM[smearing]",
-                'degauss': "SYSTEM[degauss]"
+                '@degauss': "SYSTEM[degauss]"
             },
             'tot_charge': "SYSTEM[tot_charge]",
             'tot_magnetization': "SYSTEM[tot_magnetization]",

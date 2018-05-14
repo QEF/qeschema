@@ -181,7 +181,7 @@
       <cell_factor>
        0.0000000E+00
       </cell_factor>
-      <free_cell>
+      <free_cell rank="2" dims="3 3">
           1 1 1
           1 1 1
           1 1 1
@@ -207,7 +207,7 @@
          false
       </use_all_frac>
     </symmetry_flags>
-    <free_positions>
+    <free_positions rank="2" dims="3 2">
           1 1 1
           0 0 0
     </free_positions>

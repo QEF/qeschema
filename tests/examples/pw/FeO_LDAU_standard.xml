@@ -226,7 +226,7 @@
       <cell_factor>
        0.0000000E+00
       </cell_factor>
-      <free_cell>
+      <free_cell dims ="3 3" rank="2" >
           1 1 1
           1 1 1
           1 1 1
