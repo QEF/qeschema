@@ -1,8 +1,6 @@
 &CONTROL
  calculation='scf'
- dipfield=.false.
  disk_io='low'
- dt=20.0
  etot_conv_thr=0.0001
  forc_conv_thr=0.001
  input_xml_schema_file='Pt_spinorbit.xml'
@@ -19,7 +17,6 @@
  wf_collect=.false.
 /
 &SYSTEM
- degauss=0.02
  ecutrho=250.0
  ecutwfc=30.0
  force_symmorphic=.false.
@@ -50,6 +47,8 @@
  mixing_beta=0.7
  mixing_mode='plain'
  mixing_ndim=8
+ tbeta_smoothing=.false.
+ tq_smoothing=.false.
  tqr=.false.
 /
 &IONS
@@ -60,16 +59,17 @@
 &CELL
  cell_dynamics='none'
  cell_factor=0.0
+ press=0.0
  press_conv_thr=0.5
  wmass=177802.7
 /
 ATOMIC_SPECIES
  Pt 0.0 Pt.rel-pz-n-rrkjus.UPF
 ATOMIC_POSITIONS bohr
- Pt 0.0 0.0 0.0
+Pt     0.00000000    0.00000000    0.00000000
 K_POINTS automatic
  4 4 4 1 1 1
 CELL_PARAMETERS bohr
- -0.5 0.0 0.5
- 0.0 0.5 0.5
- -0.5 0.5 0.0
+ -0.50000000   0.00000000   0.50000000 
+  0.00000000   0.50000000   0.50000000 
+ -0.50000000   0.50000000   0.00000000 
