@@ -270,7 +270,7 @@ def neb_set_system_nat(name, **kwargs):
         logger.error('No atomic_structure element found !!!')
         return ''
     image = images[0]
-    nat_value = int(image.get('nat', 0))
+    nat_value = image.get('@nat', 0)
     if nat_value <= 0:
         logger.error("error reading nat value from atomic_structure !!!")
         return ''
@@ -286,12 +286,12 @@ def setOneAmassLine(name,**kwargs):
     lines=[]
     try:
         node  = kwargs['amass']
-        value = float(node['_text'])
-        index = node['atom']
+        value = float(node['$'])
+        index = node['@atom']
         lines.append(' {}({})={:7.3f}'.format(name, index, value))
     except TypeError:
         for node in kwargs['amass']:
-            value = float(node['_text'])
-            index = node['atom']
+            value = float(node['$'])
+            index = node['@atom']
             lines.append(' {}({})={:7.3f}'.format(name, index, value))
     return lines

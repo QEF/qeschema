@@ -1,0 +1,16 @@
+&INPUTPH
+ amass(1)= 26.980
+ amass(2)= 74.920
+ epsil=.true.
+ fildrho='alas.drho'
+ fildyn='alas.dynG'
+ ldisp=.false.
+ outdir='/home/pietro/espresso-svn/tempdir/'
+ prefix='alas'
+ recover=.true.
+ tr2_ph=1e-12
+ trans=.true.
+ zeu=.true.
+ zue=.true.
+/
+0.0000    0.0000    0.0000

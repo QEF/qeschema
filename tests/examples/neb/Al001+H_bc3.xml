@@ -131,7 +131,7 @@
                 <ion_dynamics>bfgs</ion_dynamics>
             </ion_control>
             <cell_control></cell_control>
-            <free_positions>
+            <free_positions dims="3 5" rank="2">
                 0  0  0
                 0  0  0
                 0  0  0

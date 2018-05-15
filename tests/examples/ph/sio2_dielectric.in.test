@@ -1,0 +1,10 @@
+&INPUTPH
+ epsil=.true.
+ fildyn='SiO2_36-2.dynG'
+ prefix='SiO2_OR_36-2'
+ tr2_ph=1e-14
+ trans=.true.
+ zeu=.true.
+ zue=.false.
+/
+0.0000    0.0000    0.0000

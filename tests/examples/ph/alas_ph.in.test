@@ -1,0 +1,13 @@
+&INPUTPH
+ amass(1)= 26.980
+ amass(2)= 74.920
+ epsil=.false.
+ fildyn='alas.dyn'
+ ldisp=.true.
+ outdir='/home/pietro/espresso-svn/tempdir/'
+ prefix='alas'
+ tr2_ph=1e-12
+ trans=.false.
+ zeu=.false.
+ zue=.false.
+/

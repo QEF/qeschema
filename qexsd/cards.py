@@ -274,7 +274,7 @@ def get_qpoints_card(name, **kwargs):
         q_points_list = kwargs['q_points_list']['q_point']
         for q_point in q_points_list:
             vector = ' '.join([str(coord) for coord in q_point['$']])
-            lines.append(' %s %s' % (vector, q_point['weight']))
+            lines.append(' %s %s' % (vector, q_point['@weight']))
     return lines
 
 
@@ -311,11 +311,18 @@ def get_neb_images_positions_card(name, **kwargs):
     if len(images) < 2:
         logger.error("At least the atomic structures for first and last image should be provided")
         return []
-    first_positions = images[0].get('atomic_positions',{})
-    his_nat = int(images[0].get('nat',0) )
-    last_positions  = images[-1].get('atomic_positions',{})
+    first_positions = images[0].get('atomic_positions',
+                                    images[0].get('crystal_positions',
+                                    images[0].get('wyckoff_positions',{})))
+    his_nat = int(images[0].get('@nat',0) )
+    last_positions  = images[-1].get('atomic_positions',
+                                     images[-1].get('crystal_positions',
+                                     images[-1].get('wyckoff_positions',{})))
     if len(kwargs['atomic_structure']) > 2:
-        interm_pos = [ats.get('atomic_positions',{}) for ats in images[1:-1] ]
+        interm_pos = [ats.get('atomic_positions',
+                            ats.get('crystal_positions',
+                            ats.get('wyckoff_positions',{}))) for ats in images[1:-1] ]
+
     else:
         interm_pos = []
 
@@ -329,17 +336,22 @@ def get_neb_images_positions_card(name, **kwargs):
     if my_nat != his_nat:
         logger.error ( "nat provided in first image differs from number of atoms in atomic_positions!!!")
 
-    free_positions = kwargs.get('free_positions', [])
-    if free_positions and len(free_positions) != len(atoms):
-        logger.error("ATOMIC_POSITIONS: incorrect number of position constraints!")
+    free_positions = kwargs.get('free_positions', None)
+    if free_positions:
+        free_positions = free_positions.get('$')
+    else:
+        free_positions=[]
+    if free_positions and len(free_positions) != 3*len(atoms):
+            logger.error("ATOMIC_POSITIONS: incorrect number of position constraints!")
 
     lines.append ('%s { %s }' % ('ATOMIC_POSITIONS', 'bohr') )
     for k in range(len(atoms)):
-        sp_name = '{:4}'.format(atoms[k]['name'])
+        sp_name = '{:4}'.format(atoms[k]['@name'])
         coords = '{:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k]['$'])
         if k < len(free_positions):
-            free_pos = '{:4d}{:4d}{:4d}'.format(*[int(value) for value in free_positions[k]])
-            lines.append('%s %s %s' % (sp_name, coords, free_pos))
+            free_pos = '{:4d}{:4d}{:4d}'.format(*free_positions[3*k:3*k+3])
+            if free_positions[3*k]+free_positions[3*k+1]+free_positions[3*k+2] <3:
+                lines.append('%s %s %s' % (sp_name, coords, free_pos))
         else:
             lines.append('%s %s' % (sp_name, coords))
 
@@ -351,11 +363,12 @@ def get_neb_images_positions_card(name, **kwargs):
         lines.append('%s '%'INTERMEDIATE_IMAGE')
         lines.append('%s { %s }'% ('ATOMIC_POSITIONS','bohr') )
         for k in range(len(atoms)):
-            sp_name = '{:4}'.format(atoms[k]['name'])
+            sp_name = '{:4}'.format(atoms[k]['@name'])
             coords = '{:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k]['$'])
             if k < len(free_positions):
-                free_pos = '{:4d}{:4d}{:4d}'.format(*[int(value) for value in free_positions[k]])
-                lines.append('%s %s %s' % (sp_name, coords, free_pos))
+                free_pos = '{:4d}{:4d}{:4d}'.format(*free_positions[3*k:3*k+3])
+                if free_positions[3 * k] + free_positions[3 * k + 1] + free_positions[3 * k + 2] < 3:
+                    lines.append('%s %s %s' % (sp_name, coords, free_pos))
             else:
                 lines.append('%s %s' % (sp_name, coords))
     atoms=last_positions['atom']
@@ -364,11 +377,12 @@ def get_neb_images_positions_card(name, **kwargs):
     lines.append('%s '%'LAST_IMAGE')
     lines.append('%s { %s }'%('ATOMIC_POSITIONS', 'bohr') )
     for k in range(len(atoms)):
-        sp_name = '{:4}'.format(atoms[k]['name'])
+        sp_name = '{:4}'.format(atoms[k]['@name'])
         coords = '{:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k]['$'])
         if k < len(free_positions):
-            free_pos = '{:4d}{:4d}{:4d}'.format(*[int(value) for value in free_positions[k]])
-            lines.append('%s %s %s' % (sp_name, coords, free_pos))
+            free_pos = '{:4d}{:4d}{:4d}'.format(*free_positions[3*k:3*k+3])
+            if free_positions[3 * k] + free_positions[3 * k + 1] + free_positions[3 * k + 2] < 3:
+                lines.append('%s %s %s' % (sp_name, coords, free_pos))
         else:
             lines.append('%s %s' % (sp_name, coords))
     lines.append( '%s '%'END_POSITIONS')

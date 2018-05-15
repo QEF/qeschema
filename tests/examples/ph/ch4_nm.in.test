@@ -1,0 +1,13 @@
+&INPUTPH
+ amass(1)=  1.000
+ amass(2)= 12.000
+ epsil=.true.
+ fildyn='ch4.dyn'
+ outdir='./'
+ prefix='ch4'
+ tr2_ph=1e-17
+ trans=.true.
+ zeu=.false.
+ zue=.true.
+/
+0.0000    0.0000    0.0000

@@ -77,7 +77,7 @@ Authors: Paolo Giannozzi, Pietro Delugas
             <element type="neb:boundary_conditionsType" name="boundary_conditions" minOccurs="0" />
             <element type="neb:ekin_functionalType" name="ekin_functional" minOccurs="0" />
             <element type="neb:matrixType" name="external_atomic_forces" minOccurs="0" />
-            <element type="neb:matrixType" name="free_positions" minOccurs="0" />
+            <element type="neb:integerMatrixType" name="free_positions" minOccurs="0" />
             <element type="neb:matrixType" name="starting_atomic_velocities" minOccurs="0" />
             <element type="neb:electric_fieldType" name="electric_field" minOccurs="0" />
             <element type="neb:atomic_constraintsType" name="atomic_constraints" minOccurs="0" />
@@ -1015,8 +1015,8 @@ Authors: Paolo Giannozzi, Pietro Delugas
     <complexType name="matrixType">
         <simpleContent>
             <extension base="neb:doubleListType">
-                <attribute name="rank" type="integer" use="optional"/>
-                <attribute name="dims" type="neb:integerListType" use="optional"/>
+                <attribute name="rank" type="integer" use="required"/>
+                <attribute name="dims" type="neb:integerListType" use="required"/>
                 <attribute name="order" type="string" use="optional"/>
             </extension>
         </simpleContent>
@@ -1025,8 +1025,8 @@ Authors: Paolo Giannozzi, Pietro Delugas
         <simpleContent>
             <extension base="neb:integerListType">
                 <attribute name="order" type="string" use="optional"/>
-                <attribute name="dims" type="neb:integerListType" use="optional"/>
-                <attribute name="rank" type="integer" use="optional"/>
+                <attribute name="dims" type="neb:integerListType" use="required"/>
+                <attribute name="rank" type="integer" use="required"/>
             </extension>
         </simpleContent>
     </complexType>

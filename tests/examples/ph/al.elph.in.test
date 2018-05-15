@@ -1,0 +1,14 @@
+&INPUTPH
+ amass(1)= 26.980
+ electron_phonon='interpolated'
+ epsil=.false.
+ fildvscf='aldv'
+ fildyn='al.dyn'
+ ldisp=.true.
+ outdir='/home/pietro/espresso-svn/tempdir/'
+ prefix='aluminum'
+ tr2_ph=1e-10
+ trans=.true.
+ zeu=.false.
+ zue=.false.
+/

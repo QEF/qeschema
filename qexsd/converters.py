@@ -704,13 +704,18 @@ class NebInputConverter(RawInputConverter):
     def __init__(self, **_kwargs):
         engine_template_map = copy.deepcopy(PwInputConverter.PW_TEMPLATE_MAP)
         engine_template_map['atomic_structure'] = {
-            'nat': ("SYSTEM[nat]", options.neb_set_system_nat, None),
+            '@nat': ("SYSTEM[nat]", options.neb_set_system_nat, None),
             '$': [
                 ('SYSTEM[ibrav]', options.set_ibrav_to_zero, None),
                 ("CELL_PARAMETERS", cards.get_neb_cell_parameters_card, None),
                 ("ATOMIC_POSITIONS", cards.get_neb_images_positions_card, None)
             ],
-            'atomic_positions': ('ATOMIC_FORCES', cards.get_atomic_forces_card, None)
+            'atomic_positions': ('ATOMIC_FORCES', cards.get_atomic_forces_card, None),
+            'crystal_positions': ('ATOMIC_FORCES', cards.get_atomic_forces_card, None),
+            'wyckoff_positions': ('ATOMIC_FORCES', cards.get_atomic_forces_card, None)
+        }
+        engine_template_map['free_positions']={
+            '$': ("ATOMIC_POSITIONS", cards.get_neb_images_positions_card, None)
         }
         self.NEB_TEMPLATE_MAP.update({'engine': engine_template_map})
         super(NebInputConverter, self).__init__(

@@ -129,7 +129,7 @@
             </k_points_IBZ>
             <ion_control></ion_control>
             <cell_control></cell_control>
-            <free_positions>
+            <free_positions rank="2" dims="3 5">
                              0 0 0
                              0 0 0
                              0 0 0
