@@ -148,7 +148,6 @@ class XmlDocument(object):
     def get(self, qualified_name):
         section, _, item = qualified_name.partition(".")
         query = "./{0}/{1}".format(section, item)
-        print(query)
         node = self._document.find(query)
         if node is None:
             return
@@ -187,6 +186,8 @@ class XmlDocument(object):
         """
         namespaces = namespaces or {}
         namespaces.update(self.namespaces)
+        if path[:1] == "/":
+            path = "." + path
         return self._document.find(path, namespaces)
 
     def findall(self, path, namespaces=None):
@@ -199,6 +200,8 @@ class XmlDocument(object):
         """
         namespaces = namespaces or {}
         namespaces.update(self.namespaces)
+        if path[:1] == "/":
+            path = "." + path
         return self._document.findall(path, namespaces)
 
 

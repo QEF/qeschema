@@ -50,15 +50,16 @@ class ConverterTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.test_dir = os.path.dirname(os.path.abspath(__file__))
-        cls.pkg_folder = os.path.dirname(test_dir)
+        cls.pkg_folder = os.path.dirname(cls.test_dir)
 
-    def test_script(self):
-        xml_filename = os.path.join(self.test_dir, 'examples/pw/script_test_case.xml')
+    def test_conversion_script(self):
+        xml_filename = os.path.join(self.test_dir, 'examples/pw/Al001_relax_bfgs.xml')
         in_filename = xml_filename[:-4] + '.in'
+        conversion_script = os.path.join(self.pkg_folder, 'scripts/xml2qeinput.py')
         if os.path.isfile(in_filename):
-            print("Removing existing .in file %r ..." % in_filename) 
-        os.system('../scripts/xml2qeinput.py -in %s' % xml_filename)
-        #self.assertTrue(os.path.isfile(in_filename), 'Test file %s.in missing!'%in_filename)
+            os.system('rm -f %s' % in_filename)
+        os.system('%s -in %s &>/dev/null' % (conversion_script, xml_filename))
+        self.assertTrue(os.path.isfile(in_filename), 'Test file %r missing!' % in_filename)
 
 
 if __name__ == '__main__':

@@ -16,8 +16,10 @@ with open("README.rst") as readme:
 setup(
     name='qexsd',
     version='1.0.0',
+    install_requires=['xmlschema>=0.9.26'],
     packages=['qexsd'],
-    scripts = ['scripts/xml2nebinput.py', 'scripts/xml2qeinput.py'],
+    package_data={'qexsd': ['schemas/*.xsd']},
+    scripts = ['scripts/xml2qeinput.py'],
     url='https://github.com/QEF/qexsd',
     license='MIT',
     description='Quantum Espresso tools for XML Schema based documents.',

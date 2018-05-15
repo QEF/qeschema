@@ -15,10 +15,12 @@ import logging
 import re
 import os.path
 
+from .compat import unicode_type
 from .utils import BiunivocalMap
 from . import cards, options
 
 logger = logging.getLogger('qexsd')
+
 
 def conversion_maps_builder(template_map):
     """
@@ -112,16 +114,13 @@ def conversion_maps_builder(template_map):
 
 def to_fortran(value):
     """
-    Translate a Python value to the equivalent literal representation
-    for Fortran input.
-
-    :param value:
-    :return:
+    Translate a Python value to the equivalent literal representation for Fortran input.
+    Leading and trailing spaces characters are removed from strings.
     """
     if isinstance(value, bool):
         return '.true.' if value else '.false.'
-    elif isinstance(value, str):
-        return u"'%s'" % value
+    elif isinstance(value, (str, unicode_type)):
+        return u"'%s'" % value.strip()
     return str(value)
 
 
@@ -512,9 +511,8 @@ class PwInputConverter(RawInputConverter):
             'q2sigma': "SYSTEM[q2sigma]"
         },
         'external_atomic_forces': ('ATOMIC_FORCES', cards.get_atomic_forces_card, None),
-        'free_positions':{
-            '$': [("ATOMIC_POSITIONS", cards.get_atomic_positions_cell_card, None),
-                            ("CELL_PARAMETERS",)]},
+        'free_positions': {
+            '$': [("ATOMIC_POSITIONS", cards.get_atomic_positions_cell_card, None), ("CELL_PARAMETERS",)]},
         'electric_field': {
             'electric_potential': [
                 ("CONTROL[tefield]", options.get_electric_potential_related),
@@ -567,7 +565,7 @@ class PhononInputConverter(RawInputConverter):
     Convert to/from Fortran input for Phonon.
     """
     PHONON_TEMPLATE_MAP = {
-        'xq':('qPointsSpecs',cards.get_qpoints_card, None),
+        'xq': ('qPointsSpecs', cards.get_qpoints_card, None),
         'scf_ph': {
             'tr2_ph': "INPUTPH[tr2_ph]",
             'niter_ph': "INPUTPH[niter_ph]",
@@ -583,7 +581,7 @@ class PhononInputConverter(RawInputConverter):
             'lqdir': "INPUTPH[lqdir]"
         },
         'control_ph': {
-            'ldisp': ["INPUTPH[ldisp]",('qPointsSpecs', cards.get_qpoints_card, None)],
+            'ldisp': ["INPUTPH[ldisp]", ('qPointsSpecs', cards.get_qpoints_card, None)],
             'epsil': "INPUTPH[epsil]",
             'trans': "INPUTPH[trans]",
             'zeu': "INPUTPH[zeu]",
@@ -607,12 +605,12 @@ class PhononInputConverter(RawInputConverter):
             'q_in_band_form': "INPUTPH[q_in_band_form]"
         },
         'miscellanea': {
-            'amass':{'$':("INPUTPH[amass]",options.setOneAmassLine, None)},
+            'amass': {'$': ("INPUTPH[amass]", options.setOneAmassLine, None)},
             'verbosity': "INPUTPH[verbosity]",
             'reduce_io': "INPUTPH[reduce_io]",
             'low_directory_check': "INPUTPH[low_directory_check]",
             'nogg': "INPUTPH[nogg]",
-            'nscf_MPgrid':{
+            'nscf_MPgrid': {
                             'nk1': "INPUTPH[nk1]",
                             'nk2': "INPUTPH[nk2]",
                             'nk3': "INPUTPH[nk3]",
@@ -664,7 +662,7 @@ class PhononInputConverter(RawInputConverter):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **_kwargs):
         super(PhononInputConverter, self).__init__(
             *conversion_maps_builder(self.PHONON_TEMPLATE_MAP),
             input_namelists=('INPUTPH',),
@@ -703,7 +701,7 @@ class NebInputConverter(RawInputConverter):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **_kwargs):
         engine_template_map = copy.deepcopy(PwInputConverter.PW_TEMPLATE_MAP)
         engine_template_map['atomic_structure'] = {
             'nat': ("SYSTEM[nat]", options.neb_set_system_nat, None),
