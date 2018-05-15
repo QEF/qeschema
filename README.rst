@@ -8,7 +8,7 @@ and Optimization).
 Requirements
 ------------
 
-* Python_ 2.7-3.7
+* Python_ 2.7, 3.4-3.7
 * xmlschema_ (Python library for processing XML Schema based documents)
 
 .. _Python: http://www.python.org/
