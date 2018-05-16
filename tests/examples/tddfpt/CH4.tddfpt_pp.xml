@@ -1,0 +1,16 @@
+<qes_lr:spectrumDoc xmlns:qes_lr="http://www.quantum-espresso.org/ns/qes/qes_spectrum-1.0"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes_lr/qes_lr-1.0 ../../../qespresso/scheme/qes_spectrum.xsd">
+<spectrumIn>
+    <prefix>CH4</prefix>
+    <outdir>./out</outdir>
+    <itermax>10000</itermax>
+    <itermax0>500</itermax0>
+    <extrapolation>osc</extrapolation>
+    <start>0.0</start>
+    <end>3.50</end>
+    <increment>0.001</increment>
+    <ipol>4</ipol>
+    <epsil>0.01</epsil>
+</spectrumIn>   
+</qes_lr:spectrumDoc>

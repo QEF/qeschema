@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<qes_lr:tddfpt xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes_lr-1.0 https://raw.githubusercontent.com/QEF/qexsd/master/qespresso/scheme/tddfpt.xsd"
+               xmlns:qes_lr="http://www.quantum-espresso.org/ns/qes/qes_lr-1.0"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+	       <input>	       
+    <whatTD>davidson</whatTD>
+    <lr_input>
+        <prefix>Benzene</prefix>
+        <restart>false</restart>
+        <outdir>./out</outdir>
+    </lr_input>
+    <lr_davidson>
+        <num_eignv>5</num_eignv>
+        <num_init>10</num_init>
+        <num_basis_max>120</num_basis_max>
+        <res_conv_thr>1.0e-4</res_conv_thr>
+        <reference>0.5</reference>
+        <broadening>0.005</broadening>
+        <start>0.4</start>
+        <finish>0.7</finish>
+        <step>0.0002</step>
+        <p_nbnd_occ>5</p_nbnd_occ>
+        <p_nbnd_virt>15</p_nbnd_virt>
+</lr_davidson>
+</input>
+</qes_lr:tddfpt>

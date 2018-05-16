@@ -1,0 +1,10 @@
+&lr_input
+ outdir='./out'
+ prefix='CH4'
+ restart = .false.
+ restart_step=250
+/
+&lr_control
+ ipol=4
+ itermax=500
+/

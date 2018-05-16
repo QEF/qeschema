@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<qes_lr:tddfpt xmlns:qes_lr="http://www.quantum-espresso.org/ns/qes/qes_lr-1.0"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes_lr/qes_lr-1.0 ../../../qespresso/scheme/tddfpt.xsd">
+	       <input>
+    <whatTD>lanczos</whatTD>
+    <lr_input>
+        <prefix>CH4</prefix>
+        <restart>false</restart>
+        <restart_step>250</restart_step>
+        <outdir>./out</outdir>
+    </lr_input>
+    <lr_control>
+        <itermax>500</itermax>
+        <ipol>4</ipol>
+</lr_control>
+</input>
+</qes_lr:tddfpt>
+

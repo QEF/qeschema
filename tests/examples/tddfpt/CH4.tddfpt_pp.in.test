@@ -1,0 +1,12 @@
+&lr_input
+ end=3.5
+ epsil=0.01
+ extrapolation='osc'
+ increment=0.001
+ ipol=4
+ itermax=10000
+ itermax0=500
+ outdir='./out'
+ prefix='CH4'
+ start=0.0
+/

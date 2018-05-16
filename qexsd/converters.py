@@ -151,8 +151,10 @@ class RawInputConverter(Container):
             key for key in invariant_map.keys() + variant_map.keys()
         )
         """Sequence of input namelists. Use keys of the maps if not provided."""
-
-        self.input_cards = tuple(input_cards) or (key for key in variant_map)
+        if input_cards:
+            self.input_cards = tuple(input_cards)
+        else:
+            self.input_cards = ()
         """Sequence of input special cards, assuming an empty list if not provided."""
 
         self._input = dict(
@@ -278,7 +280,6 @@ class RawInputConverter(Container):
                     # Simple invariant conversion
                     lines.append(' {0}={1}'.format(name, value))
             lines.append('/')
-
         for card in self.input_cards:
             logger.debug("Add card: %s" % card)
             card_args = _input[card]
@@ -737,3 +738,144 @@ class NebInputConverter(RawInputConverter):
         qe_input = qe_input[:index] + ['END_PATH_INPUT', 'BEGIN_ENGINE_INPUT'] + qe_input[index:]
         qe_input += ['END_ENGINE_INPUT', 'END']
         return '\n'.join(qe_input)
+
+class TdInputConverter(RawInputConverter):
+    """
+    converts qes_lr schema to fortran input for turbo_lanczos, turbo_davidson and turbo_eels
+    """
+    TD_TEMPLATE_MAP = {
+        'whatTD': ('cache[what]', options.set_what_td_calculation, None),
+        'lr_input': {
+            'restart': ('lr_input[restart]', options.set_boolean_flag, None),
+            'restart_step': 'lr_input[restart_step]',
+            'verbosity': 'lr_input[lr_verbosity]',
+            'disk_io': 'lr_input[disk_io]',
+            'prefix': 'lr_input[prefix]',
+            'wfcdir': 'lr_input[wfcdir]',
+            'outdir': 'lr_input[outdir]',
+            'max_seconds': 'lr_input[max_seconds'
+        },
+        'lr_control': {
+            'itermax': 'lr_control[itermax]',
+            'n_pol': 'lr_control[n_ipol]',
+            'ipol' : 'lr_control[ipol]',
+            'ltammd': ('lr_control[ltammd]',options.set_boolean_flag, None),
+            'lrpa': ('lr_control[lrpa]', options.set_boolean_flag, None),
+            'charge_response': ('lr_control[charge_response]', options.set_boolean_flag, None),
+            'tqr': ('lr_control[tqr]',options.set_boolean_flag, None),
+            'auto_rs': ('lr_control[auto_rs]', options.set_boolean_flag, None),
+            'no_hxc': ('lr_control[no_hxc]', options.set_boolean_flag, None),
+            'lproject': ('lr_control[lproject]',options.set_boolean_flag, None),
+            'scissor': 'lr_control[scissor]',
+            'ecutfock': 'lr_control[ecutfock]',
+            'pseudo_hermitian': ('lr_control[pseudo_hermitian]',options.set_boolean_flag, None),
+            'd0psi_rs': ('lr_control[d0psi_rs]',options.set_boolean_flag, None),
+            'lshift_d0psi':('lr_control[d0psi_rs]',options.set_boolean_flag, None),
+            'q1':'lr_control[q1]',
+            'q2':'lr_control[q2]',
+            'q3':'lr_control[q3]',
+            'eels_approx': 'lr_control[approximation]'
+        },
+        'lr_davidson': {
+            'num_eignv': 'lr_dav[num_eign]',
+            'num_init': 'lr_dav[num_init]',
+            'num_basis_max': 'lr_dav[num_basis_max]',
+            'res_conv_thr': 'lr_dav[res_conv_thr]',
+            'precondition': ('lr_dav[precondition]',options.set_boolean_flag,None),
+            'reference': 'lr_dav[reference]',
+            'single_pole': ('lr_dav[single_pole]',options.set_boolean_flag, None),
+            'sort_contr': ('lr_dav[sort_contr',options.set_boolean_flag, None),
+            'diag_of_h': ('lr_dav[diag_of_h]', options.set_boolean_flag, None),
+            'close_pre': ('lr_dav[close_pre]', options.set_boolean_flag, None),
+            'broadening': 'lr_dav[broadening]',
+            'print_spectrum': ('lr_dav[print_spectrum]',options.set_boolean_flag, None),
+            'start': 'lr_dav[start]',
+            'finish': 'lr_dav[finish]',
+            'step': 'lr_dav[step]',
+            'if_checkorth': ('lr_dav[if_checkorth]',options.set_boolean_flag, None),
+            'if_random_init': ('lr_dav[if_random_init]',options.set_boolean_flag, None),
+            'if_check_her': ('lr_dav[if_check_her]',options.set_boolean_flag, None),
+            'p_nbnd_occ': 'lr_dav[p_nbnd_occ]',
+            'p_nbnd_virt': 'lr_dav[p_nbnd_virt]',
+            'poor_of_ram': ('lr_dav[poor_of_ram]',options.set_boolean_flag, None),
+            'max_iter': 'lr_dav[max_iter]',
+            'ecutfock': 'lr_dav[ecutfock]',
+            'conv_assistant': ('lr_dav[conv_assistant]',options.set_boolean_flag, None),
+            'if_dft_spectrum': ('lr_dav[if_dft_spectrum]',options.set_boolean_flag, None),
+            'no_hxc': ('lr_dav[no_hxc]',options.set_boolean_flag, None),
+            'd0psi_rs': ('lr_dav[d0psi_rs]',options.set_boolean_flag, None),
+            'lshift_d0psi': ('lr_dav[lshift_d0psi]',options.set_boolean_flag, None),
+            'lplot_drho': ('lr_dav[lplot_drho]',options.set_boolean_flag, None),
+            'vccouple_shift': 'lr_dav[vccouple_shift]',
+            'ltammd': ('lr_dav[ltammd]', options.set_boolean_flag, None)
+        },
+        'lr_post':{
+            'omeg': 'lr_post[omeg]',
+            'beta_z_gamma_prefix': 'lr_post[beta_z_gamma_prefix]',
+            'w_T_npol': 'lr_post[w_T_npol]',
+            'plot_type': 'lr_post[plot_type]',
+            'epsil': 'lr_post[epsil]',
+            'iter_maxinit': 'lr_post[iter_maxinit]',
+            'sum_rule': ('lr_post[sum_rule]', options.set_boolean_flag, None)
+        }
+    }
+
+    def __init__(self, **kwargs):
+        super (TdInputConverter, self).__init__(*conversion_maps_builder(self.TD_TEMPLATE_MAP),
+                                                input_namelists=('cache','lr_input', 'lr_control', 'lr_dav', 'lr_post' ))
+
+    def get_qe_input(self):
+        """
+        overrides get_qe_input calling super get_qe_input with use_defaults set to False. 
+        :return: the input as obtained from its input builder
+        """
+        temp = super(TdInputConverter, self).get_qe_input().split('\n')
+        td = temp[1]
+        start = temp.index('&lr_input')
+        end = start + temp[start:].index('/')
+        qe_input = '\n'.join(temp[start:end+1])
+        """ put lr_input in qe_input """
+
+        if td.lower() in ['lanczos','eels']:
+            start = temp.index('&lr_control')
+        elif td.lower() == 'davidson':
+            start = temp.index('&lr_dav')
+        end = start + temp[start:].index('/')
+        qe_input = qe_input + '\n' + '\n'.join(temp[start:end+1])
+        """ put one of lr_control(lanzsos) or lr_davidson in qe_input"""
+
+        start = temp.index('&lr_post')
+        end = start + temp[start:].index('/')
+        if end - start > 1:
+            qe_input = qe_input + '\n' + '\n'.join(temp[start:end+1])
+        """ if not empty add lr_post namelist to qe_input """
+        return qe_input
+
+
+class TD_spctInConverter(RawInputConverter):
+    """
+    converts the xml input file described by qes_spectrum scheme in namelist input for turbo_spectrum post-processing tool
+    """
+    SPEC_TEMPLACE_MAP = {
+        'itermax': 'lr_input[itermax]',
+        'itermax0': 'lr_input[itermax0]',
+        'itermax_actual': 'lr_input[itermax_actual]',
+        'extrapolation': 'lr_input[extrapolation]',
+        'start': 'lr_input[start]',
+        'end': 'lr_input[end]',
+        'increment': 'lr_input[increment]',
+        'ipol': 'lr_input[ipol]',
+        'outdir': 'lr_input[outdir]',
+        'prefix': 'lr_input[prefix]',
+        'epsil':   'lr_input[epsil]',
+        'sym_op': 'lr_input[sym_op]',
+        'verbosity': 'lr_input[verbosity]',
+        'units': 'lr_input[units]',
+        'td': 'lr_input[td]',
+        'eign_file': 'lr_input[eign_file]',
+        'eels': ('lr_input[eels]', options.set_boolean_flag, None)
+    }
+
+    def __init__(self, **kwargs):
+        super(TD_spctInConverter, self).__init__(*conversion_maps_builder(self.SPEC_TEMPLACE_MAP),
+                                                 input_namelists = ['lr_input'] )

@@ -25,6 +25,10 @@ def make_test_function(xml_file, ref_in_file):
             xml_conf = qexsd.NebDocument()
         elif elementName == 'espressoph':
             xml_conf = qexsd.PhononDocument()
+        elif elementName == 'tddfpt':
+            xml_conf = qexsd.TdDocument()
+        elif elementName == 'spectrumDoc':
+            xml_conf = qexsd.SpectrumDocument()
         else:
             raise ValueError("XML file %r is not a Quantum ESPRESSO document!" % xml_file)
 

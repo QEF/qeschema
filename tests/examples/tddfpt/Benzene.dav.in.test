@@ -1,0 +1,18 @@
+&lr_input
+ outdir='./out'
+ prefix='Benzene'
+ restart = .false.
+/
+&lr_dav
+ broadening=0.005
+ finish=0.7
+ num_basis_max=120
+ num_eign=5
+ num_init=10
+ p_nbnd_occ=5
+ p_nbnd_virt=15
+ reference=0.5
+ res_conv_thr=0.0001
+ start=0.4
+ step=0.0002
+/

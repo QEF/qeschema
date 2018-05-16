@@ -60,6 +60,10 @@ if __name__ == '__main__':
         xml_conf = qexsd.NebDocument()
     elif elementName =='espressoph':
         xml_conf = qexsd.PhononDocument()
+    elif elementName =='tddfpt':
+        xml_conf=qexsd.TdDocument()
+    elif elementName=='spectrumDoc':
+        xml_conf = qexsd.SpectrumDocument()
     else:
         sys.stderr.write("Could not find correct XML in %s, exiting...\n" % input_fn)
         sys.exit(1)
