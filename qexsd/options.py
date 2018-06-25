@@ -45,6 +45,7 @@ def get_specie_related_values(name, **kwargs):
     for value in iter(related_data if isinstance(related_data, list) else [related_data]):
         tag_specie = value['@specie']
         tag_values = value['$']
+        tag_spin   = value.get('@spin')
         if value.get('label') == 'no Hubbard':
             continue
 
@@ -61,9 +62,14 @@ def get_specie_related_values(name, **kwargs):
                 # starting_ns case: skip negative values
                 if tag_values[k] < 0 or (name == 'Hubbard_J' and tag_values[k] == 0):
                     continue
-                lines.append(' {0}({1},{2})={3}'.format(
-                    name, k + 1, specie_index, tag_values[k]
-                ))
+                if tag_spin:
+                    lines.append( ' {0}({1},{2},{3})={4}'.format(
+                        name, k + 1, tag_spin, specie_index, tag_values[k]
+                    ))
+                else:
+                    lines.append(' {0}({1},{2})={3}'.format(
+                        name, k + 1, specie_index, tag_values[k]
+                    ))
         elif tag_values > 0:
             lines.append(' {0}({1})={2}'.format(name, specie_index, tag_values))
     return lines
