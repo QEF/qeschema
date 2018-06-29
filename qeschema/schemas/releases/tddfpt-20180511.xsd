@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright (c), 2015-2016, Quantum Espresso Foundation. All rights reserved.
+This file is distributed under the terms of the MIT License. See the
+file 'LICENSE' in the root directory of the present distribution, or
+http://opensource.org/licenses/MIT.
+Authors: Pietro Delugas
+-->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:qes_lr="http://www.quantum-espresso.org/ns/qes/qes_lr-1.0"
+	targetNamespace="http://www.quantum-espresso.org/ns/qes/qes_lr-1.0" version="20180511">
+<element name="tddfpt" type="qes_lr:tddfptInType"/>
+    <complexType name="tddfptInType">
+        <annotation>
+            <documentation>
+                Elements of this type may contain all input information for turbolanczos.x, turboeels.x and
+                turbodavidson.x. The element whatTD selects code to use.
+            </documentation>
+        </annotation>
+        <sequence>
+            <element name="whatTD" type="qes_lr:turboNameType" minOccurs="1"/>
+            <element name="lr_input" type="qes_lr:inputType"/>
+            <element name="lr_control" type="qes_lr:lanczosType" minOccurs="0" maxOccurs="1"/>
+            <element name="lr_davidson" type="qes_lr:davidsonType" minOccurs="0" maxOccurs="1"/>
+            <element name="lr_post" type="qes_lr:postType" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+    <simpleType name="turboNameType">
+        <restriction base="string">
+            <enumeration value="lanczos"/>
+            <enumeration value="davidson"/>
+            <enumeration value="eels"/>
+        </restriction>
+    </simpleType>
+    <complexType name="inputType">
+        <annotation>
+            <documentation>
+                Describes the information contained in the lr_input namelist for the TDDFPT codes
+            </documentation>
+        </annotation>
+        <sequence>
+            <element name="prefix" type="string" minOccurs="0" maxOccurs="1" default="pwscf"/>
+            <element name="restart" type="boolean" minOccurs="0" maxOccurs="1" default="false"/>
+            <element name="restart_step" type="nonNegativeInteger" minOccurs="0" maxOccurs="1"/>
+            <element name="verbosity" type="nonNegativeInteger" minOccurs="0" maxOccurs="1" default="1"/>
+            <element name="disk_io" type="qes_lr:disk_ioType" minOccurs="0" maxOccurs="1" default="default"/>
+            <element name="outdir" type="string" minOccurs="0" maxOccurs="1" default="./"/>
+            <element name="wfcdir" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="max_seconds" type="positiveInteger" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+    <simpleType name="disk_ioType">
+        <restriction base="string">
+            <enumeration value="reduced"/>
+            <enumeration value="default"/>
+        </restriction>
+    </simpleType>
+    <complexType name="lanczosType">
+        <sequence>
+            <element type="positiveInteger" name="itermax"/>
+            <element type="positiveInteger" name="n_pol" minOccurs="0" maxOccurs="1" default="1"/>
+            <element type="integer" name = "ipol" minOccurs="0" maxOccurs="1" default="1"/>
+            <element type="boolean" name="ltammd" minOccurs="0" maxOccurs="1"/>
+            <element type="boolean" name="lrpa" minOccurs="0" maxOccurs="1" />
+            <element type="boolean" name="charge_response" minOccurs="0" maxOccurs="1" />
+            <element type="boolean" name="tqr" minOccurs="0" maxOccurs="1"/>
+            <element type="boolean" name="auto_rs" minOccurs="0" maxOccurs="1"/>
+            <element type="boolean" name="no_hxc" minOccurs="0" maxOccurs="1"/>
+            <element type="boolean" name="lproject" minOccurs="0" maxOccurs="1"/>
+            <element type="double" name="scissor" minOccurs="0" maxOccurs="1"/>
+            <element type="double" name="ecutfock" minOccurs="0" maxOccurs="1"/>
+            <element type="boolean" name="pseudo_hermitian" minOccurs="0" maxOccurs="1" />
+            <element type="boolean" name="d0psi_rs" minOccurs="0" maxOccurs="1" />
+            <element type="boolean" name="lshift_d0psi" minOccurs="0" maxOccurs="1" />
+            <element type="double" name="q1" minOccurs="0" maxOccurs="1"/>
+            <element type="double" name="q2" minOccurs="0" maxOccurs="1"/>
+            <element type="double" name="q3" minOccurs="0" maxOccurs="1"/>
+            <element type="qes_lr:eelsApproxType" name="eels_approx" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+    <simpleType name="eelsApproxType">
+        <restriction base="string">
+            <enumeration value="TDDFT"/>
+            <enumeration value="IPA"/>
+            <enumeration value="RPA_with_CLFE"/>
+        </restriction>
+    </simpleType>
+    <complexType name="postType">
+        <sequence>
+            <element type="double" name="omeg" minOccurs="0" maxOccurs="1"/>
+            <element type="string" name="beta_z_gamma_prefix" minOccurs="0" maxOccurs="1"/>
+            <element type="integer" name="w_T_npol" minOccurs="0" maxOccurs="1"/>
+            <element type="integer" name="plot_type"/>
+            <element type="double" name="epsil"/>
+            <element type="positiveInteger" name="iter_maxint" minOccurs="0" maxOccurs="1"/>
+            <element type="boolean" name="sum_rule" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+    <complexType name="davidsonType">
+        <sequence>
+            <element type="integer" name="num_eignv"/>
+            <element type="integer" name="num_init"/>
+            <element type="integer" name="num_basis_max"/>
+            <element type="double" name="res_conv_thr"/>
+            <element type="boolean" name="precondition" minOccurs="0" maxOccurs="1"/>
+            <element type="double" name="reference"/>
+            <element type="boolean" name="single_pole" minOccurs="0" maxOccurs="1"/>
+            <element type="boolean" name="sort_contr" minOccurs="0" maxOccurs="1"/>
+            <element type="boolean" name="diag_of_h" minOccurs="0" maxOccurs="1"/>
+            <element type="boolean" name="close_pre" minOccurs="0" maxOccurs="1" default="false"/>
+            <element type="double" name="broadening" minOccurs="0" maxOccurs="1" default="0.05"/>
+            <element type="boolean" name="print_spectrum" minOccurs="0" maxOccurs="1"/>
+            <element type="double" name="start"/>
+            <element type="double" name="finish"/>
+            <element type="double" name="step"/>
+            <element type="boolean" name="if_check_orth" minOccurs="0" maxOccurs="1"/>
+            <element type="boolean" name="if_random_init" minOccurs="0" maxOccurs="1"/>
+            <element type="boolean" name="if_check_her" minOccurs="0" maxOccurs="1"/>
+            <element type="positiveInteger" name="p_nbnd_occ"/>
+            <element type="positiveInteger" name="p_nbnd_virt"/>
+            <element type="boolean" name="poor_of_ram" minOccurs="0" maxOccurs="1"/>
+            <element type="positiveInteger" name="max_iter" minOccurs="0" maxOccurs="1"/>
+            <element type="double" name="ecutfock" minOccurs="0" maxOccurs="1"/>
+            <element type="boolean" name="conv_assistant" minOccurs="0" maxOccurs="1"/>
+            <element type="boolean" name="if_dft_spectrum" minOccurs="0" maxOccurs="1"/>
+            <element type="boolean" name="no_hxc" minOccurs="0" maxOccurs="1"/>
+            <element type="boolean" name="d0psi_rs" minOccurs="0" maxOccurs="1"/>
+            <element type="boolean" name="lshift_d0psi" minOccurs="0" maxOccurs="1"/>
+            <element type="boolean" name="lplot_drho" minOccurs="0" maxOccurs="1"/>
+            <element type="double" name = "vccouple_shift" minOccurs="0" maxOccurs="1"/>
+            <element type="boolean" name="ltammd" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+</schema>

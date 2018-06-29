@@ -44,26 +44,26 @@ if __name__ == '__main__':
         from os import path
         sys.path.append(path.abspath(path.dirname(__file__)+'/../'))
 
-    import qexsd
+    import qeschema
     import os
     import xml.etree.ElementTree as Etree
 
-    qexsd.set_logger(args.verbosity)
+    qeschema.set_logger(args.verbosity)
 
     input_fn = getattr(args, 'in')
     tree = Etree.parse(input_fn)
     root = tree.getroot()
     elementName = root.tag.split('}')[-1]
     if elementName == 'espresso':
-        xml_conf = qexsd.PwDocument()
+        xml_conf = qeschema.PwDocument()
     elif elementName == 'nebRun':
-        xml_conf = qexsd.NebDocument()
+        xml_conf = qeschema.NebDocument()
     elif elementName =='espressoph':
-        xml_conf = qexsd.PhononDocument()
+        xml_conf = qeschema.PhononDocument()
     elif elementName =='tddfpt':
-        xml_conf=qexsd.TdDocument()
+        xml_conf=qeschema.TdDocument()
     elif elementName=='spectrumDoc':
-        xml_conf = qexsd.SpectrumDocument()
+        xml_conf = qeschema.SpectrumDocument()
     else:
         sys.stderr.write("Could not find correct XML in %s, exiting...\n" % input_fn)
         sys.exit(1)

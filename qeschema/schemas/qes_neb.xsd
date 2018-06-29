@@ -9,7 +9,7 @@ Authors: Paolo Giannozzi, Pietro Delugas
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
         xmlns:qes="http://www.quantum-espresso.org/ns/qes/qes-1.0"
         xmlns:neb="http://www.quantum-espresso.org/ns/neb"
-        targetNamespace="http://www.quantum-espresso.org/ns/neb">
+        targetNamespace="http://www.quantum-espresso.org/ns/neb" version="20180511">
     <import id="qes" namespace="http://www.quantum-espresso.org/ns/qes/qes-1.0"  schemaLocation="./qes.xsd"/>
     <element name="nebRun" type="neb:NebRunType"/>
     <complexType name="NebRunType">

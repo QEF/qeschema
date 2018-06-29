@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<qes_lr:tddfpt xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes_lr-1.0 https://raw.githubusercontent.com/QEF/qexsd/master/qespresso/scheme/tddfpt.xsd"
+<qes_lr:tddfpt xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes_lr-1.0 tddfpt-20180517.xsd"
                xmlns:qes_lr="http://www.quantum-espresso.org/ns/qes/qes_lr-1.0"
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
 	       <input>	       

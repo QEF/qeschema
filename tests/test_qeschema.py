@@ -20,15 +20,15 @@ def make_test_function(xml_file, ref_in_file):
         root = tree.getroot()
         elementName = root.tag.split('}')[-1]
         if elementName == 'espresso':
-            xml_conf = qexsd.PwDocument()
+            xml_conf = qeschema.PwDocument()
         elif elementName == 'nebRun':
-            xml_conf = qexsd.NebDocument()
+            xml_conf = qeschema.NebDocument()
         elif elementName == 'espressoph':
-            xml_conf = qexsd.PhononDocument()
+            xml_conf = qeschema.PhononDocument()
         elif elementName == 'tddfpt':
-            xml_conf = qexsd.TdDocument()
+            xml_conf = qeschema.TdDocument()
         elif elementName == 'spectrumDoc':
-            xml_conf = qexsd.SpectrumDocument()
+            xml_conf = qeschema.SpectrumDocument()
         else:
             raise ValueError("XML file %r is not a Quantum ESPRESSO document!" % xml_file)
 
@@ -75,12 +75,12 @@ if __name__ == '__main__':
     pkg_folder = os.path.dirname(test_dir)
 
     try:
-        import qexsd
+        import qeschema
     except ImportError:
         sys.path.insert(0, pkg_folder)
-        import qexsd
+        import qeschema
 
-    header = "Test %r" % qexsd
+    header = "Test %r" % qeschema
     print("*" * len(header) + '\n' + header + '\n' + "*" * len(header))
 
     test_files = glob.glob(os.path.join(test_dir, "examples/*/*.xml"))

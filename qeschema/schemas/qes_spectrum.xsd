@@ -8,8 +8,13 @@ Authors: Pietro Delugas
 -->
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
 	xmlns:qes_spectrum="http://www.quantum-espresso.org/ns/qes/qes_spectrum-1.0"
-	targetNamespace="http://www.quantum-espresso.org/ns/qes/qes_spectrum-1.0">
-<element name="spectrumIn" type="qes_spectrum:spectrumInType"/>
+	targetNamespace="http://www.quantum-espresso.org/ns/qes/qes_spectrum-1.0" version="20180517">
+    <element name="spectrumDoc" type="qes_spectrum:TdppOutType"/>
+    <complexType name="TdppOutType">
+        <sequence>
+            <element name="spectrumIn" type="qes_spectrum:spectrumInType"/>
+        </sequence>
+    </complexType>
     <complexType name="spectrumInType">
         <sequence>
             <element name="prefix" type="string"/>

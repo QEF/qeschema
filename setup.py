@@ -14,13 +14,13 @@ with open("README.rst") as readme:
     long_description = readme.read()
 
 setup(
-    name='qexsd',
+    name='qeschema',
     version='1.0.0',
-    install_requires=['xmlschema>=0.9.26'],
-    packages=['qexsd'],
-    package_data={'qexsd': ['schemas/*.xsd']},
+    install_requires=['xmlschema>=0.9.31'],
+    packages=['qeschema'],
+    package_data={'qeschema': ['schemas/*.xsd']},
     scripts = ['scripts/xml2qeinput.py'],
-    url='https://github.com/QEF/qexsd',
+    url='https://github.com/QEF/qeschema',
     license='MIT',
     description='Quantum Espresso tools for XML Schema based documents.',
     long_description=long_description,
