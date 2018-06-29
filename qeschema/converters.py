@@ -19,7 +19,7 @@ from .compat import unicode_type
 from .utils import BiunivocalMap
 from . import cards, options
 
-logger = logging.getLogger('qexsd')
+logger = logging.getLogger('qeschema')
 
 
 def conversion_maps_builder(template_map):

@@ -13,7 +13,7 @@ This module contain exception classes for Quantum Espresso package.
 
 import logging
 
-logger = logging.getLogger('qexsd')
+logger = logging.getLogger('qeschema')
 
 
 class QEspressoError(Exception):
@@ -28,5 +28,3 @@ class ConfigError(QEspressoError):
     def __init__(self, message):
         Exception.__init__(self, message)
         logger.debug('!ConfigError: {0}'.format(message))
-
-

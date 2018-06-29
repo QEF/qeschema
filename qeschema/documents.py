@@ -17,7 +17,7 @@ from .converters import PwInputConverter, PhononInputConverter, NebInputConverte
 from .exceptions import ConfigError
 from .utils import etree_iter_path
 
-logger = logging.getLogger('qexsd')
+logger = logging.getLogger('qeschema')
 
 
 class XmlDocument(object):
@@ -363,7 +363,7 @@ class NebDocument(QeDocument):
     def __init__(self):
         self._input_tag = 'input'
         super(NebDocument, self).__init__(
-            xsd_file='%s/schemas/qes_neb_temp.xsd' % os.path.dirname(os.path.abspath(__file__)),
+            xsd_file='%s/schemas/qes_neb.xsd' % os.path.dirname(os.path.abspath(__file__)),
             input_builder=NebInputConverter
         )
 

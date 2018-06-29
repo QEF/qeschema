@@ -63,7 +63,8 @@ class ConverterTestCase(unittest.TestCase):
         conversion_script = os.path.join(self.pkg_folder, 'scripts/xml2qeinput.py')
         if os.path.isfile(in_filename):
             os.system('rm -f %s' % in_filename)
-        os.system('python %s -in %s 1> /dev/null 2> /dev/null' % (conversion_script, xml_filename))
+        command = 'python %s -in %s 1> /dev/null 2> /dev/null' % (conversion_script, xml_filename)
+        os.system(command)
         self.assertTrue(os.path.isfile(in_filename), 'Test file %r missing!' % in_filename)
 
 

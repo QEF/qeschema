@@ -15,8 +15,8 @@ with open("README.rst") as readme:
 
 setup(
     name='qeschema',
-    version='1.0.0',
-    install_requires=['xmlschema>=0.9.31'],
+    version='0.5.0',
+    install_requires=['xmlschema==0.9.30'],
     packages=['qeschema'],
     package_data={'qeschema': ['schemas/*.xsd']},
     scripts = ['scripts/xml2qeinput.py'],
@@ -33,7 +33,6 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
