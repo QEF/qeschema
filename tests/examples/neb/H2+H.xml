@@ -153,8 +153,9 @@
                     0.000000000000000E+00 0.00000000000000E+00 0.0000000000000E+00
                 </k_point>
             </k_points_IBZ>
-            <ion_control></ion_control>
-            <cell_control></cell_control>
+	    <ion_control>
+		    <ion_dynamics>bfgs</ion_dynamics>
+	    </ion_control>
             <symmetry_flags>
                 <nosym>false</nosym>
                 <nosym_evc>false</nosym_evc>
