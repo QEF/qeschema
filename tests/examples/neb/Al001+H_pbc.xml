@@ -127,8 +127,10 @@
             <k_points_IBZ>
                 <monkhorst_pack nk1="6" nk2="6" nk3="1" k1="1" k2="1" k3="1"></monkhorst_pack>
             </k_points_IBZ>
-            <ion_control></ion_control>
-            <cell_control></cell_control>
+	    <ion_control>
+		    <ion_dynamics>bfgs</ion_dynamics>
+	    </ion_control>
+
             <free_positions rank="2" dims="3 5">
                              0 0 0
                              0 0 0

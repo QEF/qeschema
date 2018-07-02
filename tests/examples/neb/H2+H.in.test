@@ -69,6 +69,7 @@ BEGIN_ENGINE_INPUT
  tqr=.false.
 /
 &IONS
+ ion_dynamics='bfgs'
 /
 &CELL
  press_conv_thr=0.5

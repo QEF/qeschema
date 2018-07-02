@@ -1,6 +1,6 @@
-<qes_lr:spectrumDoc xmlns:qes_lr="qes_spectrum-20180517.xsd"
+<qes_spectrum:spectrumDoc xmlns:qes_spectrum="http://www.quantum-espresso.org/ns/qes/qes_spectrum-1.0"
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes_lr/qes_lr-1.0 ../../../qespresso/scheme/qes_spectrum.xsd">
+               xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes_spectrum-1.0 ../../../qeschema/schemas/qes_spectrum.xsd">
 <spectrumIn>
     <prefix>CH4</prefix>
     <outdir>./out</outdir>
@@ -13,4 +13,4 @@
     <ipol>4</ipol>
     <epsil>0.01</epsil>
 </spectrumIn>   
-</qes_lr:spectrumDoc>
+</qes_spectrum:spectrumDoc>
