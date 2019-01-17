@@ -10,7 +10,6 @@
 """
 Convert from XML input to Fortran input
 """
-
 import sys
 
 
@@ -19,13 +18,13 @@ def parse_args():
     import argparse
 
     parser = argparse.ArgumentParser(
-            description="This program converts an XML input to the an equivalent "
+            description="This program converts a YAML formatted input to the an equivalent "
                         "input file written in a format that is natively readable "
                         "by Fortran's codes of Quantum Espresso"
     )
     parser.add_argument("-v", "--verbosity", action="count", default=1,
                         help="Increase output verbosity.")
-    parser.add_argument('-in', metavar='FILE', required=True, help="XML input filename.")
+    parser.add_argument('-in', metavar='FILE', required=True, help="YAML input filename.")
     return parser.parse_args()
 
 
@@ -38,7 +37,7 @@ if __name__ == '__main__':
         sys.exit(1)
 
     args = parse_args()
-    print("Create Fortran input from XML file %r ...\n" % getattr(args, 'in'))
+    print("Create Fortran input from YAML file %r ...\n" % getattr(args, 'in'))
 
     if __package__ is None:
         from os import path
