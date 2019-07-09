@@ -135,22 +135,22 @@
         <Hubbard_J specie="Fe2" label="3d">
        0.0000000E+00       0.0000000E+00       0.0000000E+00
         </Hubbard_J>
-        <starting_ns specie="O1" label="no Hubbard" spin="1">
+        <starting_ns size="5" specie="O1" label="no Hubbard" spin="1">
       -0.1000000E+01      -0.1000000E+01      -0.1000000E+01      -0.1000000E+01      -0.1000000E+01
         </starting_ns>
-        <starting_ns specie="Fe1" label="3d" spin="1">
+        <starting_ns size="5" specie="Fe1" label="3d" spin="1">
       -0.1000000E+01      -0.1000000E+01      -0.1000000E+01      -0.1000000E+01      -0.1000000E+01
         </starting_ns>
-        <starting_ns specie="Fe2" label="3d" spin="1">
+        <starting_ns size="5" specie="Fe2" label="3d" spin="1">
       -0.1000000E+01      -0.1000000E+01       0.1000000E+01      -0.1000000E+01      -0.1000000E+01
         </starting_ns>
-        <starting_ns specie="O1" label="no Hubbard" spin="2">
+        <starting_ns size="5" specie="O1" label="no Hubbard" spin="2">
       -0.1000000E+01      -0.1000000E+01      -0.1000000E+01      -0.1000000E+01      -0.1000000E+01
         </starting_ns>
-        <starting_ns specie="Fe1" label="3d" spin="2">
+        <starting_ns size="5" specie="Fe1" label="3d" spin="2">
       -0.1000000E+01      -0.1000000E+01       0.1000000E+01      -0.1000000E+01      -0.1000000E+01
         </starting_ns>
-        <starting_ns specie="Fe2" label="3d" spin="2">
+        <starting_ns size="5" specie="Fe2" label="3d" spin="2">
       -0.1000000E+01      -0.1000000E+01      -0.1000000E+01      -0.1000000E+01      -0.1000000E+01
         </starting_ns>
         <U_projection_type>atomic</U_projection_type>
