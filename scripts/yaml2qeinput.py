@@ -44,16 +44,27 @@ if __name__ == '__main__':
         sys.path.append(path.abspath(path.dirname(__file__)+'/../'))
 
     import qeschema
+    import xmlschema
     import os
     import xml.etree.ElementTree as Etree
+    import yaml
 
     qeschema.set_logger(args.verbosity)
 
+    print(args)
     input_fn = getattr(args, 'in')
-    tree = Etree.parse(input_fn)
+
+    with open(input_fn) as f:
+        data = yaml.load(f, Loader=yaml.Loader)
+    print(data)
+
+    print()
+    breakpoint()
+    tree = xmlschema.parse(input_fn)
     root = tree.getroot()
     elementName = root.tag.split('}')[-1]
     if elementName == 'espresso':
+        tree
         xml_conf = qeschema.PwDocument()
     elif elementName == 'nebRun':
         xml_conf = qeschema.NebDocument()
@@ -75,6 +86,8 @@ if __name__ == '__main__':
 
     input_fn_name, input_fn_ext = os.path.splitext(input_fn)
     outfile = input_fn_name + '.in'
+
+    breakpoint()
 
     with open(outfile, mode='w') as f:
         f.write(qe_in)

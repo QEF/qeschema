@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c), 2015-2016, Quantum Espresso Foundation and SISSA (Scuola
+# Copyright (c), 2015-2019, Quantum Espresso Foundation and SISSA (Scuola
 # Internazionale Superiore di Studi Avanzati). All rights reserved.
 # This file is distributed under the terms of the MIT License. See the
 # file 'LICENSE' in the root directory of the present distribution, or
 # http://opensource.org/licenses/MIT.
+#
 # Authors: Davide Brunato
 #
 import logging
@@ -13,7 +14,8 @@ from xml.etree import ElementTree
 import xmlschema
 from xmlschema import XMLSchemaValidationError
 
-from .converters import PwInputConverter, PhononInputConverter, NebInputConverter, TdInputConverter, TD_spctInConverter
+from .converters import PwInputConverter, PhononInputConverter, NebInputConverter, \
+    TdInputConverter, TdSpectrumInputConverter
 from .exceptions import ConfigError
 from .utils import etree_iter_path
 
@@ -74,7 +76,8 @@ class XmlDocument(object):
             self._document, self._config_file = old_config
             raise
 
-    def parse_xml(self, filename):
+    @staticmethod
+    def parse_xml(filename):
         """
         Return an ElementTree object representing an XML file
         """
@@ -214,9 +217,11 @@ class QeDocument(XmlDocument):
         self.input_builder = input_builder
 
         self.default_namespace = self.schema.target_namespace
-        qe_nslist = list(map(self.namespaces.get, ['qes','neb','qes_ph','qes_lr','qes_spectrum']))
-        if not self.default_namespace in qe_nslist:
-            raise NotImplementedError("Converter not implemented for this schema {}".format(self.default_namespace) )
+        qe_nslist = list(map(self.namespaces.get, ['qes', 'neb', 'qes_ph', 'qes_lr', 'qes_spectrum']))
+        if self.default_namespace not in qe_nslist:
+            raise NotImplementedError(
+                "Converter not implemented for this schema {}".format(self.default_namespace)
+            )
 
     def read_qe_input(self, filename):
         """
@@ -238,8 +243,12 @@ class QeDocument(XmlDocument):
             f.write(self.get_qe_input())
 
     @property
-    def input_tag(self):
+    def input_path(self):
         return 'input'
+
+    @property
+    def output_path(self):
+        return 'output'
 
     def get_qe_input(self, use_defaults=True):
         if self._document is None:
@@ -247,7 +256,7 @@ class QeDocument(XmlDocument):
 
         qe_input = self.input_builder(xml_file=self._config_file)
         schema = self.schema
-        input_path = '//%s' % self.input_tag
+        input_path = '//%s' % self.input_path
 
         input_root = self.find(input_path)
         # Extract values from input's subtree of the XML document
@@ -324,28 +333,28 @@ class PwDocument(QeDocument):
     """
     Class to manage PW XML documents.
     """
-    def __init__(self):
-        self._input_tag = 'input'
-        super(PwDocument, self).__init__(
-            xsd_file='%s/schemas/qes.xsd' % os.path.dirname(os.path.abspath(__file__)),
-            input_builder=PwInputConverter
-        )
+    def __init__(self, xsd_file=None):
+        if xsd_file is None:
+            xsd_file = '%s/schemas/qes.xsd' % os.path.dirname(os.path.abspath(__file__)),
+        super(PwDocument, self).__init__(xsd_file, input_builder=PwInputConverter)
 
 
 class PhononDocument(QeDocument):
     """
     Class to manage Phonon XML documents.
     """
-    def __init__(self):
-        self._input_tag = 'input'
-        super(PhononDocument, self).__init__(
-            xsd_file='%s/schemas/ph_temp.xsd' % os.path.dirname(os.path.abspath(__file__)),
-            input_builder=PhononInputConverter
-        )
+    def __init__(self, xsd_file=None):
+        if xsd_file is None:
+            xsd_file = '%s/schemas/ph_temp.xsd' % os.path.dirname(os.path.abspath(__file__)),
+        super(PhononDocument, self).__init__(xsd_file, input_builder=PhononInputConverter)
 
     @property
-    def input_tag(self):
+    def input_path(self):
         return 'inputPH'
+
+    @property
+    def output_path(self):
+        return 'outputPH'
 
     def get_qe_input(self, use_defaults=False):
         """
@@ -360,53 +369,38 @@ class NebDocument(QeDocument):
     """
     Class to manage NEB XML documents.
     """
-    def __init__(self):
-        self._input_tag = 'input'
-        super(NebDocument, self).__init__(
-            xsd_file='%s/schemas/qes_neb.xsd' % os.path.dirname(os.path.abspath(__file__)),
-            input_builder=NebInputConverter
-        )
+    def __init__(self, xsd_file=None):
+        if xsd_file is None:
+            xsd_file = '%s/schemas/qes_neb.xsd' % os.path.dirname(os.path.abspath(__file__)),
+        super(NebDocument, self).__init__(xsd_file, input_builder=NebInputConverter)
 
 
 class TdDocument(QeDocument):
     """
-    Class to manage TDDFPT 
+    Class to manage TDDFPT XML documents.
     """
-    def __init__(self):
-        self._input_tag = ''
-        super(TdDocument, self).__init__(
-            xsd_file='%s/schemas/tddfpt.xsd' %
-            os.path.dirname(os.path.abspath(__file__)),
-            input_builder = TdInputConverter
-        )
+    def __init__(self, xsd_file=None):
+        if xsd_file is None:
+            xsd_file = '%s/schemas/tddfpt.xsd' % os.path.dirname(os.path.abspath(__file__)),
+        super(TdDocument, self).__init__(xsd_file, input_builder=TdInputConverter)
 
-
-    def get_input_path(self):
+    @property
+    def input_path(self):
         return 'input'
 
 
-
-
-
-
 class SpectrumDocument(QeDocument):
-     """
-     Class to manage turbo-spectrum inputs
-     """
-     def __init__(self):
-         self._input_tag = '.'
-         super(SpectrumDocument,self).__init__(
-             xsd_file =
-             '%s/schemas/qes_spectrum.xsd'%os.path.dirname(os.path.abspath(__file__)),
-             input_builder = TD_spctInConverter
-         )
+    """
+    Class to manage turbo-spectrum inputs
+    """
+    def __init__(self, xsd_file=None):
+        if xsd_file is None:
+            xsd_file = '%s/schemas/qes_spectrum.xsd' % os.path.dirname(os.path.abspath(__file__)),
+        super(SpectrumDocument,self).__init__(xsd_file, input_builder=TdSpectrumInputConverter)
 
-     @property
-     def input_tag(self):
-         return 'spectrumIn'
-
-     def get_input_path(self):
-         return 'spectrumIn'
+    @property
+    def input_path(self):
+        return 'spectrumIn'
 
  
 

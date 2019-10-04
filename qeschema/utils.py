@@ -1,14 +1,14 @@
 #
-# Copyright (c), 2015-2017, Quantum Espresso Foundation and SISSA (Scuola
+# Copyright (c), 2015-2019, Quantum Espresso Foundation and SISSA (Scuola
 # Internazionale Superiore di Studi Avanzati). All rights reserved.
 # This file is distributed under the terms of the MIT License. See the
 # file 'LICENSE' in the root directory of the present distribution, or
 # http://opensource.org/licenses/MIT.
+#
 # Authors: Davide Brunato
 #
-
 import logging
-from collections import MutableMapping
+from collections.abc import MutableMapping
 
 logger = logging.getLogger('qeschema')
 
@@ -148,11 +148,11 @@ class BiunivocalMap(MutableMapping):
 
     def getkey(self, value, default=None):
         """
-        If value is in dictionary's values, return the key correspondent
-        to the value, else return None.
+        If value is in dictionary's values, returns the key correspondent
+        to the value, else returns `None~.
 
-        :param value: Value to map
-        :param default: Default to return if the value is not in the map values
+        :param value: value to map
+        :param default: default to return if the value is not in the map values
         """
         try:
             return self.__inverse[value]
@@ -160,5 +160,5 @@ class BiunivocalMap(MutableMapping):
             return default
 
     def inverse(self):
-        """Return a copy of the inverse dictionary."""
+        """Returns a copy of the inverse dictionary."""
         return self.__inverse.copy()
