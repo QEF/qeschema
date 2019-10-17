@@ -63,7 +63,7 @@ if __name__ == '__main__':
     elif elementName == 'tddfpt':
         xml_conf = qeschema.TdDocument()
     elif elementName == 'spectrumDoc':
-        xml_conf = qeschema.SpectrumDocument()
+        xml_conf = qeschema.TdSpectrumDocument()
     else:
         sys.stderr.write("Could not find correct XML in %s, exiting...\n" % input_fn)
         sys.exit(1)

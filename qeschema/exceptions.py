@@ -13,11 +13,11 @@ import logging
 logger = logging.getLogger('qeschema')
 
 
-class QEspressoError(Exception):
+class QESchemaError(Exception):
     pass
 
 
-class ConfigError(QEspressoError):
+class ConfigError(QESchemaError):
     """A validation error of an XML configuration."""
 
     def __init__(self, message):

@@ -28,7 +28,7 @@ def make_test_function(xml_file, ref_in_file):
         elif elementName == 'tddfpt':
             xml_conf = qeschema.TdDocument()
         elif elementName == 'spectrumDoc':
-            xml_conf = qeschema.SpectrumDocument()
+            xml_conf = qeschema.TdSpectrumDocument()
         else:
             raise ValueError("XML file %r is not a Quantum ESPRESSO document!" % xml_file)
 

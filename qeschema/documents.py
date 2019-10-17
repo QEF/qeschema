@@ -10,9 +10,15 @@
 #
 import logging
 import os.path
+import json
 from xml.etree import ElementTree
 import xmlschema
-from xmlschema import XMLSchemaValidationError
+from xmlschema.etree import etree_tostring
+
+try:
+    import yaml
+except ImportError:
+    yaml = None
 
 from .converters import PwInputConverter, PhononInputConverter, NebInputConverter, \
     TdInputConverter, TdSpectrumInputConverter
@@ -24,160 +30,226 @@ logger = logging.getLogger('qeschema')
 
 class XmlDocument(object):
     """
-    Generic XML schema based document.
+    Generic XML schema based document. The XSD schema file associated is used for
+    checking types, validation of the XML data and for lookup of default values.
+    Loaded XML data is loader into memory into an ElementTree structure.
+    Data files can be also in JSON or YAML format. In these cases the data source
+    is converted to XML when loading.
 
-    A XSD schema is needed for checking types, validation of the configuration
-    and for lookup of default values of the attributes. Full schema's validation
-    is available only if lxml library is installed.
+    :param xsd_file: the filesystem path of the XSD reference schema.
+    :param converter: an alternative converter class or instance used for convert \
+    the XML document to other formats (JSON and YAML). If nothing is passed the \
+    default converter of the *xmlschema* library is created and used.
 
-    Supported files data format for configuration are XML, YAML and JSON.
+    :ivar root: the root element of the XML tree.
+    :ivar filename: the filepath of the data source file.
+    :ivar format: the format of the data source file (XML, JSON, YAML).
+    :ivar errors: the list of detected validation errors.
     """
-    def __init__(self, xsd_file):
-        self._document = None
-        self._config_file = None
-        self._file_format = None
-        self._xsd_file = xsd_file
+    def __init__(self, xsd_file, converter=None):
+        self.root = None
+        self.filename = None
+        self.format = None
+        self.errors = []
 
-        try:
-            self.schema = xmlschema.XMLSchema(xsd_file)
-        except IOError as err:
-            logger.error('XML Schema not available: %s' % err)
-            self.schema = None
-            raise
-        self.namespaces = self.schema.namespaces
+        self.xsd_file = xsd_file
+        self.schema = xmlschema.XMLSchema(xsd_file, converter=converter)
 
-    def read(self, filename, data_format='XML'):
+    @property
+    def converter(self):
+        """The default converter applied to data format conversions."""
+        return self.schema.converter
+
+    @property
+    def namespaces(self):
+        """Schema namespaces, that is a dictionary that maps prefixes to URI."""
+        return self.schema.namespaces
+
+    def read(self, filename, validation='strict', converter=None):
         """
-        Read configuration from a text file in a specific data format.
+        Read configuration from a text file in a specific data format. Input
+        data files can be XML, JSON or YAML.
 
-        :param filename: Name of the text file containing the configuration
-        :param data_format: Input file data format (XML, JSON or YAML)
+        :param filename: filepath of the data source file.
+        :param validation: validation mode, can be 'strict', 'lax' or 'skip'.
+        :param converter: the class used for converting non-XML data sources. \
+        If left to `None` the default converter of the xmlschema library is used.
         """
-        data_format = data_format.upper()
-        old_config = (self._document, self._config_file)
-        try:
-            if data_format == 'XML':
-                self._document = self.parse_xml(filename)
-            elif data_format == 'YAML':
-                self._document = self.parse_yaml(filename)
-            elif data_format == 'JSON':
-                self._document = self.parse_json(filename)
-            else:
-                raise ValueError("'input_format' argument must be 'XML', 'YAML' or 'JSON'")
-        except XMLSchemaValidationError:
-            raise
+        if not isinstance(filename, str):
+            raise TypeError("wrong type for argument 'filename'")
+        elif os.path.isfile(filename):
+            raise ValueError("{!r} is not a file".format(filename))
+
+        ext = filename.strip().lower().rpartition('.') if '.' in filename else None
+
+        if ext == 'xml':
+            self.root, self.errors = self.from_xml(filename, validation)
+            self.format = 'xml'
+        elif ext == 'json':
+            self.root, self.errors = self.from_json(filename, validation, converter)
+            self.format = 'json'
+        elif ext in ('yml', 'yaml'):
+            self.root, self.errors = self.from_yaml(filename, validation, converter)
+            self.format = 'yaml'
         else:
-            self._config_file = filename
-
-        # Validation of the new ElementTree structure (valid
-        try:
-            self.validate()
-        except XMLSchemaValidationError:
-            self._document, self._config_file = old_config
-            raise
-
-    @staticmethod
-    def parse_xml(filename):
-        """
-        Return an ElementTree object representing an XML file
-        """
-        return ElementTree.parse(filename)
-
-    def parse_json(self, filename):
-        """
-        Build an ElementTree object representing a YAML file
-        """
-        logger.warning("JSON read is a TODO!")
-        return
-
-    def parse_yaml(self, filename):
-        """
-        Build an ElementTree object representing a YAML file
-        """
-        logger.warning("YAML read is a TODO!")
-        return
-
-    def from_dict(self):
-        """
-        Build an ElementTree object from a dictionary
-        """
-        return
-
-    def validate(self, filename=None):
-        if filename is not None:
             try:
-                self.validate()
-            except XMLSchemaValidationError as e:
-                e.message = "Invalid XML file '%s': %s" % (filename, e.message)
-                raise
-            else:
-                self._config_file = filename
+                self.root, self.errors = self.from_xml(filename, validation)
+                self.format = 'xml'
+            except ElementTree.ParseError:
+                try:
+                    self.root, self.errors = self.from_json(filename, validation, converter)
+                    self.format = 'json'
+                except json.JSONDecodeError:
+                    try:
+                        self.root, self.errors = self.from_yaml(filename, validation, converter)
+                        self.format = 'yaml'
+                    except yaml.YAMLError:
+                        raise ValueError("input file is not in neither of XML, JSON or YAML formats")
 
-        self.schema.validate(self._document)
-        self.extra_validations(self._document)
+        self.filename = filename
 
-    def extra_validations(self, xlm_tree):
+    def from_xml(self, source, validation='strict'):
         """
-        Hook for ad-hoc validations of dependencies between parameters that
-        are not explainable with the XSD schema.
-        """
-        pass
+        Load source data from an XML file. Data is validated against the schema.
 
-    def write(self, filename, output_format='XML'):
+        :param source: a filepath to an XML file or a string containing XML data.
+        :param validation: validation mode, can be 'strict', 'lax' or 'skip'.
+        :return: a couple with the root element of the XML ElementTree a list \
+        containing the detected errors.
         """
-        Write configuration to a text file in a specific data format.
+        if not isinstance(source, str):
+            raise TypeError("the source argument must be a string!")
+        elif '\n' not in source and not source.strip().startswith('<'):
+            root = ElementTree.parse(source).getroot()
+        else:
+            root = ElementTree.XML(source)
 
-        :param filename:
-        :param output_format:
-        :return:
+        if validation == 'lax':
+            return root, [e for e in self.schema.iter_errors(source)]
+        elif validation != 'skip':
+            self.schema.validate(source)
+        return root, []
+
+    def from_json(self, source, validation='strict', converter=None):
         """
-        if self._document is None:
-            logger.error("No configuration loaded!")
-            return
+        Converts a JSON encoded file to an XML ElementTree structure.
+        Data is validated against the schema during conversion.
 
-        output_format = output_format.upper()
+        :param source: a filepath to a JSON file or a string containing JSON data.
+        :param validation: validation mode, can be 'strict', 'lax' or 'skip'.
+        :param converter: the class used for converting non-XML data sources. \
+        If left to `None` the default converter of the xmlschema library is used.
+        :return: a couple with the root element of the XML ElementTree a list \
+        containing the detected errors.
+        """
+        obj = xmlschema.from_json(source, self.schema, validation=validation, converter=converter)
+        return obj if isinstance(obj, tuple) else obj, []
+
+    def from_yaml(self, source, validation='strict', converter=None):
+        """
+        Converts a YAML encoded file to an XML ElementTree structure.
+        Data is validated against the schema during conversion.
+
+        :param source: a filepath to a YAML file or a string containing YAML data.
+        :param validation: validation mode, can be 'strict', 'lax' or 'skip'.
+        :param converter: the class used for converting non-XML data sources. \
+        If left to `None` the default converter of the xmlschema library is used.
+        :return: a couple with the root element of the XML ElementTree and a list \
+        containing the detected errors.
+        """
+        if yaml is None:
+            raise RuntimeError("PyYAML library is not installed!")
+        elif not isinstance(source, str):
+            raise TypeError("the source argument must be a string!")
+        elif '\n' not in source and not source.strip().startswith('<'):
+            data = yaml.load(open(source))
+        else:
+            data = yaml.load(source)
+
+        obj = self.schema.encode(data, validation=validation, converter=converter)
+        return obj if isinstance(obj, tuple) else obj, []
+
+    def from_dict(self, data, validation='strict', converter=None):
+        """
+        Converts a Python object to an XML ElementTree structure.
+        Object data is validated against the schema during conversion.
+
+        :param data: filepath of the data source file.
+        :param validation: validation mode, can be 'strict', 'lax' or 'skip'.
+        :param converter: the class used for converting the object to XML. \
+        If left to `None` the default converter of the xmlschema library is used.
+        :return: a couple with the root element of the XML ElementTree and a list \
+        containing the detected errors.
+        """
+        obj = self.schema.encode(data, validation=validation, converter=converter)
+        return obj if isinstance(obj, tuple) else obj, []
+
+    def write(self, filename, output_format='xml', validation='strict', converter=None):
+        """
+        Write XML data to a file.
+
+        :param filename: filepath of the destination file.
+        :param output_format: the data format of the output file.
+        :param validation: validation mode, can be 'strict', 'lax' or 'skip'.
+        :param converter: the class used for converting the object to XML. \
+        If left to `None` the default converter of the xmlschema library is used.
+        """
+        if not isinstance(filename, str):
+            raise TypeError("the filename argument must be a string!")
+        elif self.root is None:
+            raise RuntimeError("No XML data loaded!")
+
+        output_format = output_format.strip().lower()
         if output_format == 'XML':
-            self._document.write(filename)
-        elif output_format == 'YAML':
-            logger.warning("YAML write is a TODO!")
-        elif output_format == 'JSON':
-            logger.warning("JSON write is a TODO!")
+            with open(filename, 'w') as f:
+                f.write(etree_tostring(self.root))
+
+        elif output_format == 'json':
+            obj = self.to_dict(validation, converter)
+            with open(filename, 'w') as f:
+                return json.dump(f, obj, sort_keys=True, indent=4)
+
+        elif output_format == 'yaml':
+            if yaml is None:
+                raise RuntimeError("PyYAML library is not installed!")
+
+            obj = self.to_dict(validation, converter)
+            with open(filename, 'w') as f:
+                yaml.dump(obj, stream=f, default_flow_style=False)
         else:
             raise ValueError("Accepted output_format are: 'XML'(default), 'YAML' and 'JSON'!")
 
-    def read_string(self, text):
-        self._document = ElementTree.fromstring(text)
+    def to_dict(self, validation='strict', converter=None):
+        obj = self.schema.to_dict(self.root, validation=validation, converter=converter)
+        return obj[0] if isinstance(obj, tuple) else obj
+
+    def to_json(self, validation='strict', converter=None):
+        """Converts the XML data to a JSON string."""
+        return json.dumps(self.to_dict(validation, converter), sort_keys=True, indent=4)
+
+    def to_yaml(self, validation='strict', converter=None):
+        """Converts the configuration to YAML string."""
+        if yaml is None:
+            raise RuntimeError("PyYAML library is not installed!")
+        return yaml.dump(self.to_dict(validation, converter), default_flow_style=False)
 
     def get(self, qualified_name):
         section, _, item = qualified_name.partition(".")
         query = "./{0}/{1}".format(section, item)
-        node = self._document.find(query)
+        node = self.root.find(query)
         if node is None:
             return
         return node.text
 
     def __getitem__(self, section):
         query = "./{0}".format(section)
-        parent = self._document.find(query)
+        parent = self.root.find(query)
         return dict((item.tag, item.text) for item in parent)
-
-    def to_dict(self):
-        return xmlschema.to_dict(self._document, self.schema)
-
-    def to_json(self):
-        """Converts the configuration to to json."""
-        import json
-        return json.dumps(self.to_dict(), sort_keys=True, indent=4)
-
-    def to_yaml(self):
-        """Converts the configuration to to json."""
-        import yaml
-        return yaml.dump(self.to_dict(), default_flow_style=False)
 
     # ElementTree API wrappers
 
     def iter(self, tag=None):
-        return self._document.iter(tag)
+        return self.root.iter(tag)
 
     def find(self, path, namespaces=None):
         """
@@ -191,7 +263,7 @@ class XmlDocument(object):
         namespaces.update(self.namespaces)
         if path[:1] == "/":
             path = "." + path
-        return self._document.find(path, namespaces)
+        return self.root.find(path, namespaces)
 
     def findall(self, path, namespaces=None):
         """
@@ -205,7 +277,7 @@ class XmlDocument(object):
         namespaces.update(self.namespaces)
         if path[:1] == "/":
             path = "." + path
-        return self._document.findall(path, namespaces)
+        return self.root.findall(path, namespaces)
 
 
 class QeDocument(XmlDocument):
@@ -251,10 +323,10 @@ class QeDocument(XmlDocument):
         return 'output'
 
     def get_qe_input(self, use_defaults=True):
-        if self._document is None:
+        if self.root is None:
             raise ConfigError("Configuration not loaded!")
 
-        qe_input = self.input_builder(xml_file=self._config_file)
+        qe_input = self.input_builder(xml_file=self.filename)
         schema = self.schema
         input_path = '//%s' % self.input_path
 
@@ -389,18 +461,15 @@ class TdDocument(QeDocument):
         return 'input'
 
 
-class SpectrumDocument(QeDocument):
+class TdSpectrumDocument(QeDocument):
     """
     Class to manage turbo-spectrum inputs
     """
     def __init__(self, xsd_file=None):
         if xsd_file is None:
             xsd_file = '%s/schemas/qes_spectrum.xsd' % os.path.dirname(os.path.abspath(__file__)),
-        super(SpectrumDocument,self).__init__(xsd_file, input_builder=TdSpectrumInputConverter)
+        super(TdSpectrumDocument, self).__init__(xsd_file, input_builder=TdSpectrumInputConverter)
 
     @property
     def input_path(self):
         return 'spectrumIn'
-
- 
-
