@@ -22,7 +22,7 @@ except ImportError:
 
 from .converters import PwInputConverter, PhononInputConverter, NebInputConverter, \
     TdInputConverter, TdSpectrumInputConverter
-from .exceptions import ConfigError
+from .exceptions import XmlDocumentError
 from .utils import etree_iter_path
 
 logger = logging.getLogger('qeschema')
@@ -201,12 +201,12 @@ class XmlDocument(object):
 
         output_format = output_format.strip().lower()
         if output_format == 'XML':
-            with open(filename, 'w') as f:
+            with open(filename, 'w+') as f:
                 f.write(etree_tostring(self.root))
 
         elif output_format == 'json':
             obj = self.to_dict(validation, converter)
-            with open(filename, 'w') as f:
+            with open(filename, 'w+') as f:
                 return json.dump(f, obj, sort_keys=True, indent=4)
 
         elif output_format == 'yaml':
@@ -214,7 +214,7 @@ class XmlDocument(object):
                 raise RuntimeError("PyYAML library is not installed!")
 
             obj = self.to_dict(validation, converter)
-            with open(filename, 'w') as f:
+            with open(filename, 'w+') as f:
                 yaml.dump(obj, stream=f, default_flow_style=False)
         else:
             raise ValueError("Accepted output_format are: 'XML'(default), 'YAML' and 'JSON'!")
@@ -282,7 +282,7 @@ class XmlDocument(object):
 
 class QeDocument(XmlDocument):
     """
-    Abstract class for XML schema based configurations.
+    Base class for schema based data for Quantum ESPRESSO applications.
     """
     def __init__(self, xsd_file, input_builder):
         super(QeDocument, self).__init__(xsd_file)
@@ -295,24 +295,23 @@ class QeDocument(XmlDocument):
                 "Converter not implemented for this schema {}".format(self.default_namespace)
             )
 
-    def read_qe_input(self, filename):
+    def read_fortran_input(self, filename):
         """
-        Map from a Fortran input to XML old parameters to correspondent parameter in XML schema.
+        Reads a Fortran namelist input from file and converts to XML input.
+
+        :param filename: a filepath to the namelist file containing the Fortran input.
+        :return: the input XML Element.
+        """
+        raise NotImplementedError
+
+    def write_fortran_input(self, filename):
+        """
+        Converts the XML input data to a Fortran namelist input and writes it to a file.
 
         :param filename:
-        :return:
-        """
-        return self
-
-    def write_qe_input(self, filename):
-        """
-        Write the XML configuration to a Fortran input.
-
-        :param filename:
-        :return:
         """
         with open(filename, mode='w+') as f:
-            f.write(self.get_qe_input())
+            f.write(self.get_fortran_input())
 
     @property
     def input_path(self):
@@ -322,12 +321,12 @@ class QeDocument(XmlDocument):
     def output_path(self):
         return 'output'
 
-    def get_qe_input(self, use_defaults=True):
+    def get_fortran_input(self, use_defaults=True):
+
         if self.root is None:
-            raise ConfigError("Configuration not loaded!")
+            raise XmlDocumentError("XML data is not loaded!")
 
         qe_input = self.input_builder(xml_file=self.filename)
-        schema = self.schema
         input_path = '//%s' % self.input_path
 
         input_root = self.find(input_path)
@@ -335,7 +334,7 @@ class QeDocument(XmlDocument):
         for elem, path in etree_iter_path(input_root, path=input_path):
 
             rel_path = path.replace(input_path, '.')
-            xsd_element = schema.find(path)
+            xsd_element = self.schema.find(path)
             if xsd_element is None:
                 logger.error("%r doesn't match any element!" % path)
                 continue
@@ -366,11 +365,11 @@ class QeDocument(XmlDocument):
             # Add defaults for elements not included in input XML subtree
             for path in filter(
                     lambda x: x.startswith(input_path) and self.find(x) is None,
-                    schema.elements
+                    self.schema.elements
             ):
                 rel_path = path.replace(input_path, '.')
                 tag = rel_path.rsplit('/', 1)[-1]
-                xsd_attributes = schema.get_attributes(path)
+                xsd_attributes = self.schema.get_attributes(path)
                 defaults_dict = {}
                 defaults_path_keys = []
 
@@ -387,10 +386,10 @@ class QeDocument(XmlDocument):
                 except AttributeError:
                     pass
 
-                default_value = schema.get_element_default(path)
+                default_value = self.schema.get_element_default(path)
                 if default_value is not None:
                     path_key = '%s/$' % rel_path if xsd_attributes else rel_path
-                    xsd_type = schema.get_element_type(path)
+                    xsd_type = self.schema.get_element_type(path)
                     value = xsd_type.decode(default_value)
                     defaults_dict[path_key.rsplit("/")[-1]] = value
                     defaults_path_keys.append(path_key)
@@ -398,7 +397,7 @@ class QeDocument(XmlDocument):
                 for path_key in defaults_path_keys:
                     qe_input.set_path(path_key, tag, defaults_dict)
 
-        return qe_input.get_qe_input()
+        return qe_input.get_fortran_input()
 
 
 class PwDocument(QeDocument):
@@ -428,13 +427,13 @@ class PhononDocument(QeDocument):
     def output_path(self):
         return 'outputPH'
 
-    def get_qe_input(self, use_defaults=False):
+    def get_fortran_input(self, use_defaults=False):
         """
         overrides get_qe_input calling super get_qe_input with use_defaults set to False. 
         :param use_defaults: 
         :return: the input as obtained from its input builder
         """
-        return super(PhononDocument, self).get_qe_input(use_defaults=use_defaults)
+        return super(PhononDocument, self).get_fortran_input(use_defaults=use_defaults)
 
 
 class NebDocument(QeDocument):

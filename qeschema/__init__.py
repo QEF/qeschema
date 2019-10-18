@@ -11,7 +11,7 @@
 from .documents import QeDocument, PwDocument, PhononDocument, NebDocument, TdDocument, TdSpectrumDocument
 from .converters import RawInputConverter, PwInputConverter, PhononInputConverter, \
     NebInputConverter, TdInputConverter, TdSpectrumInputConverter
-from .exceptions import ConfigError
+from .exceptions import XmlDocumentError
 from .utils import set_logger
 
 __version__ = '1.0.0'
@@ -19,5 +19,5 @@ __version__ = '1.0.0'
 __all__ = [
     'QeDocument', 'PhononDocument', 'TdDocument', 'TdSpectrumDocument',
     'RawInputConverter', 'PwInputConverter', 'PhononInputConverter',
-    'TdInputConverter', 'TdSpectrumInputConverter', 'set_logger', 'ConfigError'
+    'TdInputConverter', 'TdSpectrumInputConverter', 'set_logger', 'XmlDocumentError'
 ]

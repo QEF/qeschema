@@ -82,7 +82,7 @@ def etree_iter_path(elem, tag=None, path='.'):
 class BiunivocalMap(MutableMapping):
     """
     A dictionary that implements a bijective correspondence, namely with constraints
-    of uniqueness both on keys that on values.
+    of uniqueness both on keys and on values. Both keys and values must be hashable.
     """
     def __init__(self, *args, **kwargs):
         self.__map = {}
@@ -124,41 +124,21 @@ class BiunivocalMap(MutableMapping):
         return key in self.__map
 
     def __repr__(self):
-        return repr(self.__map)
+        return '%s(%s)' % (self.__class__.__name__, self.__map or '')
 
     def copy(self):
-        if self.__class__ is BiunivocalMap:
-            return BiunivocalMap(self.__map.copy())
-        import copy
-        __map = self.__map
-        try:
-            self.__map = {}
-            c = copy.copy(self)
-        finally:
-            self.__map = __map
-        c.update(self)
-        return c
+        return self.__class__(self.__map.copy())
 
-    @classmethod
-    def fromkeys(cls, iterable, value=None):
-        d = cls()
-        for key in iterable:
-            d[key] = value
-        return d
+    def inverse(self):
+        """Returns a copy of the inverse dictionary."""
+        return self.__inverse.copy()
 
     def getkey(self, value, default=None):
         """
-        If value is in dictionary's values, returns the key correspondent
-        to the value, else returns `None~.
-
-        :param value: value to map
-        :param default: default to return if the value is not in the map values
+        If *value* is in dictionary's values, returns the key correspondent to the value,
+        else returns the *default* argument.
         """
         try:
             return self.__inverse[value]
         except KeyError:
             return default
-
-    def inverse(self):
-        """Returns a copy of the inverse dictionary."""
-        return self.__inverse.copy()

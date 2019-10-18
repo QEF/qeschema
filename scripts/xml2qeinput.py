@@ -72,7 +72,7 @@ if __name__ == '__main__':
     tree = None
 
     xml_conf.read(input_fn)
-    qe_in = xml_conf.get_qe_input()
+    qe_in = xml_conf.get_fortran_input()
 
     input_fn_name, input_fn_ext = os.path.splitext(input_fn)
     outfile = input_fn_name + '.in'

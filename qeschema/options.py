@@ -11,7 +11,8 @@
 Conversion functions for Quantum Espresso input options.
 """
 import logging
-from .exceptions import ConfigError
+
+from .exceptions import XmlDocumentError
 
 logger = logging.getLogger('qeschema')
 
@@ -55,7 +56,7 @@ def get_specie_related_values(name, **kwargs):
                 break
             specie_index += 1
         else:
-            raise ConfigError("Unknown specie '%s' in tag '%s'" % (tag_specie, name))
+            raise XmlDocumentError("Unknown specie '%s' in tag '%s'" % (tag_specie, name))
 
         if isinstance(tag_values, list):
             for k in range(len(tag_values)):

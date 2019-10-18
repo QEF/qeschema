@@ -17,9 +17,9 @@ class QESchemaError(Exception):
     pass
 
 
-class ConfigError(QESchemaError):
-    """A validation error of an XML configuration."""
+class XmlDocumentError(QESchemaError, RuntimeError):
+    """An error or a wrong condition with an XML document instance."""
 
     def __init__(self, message):
         Exception.__init__(self, message)
-        logger.debug('!ConfigError: {0}'.format(message))
+        logger.debug('!XmlDocumentError: {0}'.format(message))
