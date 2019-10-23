@@ -1,7 +1,8 @@
 # Requirements for setup a development environment for the qeschema package.
 setuptools
 tox
-xmlschema~=1.0.13
+coverage
+xmlschema~=1.0.15
 pyyaml
 Sphinx
 sphinx_rtd_theme

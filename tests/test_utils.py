@@ -10,9 +10,10 @@
 import unittest
 import tempfile
 import logging
-from io import StringIO
+from types import MethodType
+from xml.etree import ElementTree
 
-from qeschema.utils import set_logger, BiunivocalMap
+from qeschema.utils import set_logger, etree_iter_path, BiunivocalMap
 
 
 class TestHelperFunctions(unittest.TestCase):
@@ -39,6 +40,13 @@ class TestHelperFunctions(unittest.TestCase):
         self.assertIsInstance(logger.handlers[0], logging.StreamHandler)
         self.assertNotIsInstance(logger.handlers[0], logging.FileHandler)
         self.assertEqual(len(logger.handlers), 1)
+
+        set_logger(2)
+        self.assertEqual(logger.getEffectiveLevel(), logging.WARNING)
+        self.assertIsInstance(logger.handlers[0], logging.StreamHandler)
+        self.assertNotIsInstance(logger.handlers[0], logging.FileHandler)
+        self.assertEqual(len(logger.handlers), 1)
+
         logger.handlers = []
 
         f = tempfile.mkstemp()
@@ -46,9 +54,42 @@ class TestHelperFunctions(unittest.TestCase):
         self.assertEqual(logger.getEffectiveLevel(), logging.ERROR)
         self.assertIsInstance(logger.handlers[0], logging.FileHandler)
         logger.handlers[0].close()
-        
         logger.setLevel(loglevel)
         logger.handlers = handlers
+
+    def test_etree_iterpath(self):
+        root = ElementTree.XML('<A><B1><C1/></B1><B2><C2/><C3/></B2></A>')
+
+        values = iter(etree_iter_path(root))
+        self.assertEqual(next(values), (root, '.'))
+        self.assertEqual(next(values), (root[0], './B1'))
+        self.assertEqual(next(values), (root[0][0], './B1/C1'))
+        self.assertEqual(next(values), (root[1], './B2'))
+        self.assertEqual(next(values), (root[1][0], './B2/C2'))
+        self.assertEqual(next(values), (root[1][1], './B2/C3'))
+        self.assertRaises(StopIteration, next, values)
+
+        values = iter(etree_iter_path(root, tag='C2'))
+        self.assertEqual(next(values), (root[1][0], './B2/C2'))
+        self.assertRaises(StopIteration, next, values)
+
+        values = iter(etree_iter_path(root, tag="*"))
+        self.assertEqual(next(values), (root, '.'))
+        self.assertEqual(next(values), (root[0], './B1'))
+        self.assertEqual(next(values), (root[0][0], './B1/C1'))
+        self.assertEqual(next(values), (root[1], './B2'))
+        self.assertEqual(next(values), (root[1][0], './B2/C2'))
+        self.assertEqual(next(values), (root[1][1], './B2/C3'))
+        self.assertRaises(StopIteration, next, values)
+
+        values = iter(etree_iter_path(root, path='/A'))
+        self.assertEqual(next(values), (root, '/A'))
+        self.assertEqual(next(values), (root[0], '/A/B1'))
+        self.assertEqual(next(values), (root[0][0], '/A/B1/C1'))
+        self.assertEqual(next(values), (root[1], '/A/B2'))
+        self.assertEqual(next(values), (root[1][0], '/A/B2/C2'))
+        self.assertEqual(next(values), (root[1][1], '/A/B2/C3'))
+        self.assertRaises(StopIteration, next, values)
 
 
 class TestBiunivocalMap(unittest.TestCase):
@@ -81,6 +122,17 @@ class TestBiunivocalMap(unittest.TestCase):
         self.assertEqual(getattr(bimap, '_BiunivocalMap__map'), result)
         self.assertEqual(getattr(bimap, '_BiunivocalMap__inverse'),
                          {1: 'a', 2: 'b', 3: 'c', 4: 'd'})
+
+    def test_getitem(self):
+        bimap = BiunivocalMap({'a': 1, 'b': 2, 'c': 3})
+        self.assertEqual(bimap['a'], 1)
+        self.assertEqual(bimap['b'], 2)
+        self.assertEqual(bimap['c'], 3)
+        with self.assertRaises(KeyError):
+            _ = bimap['d']
+
+        bimap.__missing__ = MethodType(lambda x, y: 0, bimap)
+        self.assertEqual(bimap['d'], 0)
 
     def test_delitem(self):
         bimap = BiunivocalMap({'a': 1, 'b': 2, 'c': 3, 'd': 4})
@@ -117,6 +169,14 @@ class TestBiunivocalMap(unittest.TestCase):
     def test_len(self):
         self.assertEqual(len(BiunivocalMap()), 0)
         self.assertEqual(len(BiunivocalMap({'a': 1, 'b': 2, 'c': 3, 'd': 4})), 4)
+
+    def test_contains(self):
+        bimap = BiunivocalMap({'a': 1, 'b': 2, 'c': 3, 'd': 4})
+        self.assertTrue('a' in bimap)
+        self.assertTrue('c' in bimap)
+        self.assertTrue('d' in bimap)
+        self.assertFalse('e' in bimap)
+        self.assertFalse(4 in bimap)
 
     def test_repr(self):
         bimap = BiunivocalMap()

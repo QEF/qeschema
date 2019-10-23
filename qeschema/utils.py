@@ -90,11 +90,12 @@ class BiunivocalMap(MutableMapping):
         self.update(*args, **kwargs)
 
     def __getitem__(self, key):
-        if key in self.__map:
+        try:
             return self.__map[key]
-        if hasattr(self.__class__, '__missing__'):
-            return getattr(self.__class__, '__missing__')(self, key)
-        raise KeyError(key)
+        except KeyError:
+            if not hasattr(self, '__missing__'):
+                raise
+            return getattr(self, '__missing__')(key)
 
     def __setitem__(self, key, item):
         try:

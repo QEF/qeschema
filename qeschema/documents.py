@@ -284,6 +284,8 @@ class QeDocument(XmlDocument):
     """
     Base class for schema based data for Quantum ESPRESSO applications.
     """
+    SCHEMAS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'schemas')
+
     def __init__(self, xsd_file, input_builder):
         super(QeDocument, self).__init__(xsd_file)
         self.input_builder = input_builder
@@ -406,7 +408,7 @@ class PwDocument(QeDocument):
     """
     def __init__(self, xsd_file=None):
         if xsd_file is None:
-            xsd_file = '%s/schemas/qes.xsd' % os.path.dirname(os.path.abspath(__file__)),
+            xsd_file = os.path.join(self.SCHEMAS_DIR, 'qes.xsd')
         super(PwDocument, self).__init__(xsd_file, input_builder=PwInputConverter)
 
 
@@ -416,7 +418,7 @@ class PhononDocument(QeDocument):
     """
     def __init__(self, xsd_file=None):
         if xsd_file is None:
-            xsd_file = '%s/schemas/ph_temp.xsd' % os.path.dirname(os.path.abspath(__file__)),
+            xsd_file = os.path.join(self.SCHEMAS_DIR, 'ph_temp.xsd')
         super(PhononDocument, self).__init__(xsd_file, input_builder=PhononInputConverter)
 
     @property
@@ -442,7 +444,7 @@ class NebDocument(QeDocument):
     """
     def __init__(self, xsd_file=None):
         if xsd_file is None:
-            xsd_file = '%s/schemas/qes_neb.xsd' % os.path.dirname(os.path.abspath(__file__)),
+            xsd_file = os.path.join(self.SCHEMAS_DIR, 'qes_neb.xsd')
         super(NebDocument, self).__init__(xsd_file, input_builder=NebInputConverter)
 
 
@@ -452,7 +454,7 @@ class TdDocument(QeDocument):
     """
     def __init__(self, xsd_file=None):
         if xsd_file is None:
-            xsd_file = '%s/schemas/tddfpt.xsd' % os.path.dirname(os.path.abspath(__file__)),
+            xsd_file = os.path.join(self.SCHEMAS_DIR, 'tddfpt.xsd')
         super(TdDocument, self).__init__(xsd_file, input_builder=TdInputConverter)
 
     @property
@@ -466,7 +468,7 @@ class TdSpectrumDocument(QeDocument):
     """
     def __init__(self, xsd_file=None):
         if xsd_file is None:
-            xsd_file = '%s/schemas/qes_spectrum.xsd' % os.path.dirname(os.path.abspath(__file__)),
+            xsd_file = os.path.join(self.SCHEMAS_DIR, 'qes_spectrum.xsd')
         super(TdSpectrumDocument, self).__init__(xsd_file, input_builder=TdSpectrumInputConverter)
 
     @property
