@@ -77,10 +77,10 @@ class XmlDocument(object):
         """
         if not isinstance(filename, str):
             raise TypeError("wrong type for argument 'filename'")
-        elif os.path.isfile(filename):
+        elif not os.path.isfile(filename):
             raise ValueError("{!r} is not a file".format(filename))
 
-        ext = filename.strip().lower().rpartition('.') if '.' in filename else None
+        ext = filename.strip().lower().rpartition('.')[2] if '.' in filename else None
 
         if ext == 'xml':
             self.root, self.errors = self.from_xml(filename, validation)
@@ -130,7 +130,7 @@ class XmlDocument(object):
             self.schema.validate(source)
         return root, []
 
-    def from_json(self, source, validation='strict', converter=None):
+    def from_json(self, source, validation='strict', converter=None, **kwargs):
         """
         Converts a JSON encoded file to an XML ElementTree structure.
         Data is validated against the schema during conversion.
@@ -142,10 +142,20 @@ class XmlDocument(object):
         :return: a couple with the root element of the XML ElementTree a list \
         containing the detected errors.
         """
-        obj = xmlschema.from_json(source, self.schema, validation=validation, converter=converter)
+        preserve_root = kwargs.pop('preserve_root', True)
+        try:
+            json.loads(source)
+        except ValueError:
+            with open(source) as f:
+                obj = xmlschema.from_json(f, self.schema, validation=validation,
+                                          converter=converter, preserve_root=preserve_root)
+        else:
+            obj = xmlschema.from_json(source, self.schema, validation=validation,
+                                      converter=converter, preserve_root=preserve_root)
+
         return obj if isinstance(obj, tuple) else obj, []
 
-    def from_yaml(self, source, validation='strict', converter=None):
+    def from_yaml(self, source, validation='strict', converter=None, **kwargs):
         """
         Converts a YAML encoded file to an XML ElementTree structure.
         Data is validated against the schema during conversion.
@@ -157,16 +167,19 @@ class XmlDocument(object):
         :return: a couple with the root element of the XML ElementTree and a list \
         containing the detected errors.
         """
+        preserve_root = kwargs.pop('preserve_root', True)
         if yaml is None:
             raise RuntimeError("PyYAML library is not installed!")
         elif not isinstance(source, str):
             raise TypeError("the source argument must be a string!")
         elif '\n' not in source and not source.strip().startswith('<'):
-            data = yaml.load(open(source))
+            with open(source) as f:
+                data = yaml.load(f, Loader=yaml.Loader)
         else:
-            data = yaml.load(source)
+            data = yaml.load(source, Loader=yaml.Loader)
 
-        obj = self.schema.encode(data, validation=validation, converter=converter)
+        obj = self.schema.encode(data, validation=validation, converter=converter,
+                                 preserve_root=preserve_root)
         return obj if isinstance(obj, tuple) else obj, []
 
     def from_dict(self, data, validation='strict', converter=None):
@@ -219,19 +232,33 @@ class XmlDocument(object):
         else:
             raise ValueError("Accepted output_format are: 'XML'(default), 'YAML' and 'JSON'!")
 
-    def to_dict(self, validation='strict', converter=None):
-        obj = self.schema.to_dict(self.root, validation=validation, converter=converter)
+    def to_dict(self, validation='strict', converter=None, **kwargs):
+        obj = self.schema.to_dict(
+            source=self.root,
+            validation=validation,
+            converter=converter,
+            preserve_root=kwargs.pop('preserve_root', True),
+            **kwargs
+        )
         return obj[0] if isinstance(obj, tuple) else obj
 
-    def to_json(self, validation='strict', converter=None):
+    def to_json(self, filename=None, validation='strict', converter=None, **kwargs):
         """Converts the XML data to a JSON string."""
-        return json.dumps(self.to_dict(validation, converter), sort_keys=True, indent=4)
+        if filename is None:
+            return json.dumps(self.to_dict(validation, converter, **kwargs), sort_keys=True, indent=4)
 
-    def to_yaml(self, validation='strict', converter=None):
+        with open(filename) as f:
+            json.dump(self.to_dict(validation, converter, **kwargs), f, sort_keys=True, indent=4)
+
+    def to_yaml(self, filename=None, validation='strict', converter=None, **kwargs):
         """Converts the configuration to YAML string."""
         if yaml is None:
             raise RuntimeError("PyYAML library is not installed!")
-        return yaml.dump(self.to_dict(validation, converter), default_flow_style=False)
+        elif filename is None:
+            return yaml.dump(self.to_dict(validation, converter, **kwargs), default_flow_style=False)
+
+        with open(filename) as f:
+            yaml.dump(self.to_dict(validation, converter, **kwargs), stream=f, default_flow_style=False)
 
     def get(self, qualified_name):
         section, _, item = qualified_name.partition(".")

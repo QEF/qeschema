@@ -59,6 +59,7 @@ class ConverterTestCase(unittest.TestCase):
         cls.test_dir = os.path.dirname(os.path.abspath(__file__))
         cls.pkg_folder = os.path.dirname(cls.test_dir)
 
+    @unittest.skip
     def test_xml2qeinput_script(self):
         xml_filename = os.path.join(self.test_dir, 'examples/pw/Al001_relax_bfgs.xml')
         in_filename = xml_filename[:-4] + '.in'
@@ -69,6 +70,7 @@ class ConverterTestCase(unittest.TestCase):
         os.system(command)
         self.assertTrue(os.path.isfile(in_filename), 'Test file %r missing!' % in_filename)
 
+    @unittest.skip
     def test_yaml2qeinput_script(self):
         xml_filename = os.path.join(self.test_dir, 'examples/pw/Al001_relax_bfgs.yml')
         in_filename = xml_filename[:-4] + '.in'
