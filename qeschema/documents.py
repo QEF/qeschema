@@ -139,9 +139,13 @@ class XmlDocument(object):
         :param validation: validation mode, can be 'strict', 'lax' or 'skip'.
         :param converter: the class used for converting non-XML data sources. \
         If left to `None` the default converter of the xmlschema library is used.
+        :param kwargs: keyword arguments containing options for converter and encoding.
         :return: a couple with the root element of the XML ElementTree a list \
         containing the detected errors.
         """
+        if not isinstance(source, str):
+            raise TypeError("the source argument must be a string!")
+
         preserve_root = kwargs.pop('preserve_root', True)
         try:
             json.loads(source)
@@ -153,7 +157,7 @@ class XmlDocument(object):
             obj = xmlschema.from_json(source, self.schema, validation=validation,
                                       converter=converter, preserve_root=preserve_root)
 
-        return obj if isinstance(obj, tuple) else obj, []
+        return obj if isinstance(obj, tuple) else (obj, [])
 
     def from_yaml(self, source, validation='strict', converter=None, **kwargs):
         """
@@ -164,10 +168,10 @@ class XmlDocument(object):
         :param validation: validation mode, can be 'strict', 'lax' or 'skip'.
         :param converter: the class used for converting non-XML data sources. \
         If left to `None` the default converter of the xmlschema library is used.
+        :param kwargs: keyword arguments containing options for converter and encoding.
         :return: a couple with the root element of the XML ElementTree and a list \
         containing the detected errors.
         """
-        preserve_root = kwargs.pop('preserve_root', True)
         if yaml is None:
             raise RuntimeError("PyYAML library is not installed!")
         elif not isinstance(source, str):
@@ -178,11 +182,12 @@ class XmlDocument(object):
         else:
             data = yaml.load(source, Loader=yaml.Loader)
 
+        preserve_root = kwargs.pop('preserve_root', True)
         obj = self.schema.encode(data, validation=validation, converter=converter,
-                                 preserve_root=preserve_root)
-        return obj if isinstance(obj, tuple) else obj, []
+                                 preserve_root=preserve_root, **kwargs)
+        return obj if isinstance(obj, tuple) else (obj, [])
 
-    def from_dict(self, data, validation='strict', converter=None):
+    def from_dict(self, data, validation='strict', converter=None, **kwargs):
         """
         Converts a Python object to an XML ElementTree structure.
         Object data is validated against the schema during conversion.
@@ -191,11 +196,14 @@ class XmlDocument(object):
         :param validation: validation mode, can be 'strict', 'lax' or 'skip'.
         :param converter: the class used for converting the object to XML. \
         If left to `None` the default converter of the xmlschema library is used.
+        :param kwargs: keyword arguments containing options for converter and encoding.
         :return: a couple with the root element of the XML ElementTree and a list \
         containing the detected errors.
         """
-        obj = self.schema.encode(data, validation=validation, converter=converter)
-        return obj if isinstance(obj, tuple) else obj, []
+        preserve_root = kwargs.pop('preserve_root', True)
+        obj = self.schema.encode(data, validation=validation, converter=converter,
+                                 preserve_root=preserve_root, **kwargs)
+        return obj if isinstance(obj, tuple) else (obj, [])
 
     def write(self, filename, output_format='xml', validation='strict', converter=None):
         """
@@ -213,14 +221,14 @@ class XmlDocument(object):
             raise RuntimeError("No XML data loaded!")
 
         output_format = output_format.strip().lower()
-        if output_format == 'XML':
+        if output_format == 'xml':
             with open(filename, 'w+') as f:
                 f.write(etree_tostring(self.root))
 
         elif output_format == 'json':
             obj = self.to_dict(validation, converter)
             with open(filename, 'w+') as f:
-                return json.dump(f, obj, sort_keys=True, indent=4)
+                return json.dump(obj, f, sort_keys=True, indent=4)
 
         elif output_format == 'yaml':
             if yaml is None:
@@ -230,7 +238,7 @@ class XmlDocument(object):
             with open(filename, 'w+') as f:
                 yaml.dump(obj, stream=f, default_flow_style=False)
         else:
-            raise ValueError("Accepted output_format are: 'XML'(default), 'YAML' and 'JSON'!")
+            raise ValueError("Accepted output_format are 'xml', 'json' or 'yaml'!")
 
     def to_dict(self, validation='strict', converter=None, **kwargs):
         obj = self.schema.to_dict(
@@ -247,7 +255,7 @@ class XmlDocument(object):
         if filename is None:
             return json.dumps(self.to_dict(validation, converter, **kwargs), sort_keys=True, indent=4)
 
-        with open(filename) as f:
+        with open(filename, mode='w+') as f:
             json.dump(self.to_dict(validation, converter, **kwargs), f, sort_keys=True, indent=4)
 
     def to_yaml(self, filename=None, validation='strict', converter=None, **kwargs):
@@ -257,8 +265,10 @@ class XmlDocument(object):
         elif filename is None:
             return yaml.dump(self.to_dict(validation, converter, **kwargs), default_flow_style=False)
 
-        with open(filename) as f:
+        with open(filename, mode='w+') as f:
             yaml.dump(self.to_dict(validation, converter, **kwargs), stream=f, default_flow_style=False)
+
+    # ConfigParser-like calls
 
     def get(self, qualified_name):
         section, _, item = qualified_name.partition(".")
@@ -426,7 +436,7 @@ class QeDocument(XmlDocument):
                 for path_key in defaults_path_keys:
                     qe_input.set_path(path_key, tag, defaults_dict)
 
-        return qe_input.get_fortran_input()
+        return qe_input.get_qe_input()
 
 
 class PwDocument(QeDocument):

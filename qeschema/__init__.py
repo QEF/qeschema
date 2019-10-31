@@ -17,7 +17,7 @@ from .utils import set_logger
 __version__ = '1.0.0'
 
 __all__ = [
-    'QeDocument', 'PhononDocument', 'TdDocument', 'TdSpectrumDocument',
-    'RawInputConverter', 'PwInputConverter', 'PhononInputConverter',
+    'QeDocument', 'PwDocument', 'PhononDocument', 'NebDocument', 'TdDocument',
+    'TdSpectrumDocument', 'RawInputConverter', 'PwInputConverter', 'PhononInputConverter',
     'TdInputConverter', 'TdSpectrumInputConverter', 'set_logger', 'XmlDocumentError'
 ]
