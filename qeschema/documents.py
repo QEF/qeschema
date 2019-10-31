@@ -268,21 +268,6 @@ class XmlDocument(object):
         with open(filename, mode='w+') as f:
             yaml.dump(self.to_dict(validation, converter, **kwargs), stream=f, default_flow_style=False)
 
-    # ConfigParser-like calls
-
-    def get(self, qualified_name):
-        section, _, item = qualified_name.partition(".")
-        query = "./{0}/{1}".format(section, item)
-        node = self.root.find(query)
-        if node is None:
-            return
-        return node.text
-
-    def __getitem__(self, section):
-        query = "./{0}".format(section)
-        parent = self.root.find(query)
-        return dict((item.tag, item.text) for item in parent)
-
     # ElementTree API wrappers
 
     def iter(self, tag=None):
