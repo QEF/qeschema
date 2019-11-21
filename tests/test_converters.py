@@ -68,7 +68,7 @@ class ConverterTestCase(unittest.TestCase):
             os.system('rm -f %s' % in_filename)
         command = 'python %s -in %s 1> /dev/null 2> /dev/null' % (conversion_script, xml_filename)
         os.system(command)
-        self.assertTrue(os.path.isfile(in_filename), 'Test file %r missing!' % in_filename)
+        self.assertTrue(os.path.isfile(in_filename), 'Test output file %r missing!' % in_filename)
 
     def test_yaml2qeinput_script(self):
         xml_filename = os.path.join(self.test_dir, 'examples/pw/Al001_relax_bfgs.yml')
@@ -77,9 +77,8 @@ class ConverterTestCase(unittest.TestCase):
         if os.path.isfile(in_filename):
             os.system('rm -f %s' % in_filename)
         command = 'python %s -in %s 1> /dev/null 2> /dev/null' % (conversion_script, xml_filename)
-        print(command)
         os.system(command)
-        self.assertTrue(os.path.isfile(in_filename), 'Test file %r missing!' % in_filename)
+        self.assertTrue(os.path.isfile(in_filename), 'Test output file %r missing!' % in_filename)
 
 
 if __name__ == '__main__':

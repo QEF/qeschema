@@ -71,15 +71,11 @@ if __name__ == '__main__':
         sys.stderr.write("Could not find correct document root in %r, exiting...\n" % input_fn)
         sys.exit(1)
 
-    breakpoint()
-
     xml_document.read(input_fn)
     qe_in = xml_document.get_fortran_input()
 
     input_fn_name, input_fn_ext = os.path.splitext(input_fn)
     outfile = input_fn_name + '.in'
-
-    breakpoint()
 
     with open(outfile, mode='w') as f:
         f.write(qe_in)
