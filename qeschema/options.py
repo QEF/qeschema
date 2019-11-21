@@ -289,7 +289,7 @@ def neb_set_system_nat(name, **kwargs):
 
 def ha2ry(name, **kwargs):
     related_tag = kwargs['_related_tag']
-    value = kwargs[related_tag]*2.e0
+    value = kwargs[related_tag] * 2.e0
     return [' {} = {:12.8f}'.format(name, value)]
 
 

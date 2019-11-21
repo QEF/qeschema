@@ -10,6 +10,7 @@
 import unittest
 import tempfile
 import logging
+import sys
 from types import MethodType
 from xml.etree import ElementTree
 
@@ -164,7 +165,11 @@ class TestBiunivocalMap(unittest.TestCase):
 
     def test_iter(self):
         bimap = BiunivocalMap({'a': 1, 'b': 2, 'c': 3, 'd': 4})
-        self.assertListEqual(list(x for x in bimap), ['a', 'b', 'c', 'd'])
+
+        if sys.version_info >= (3, 6):
+            self.assertListEqual(list(x for x in bimap), ['a', 'b', 'c', 'd'])
+        else:
+            self.assertEqual(set(x for x in bimap), {'a', 'd', 'b', 'c'})
 
     def test_len(self):
         self.assertEqual(len(BiunivocalMap()), 0)
@@ -183,7 +188,14 @@ class TestBiunivocalMap(unittest.TestCase):
         self.assertEqual(repr(bimap), "BiunivocalMap()")
 
         bimap = BiunivocalMap({'a': 1, 'b': 2, 'c': 3, 'd': 4})
-        self.assertEqual(repr(bimap), "BiunivocalMap({'a': 1, 'b': 2, 'c': 3, 'd': 4})")
+        if sys.version_info >= (3, 6):
+            self.assertEqual(repr(bimap), "BiunivocalMap({'a': 1, 'b': 2, 'c': 3, 'd': 4})")
+        else:
+            s = repr(bimap)
+            self.assertTrue(s.startswith("BiunivocalMap({"))
+            self.assertTrue(s.endswith('})'))
+            self.assertListEqual(sorted(s[15:-2].split(', ')),
+                                 ["'a': 1", "'b': 2", "'c': 3", "'d': 4"])
 
     def test_copy(self):
         bimap = BiunivocalMap({'a': 1, 'b': 2, 'c': 3})

@@ -319,7 +319,7 @@ class PwInputConverter(RawInputConverter):
             'press_conv_thr': "CELL[press_conv_thr]",
             'verbosity': "CONTROL[verbosity]",
             'print_every': "CONTROL[iprint]",
-            'nstep':       "CONTROL[nstep]",
+            'nstep': "CONTROL[nstep]",
         },
         # Card ATOMIC species with attributes
         'atomic_species': {
@@ -567,7 +567,7 @@ class PhononInputConverter(RawInputConverter):
             'tr2_ph': "INPUTPH[tr2_ph]",
             'niter_ph': "INPUTPH[niter_ph]",
             'alpha_mix': "INPUTPH[alpha_mix]",
-            'nmix_ph':   "INPUTPH[nmix_ph]"
+            'nmix_ph': "INPUTPH[nmix_ph]",
         },
         'files': {
             'prefix': "INPUTPH[prefix]",
@@ -575,7 +575,7 @@ class PhononInputConverter(RawInputConverter):
             'fildyn': "INPUTPH[fildyn]",
             'fildrho': "INPUTPH[fildrho]",
             'fildvscf': "INPUTPH[fildvscf]",
-            'lqdir': "INPUTPH[lqdir]"
+            'lqdir': "INPUTPH[lqdir]",
         },
         'control_ph': {
             'ldisp': ["INPUTPH[ldisp]", ('qPointsSpecs', cards.get_qpoints_card, None)],
@@ -586,15 +586,15 @@ class PhononInputConverter(RawInputConverter):
             'elop': "INPUTPH[elop]",
             'fpol': "INPUTPH[fpol]",
             'lraman': "INPUTPH[lraman]",
-            'search_sym': "INPUTPH[search_sym]"
+            'search_sym': "INPUTPH[search_sym]",
         },
         'control_job': {
             'recover': "INPUTPH[recover]",
-            'max_seconds': "INPUTPH[max_seconds]"
+            'max_seconds': "INPUTPH[max_seconds]",
         },
         'control_diel': {
             'lrpa': "INPUTPH[lrpa]",
-            'lnoloc': "INPUTPH[lnoloc]"
+            'lnoloc': "INPUTPH[lnoloc]",
         },
         'control_qplot': {
             'qplot': [('qPointsSpecs', cards.get_qpoints_card, None), "INPUTPH[qplot]"],
@@ -608,13 +608,13 @@ class PhononInputConverter(RawInputConverter):
             'low_directory_check': "INPUTPH[low_directory_check]",
             'nogg': "INPUTPH[nogg]",
             'nscf_MPgrid': {
-                            'nk1': "INPUTPH[nk1]",
-                            'nk2': "INPUTPH[nk2]",
-                            'nk3': "INPUTPH[nk3]",
-                            'k1':  "INPUTPH[k1]",
-                            'k2':  "INPUTPH[k2]",
-                            'k3':  "INPUTPH[k3]"
-                          }
+                'nk1': "INPUTPH[nk1]",
+                'nk2': "INPUTPH[nk2]",
+                'nk3': "INPUTPH[nk3]",
+                'k1': "INPUTPH[k1]",
+                'k2': "INPUTPH[k2]",
+                'k3': "INPUTPH[k3]",
+            }
         },
         'irr_repr': {
             'start_q': "INPUTPH[start_q]",
@@ -624,7 +624,7 @@ class PhononInputConverter(RawInputConverter):
             'nat_todo': "INPUTPH[nat_todo]",
             'modenum': "INPUTPH[modenum]",
             'only_init': "INPUTPH[only_init]",
-            'ldiag': "INPUTPH[ldiag]"
+            'ldiag': "INPUTPH[ldiag]",
         },
         'electron_phonon_options': {
             'electron_phonon': "INPUTPH[electron_phonon]",
@@ -633,14 +633,14 @@ class PhononInputConverter(RawInputConverter):
                 'dir': "INPUTPH[dvscf_star%dir]",
                 'ext': "INPUTPH[dvscf_star%ext]",
                 'basis': "INPUTPH[dvscf_star%basis]",
-                'pat': "INPUTPH[dvscf_star%pat]"
+                'pat': "INPUTPH[dvscf_star%pat]",
             },
             'drho_star': {
-                'open':  "INPUTPH[drho_star%open]",
-                'dir':   "INPUTPH[drho_star%dir]",
-                'ext':   "INPUTPH[drho_star%ext]",
+                'open': "INPUTPH[drho_star%open]",
+                'dir': "INPUTPH[drho_star%dir]",
+                'ext': "INPUTPH[drho_star%ext]",
                 'basis': "INPUTPH[drho_star%basis]",
-                'pat':   "INPUTPH[drho_star%pat]"
+                'pat': "INPUTPH[drho_star%pat]",
             }
         },
         'lraman_options': {
@@ -825,14 +825,14 @@ class TdInputConverter(RawInputConverter):
 
     def get_qe_input(self):
         """
-        overrides get_qe_input calling super get_qe_input with use_defaults set to False. 
+        Overrides superclass get_qe_input with use_defaults set to False.
         :return: the input as obtained from its input builder
         """
         temp = super(TdInputConverter, self).get_qe_input().split('\n')
         td = temp[1]
         start = temp.index('&lr_input')
         end = start + temp[start:].index('/')
-        qe_input = '\n'.join(temp[start:end+1])
+        qe_input = '\n'.join(temp[start:end + 1])
         """ put lr_input in qe_input """
 
         if td.lower() in ('lanczos', 'eels'):
@@ -840,13 +840,13 @@ class TdInputConverter(RawInputConverter):
         elif td.lower() == 'davidson':
             start = temp.index('&lr_dav')
         end = start + temp[start:].index('/')
-        qe_input = qe_input + '\n' + '\n'.join(temp[start:end+1])
+        qe_input = qe_input + '\n' + '\n'.join(temp[start:end + 1])
         """ put one of lr_control(lanczos) or lr_davidson in qe_input"""
 
         start = temp.index('&lr_post')
         end = start + temp[start:].index('/')
         if end - start > 1:
-            qe_input = qe_input + '\n' + '\n'.join(temp[start:end+1])
+            qe_input = qe_input + '\n' + '\n'.join(temp[start:end + 1])
         """ if not empty add lr_post namelist to qe_input """
         return qe_input
 
@@ -867,13 +867,13 @@ class TdSpectrumInputConverter(RawInputConverter):
         'ipol': 'lr_input[ipol]',
         'outdir': 'lr_input[outdir]',
         'prefix': 'lr_input[prefix]',
-        'epsil':   'lr_input[epsil]',
+        'epsil': 'lr_input[epsil]',
         'sym_op': 'lr_input[sym_op]',
         'verbosity': 'lr_input[verbosity]',
         'units': 'lr_input[units]',
         'td': 'lr_input[td]',
         'eign_file': 'lr_input[eign_file]',
-        'eels': ('lr_input[eels]', options.set_boolean_flag, None)
+        'eels': ('lr_input[eels]', options.set_boolean_flag, None),
     }
 
     def __init__(self, **_kwargs):

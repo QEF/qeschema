@@ -289,8 +289,6 @@ class XmlDocument(object):
         :param namespaces: is an optional mapping from namespace prefix to full name.
         :return: the first matching element, or None if no element was found
         """
-        namespaces = namespaces or {}
-        namespaces.update(self.namespaces)
         if path[:1] == "/":
             path = "." + path
         return self.root.find(path, namespaces)
@@ -303,8 +301,6 @@ class XmlDocument(object):
         :param namespaces: is an optional mapping from namespace prefix to full name.
         :return: the first matching element, or None if no element was found
         """
-        namespaces = namespaces or {}
-        namespaces.update(self.namespaces)
         if path[:1] == "/":
             path = "." + path
         return self.root.findall(path, namespaces)
@@ -452,8 +448,9 @@ class PhononDocument(QeDocument):
 
     def get_fortran_input(self, use_defaults=False):
         """
-        overrides get_qe_input calling super get_qe_input with use_defaults set to False. 
-        :param use_defaults: 
+        Overrides get_fortran_input() setting *use_defaults* optional argument to False.
+
+        :param use_defaults:
         :return: the input as obtained from its input builder
         """
         return super(PhononDocument, self).get_fortran_input(use_defaults=use_defaults)

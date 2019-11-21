@@ -94,8 +94,9 @@ def get_atomic_positions_cell_card(name, **kwargs):
         line = '{:4}'.format(atoms[k]['@name'])
         line += ' {:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k]['$'])
 
-        if free_positions and free_positions[3*k]+free_positions[3*k+1]+free_positions[3*k+2] != 3:
-            line += ' {:4d}{:4d}{:4d}'.format(*map(int, free_positions[3*k:3*k+3]))
+        if free_positions and \
+                free_positions[3 * k] + free_positions[3 * k + 1] + free_positions[3 * k + 2] != 3:
+            line += ' {:4d}{:4d}{:4d}'.format(*map(int, free_positions[3 * k:3 * k + 3]))
         lines.append(line)
 
     return lines
@@ -224,7 +225,7 @@ def get_cell_parameters_card(name, **kwargs):
         for key in sorted(cells):
             if key not in ['a1', 'a2', 'a3']:
                 continue
-            lines.append((3*'{:12.8f} ').format(*cells[key]))
+            lines.append((3 * '{:12.8f} ').format(*cells[key]))
         return lines
     return []
 
@@ -337,7 +338,7 @@ def get_neb_images_positions_card(name, **kwargs):
         free_positions = free_positions.get('$')
     else:
         free_positions = []
-    if free_positions and len(free_positions) != 3*len(atoms):
+    if free_positions and len(free_positions) != 3 * len(atoms):
         logger.error("ATOMIC_POSITIONS: incorrect number of position constraints!")
 
     lines.append('ATOMIC_POSITIONS { bohr }')
@@ -345,7 +346,7 @@ def get_neb_images_positions_card(name, **kwargs):
         sp_name = '{:4}'.format(atoms[k]['@name'])
         coords = '{:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k]['$'])
         if k < len(free_positions):
-            free_pos = '{:4d}{:4d}{:4d}'.format(*free_positions[3*k:3*k+3])
+            free_pos = '{:4d}{:4d}{:4d}'.format(*free_positions[3 * k:3 * k + 3])
             if sum(free_positions[3 * k + n] for n in range(3)) < 3:
                 lines.append('%s %s %s' % (sp_name, coords, free_pos))
         else:
@@ -362,7 +363,7 @@ def get_neb_images_positions_card(name, **kwargs):
             sp_name = '{:4}'.format(atoms[k]['@name'])
             coords = '{:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k]['$'])
             if k < len(free_positions):
-                free_pos = '{:4d}{:4d}{:4d}'.format(*free_positions[3*k:3*k+3])
+                free_pos = '{:4d}{:4d}{:4d}'.format(*free_positions[3 * k:3 * k + 3])
                 if free_positions[3 * k] + free_positions[3 * k + 1] + free_positions[3 * k + 2] < 3:
                     lines.append('%s %s %s' % (sp_name, coords, free_pos))
             else:
@@ -376,7 +377,7 @@ def get_neb_images_positions_card(name, **kwargs):
         sp_name = '{:4}'.format(atoms[k]['@name'])
         coords = '{:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k]['$'])
         if k < len(free_positions):
-            free_pos = '{:4d}{:4d}{:4d}'.format(*free_positions[3*k:3*k+3])
+            free_pos = '{:4d}{:4d}{:4d}'.format(*free_positions[3 * k:3 * k + 3])
             if free_positions[3 * k] + free_positions[3 * k + 1] + free_positions[3 * k + 2] < 3:
                 lines.append('%s %s %s' % (sp_name, coords, free_pos))
         else:
@@ -410,7 +411,7 @@ def get_neb_cell_parameters_card(name, **kwargs):
         for key in sorted(cells):
             if key not in ['a1', 'a2', 'a3']:
                 continue
-            lines.append((3*'{:12.8f}').format(*cells[key]))
+            lines.append((3 * '{:12.8f}').format(*cells[key]))
         return lines
     return []
 
