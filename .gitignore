@@ -12,3 +12,4 @@
 dist/
 build/
 tests/examples/dummy/write_test_file
+docs/_*/

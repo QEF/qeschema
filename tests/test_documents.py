@@ -26,43 +26,43 @@ class TestDocuments(unittest.TestCase):
         cls.schemas_dir = os.path.join(cls.pkg_folder, 'qeschema/schemas')
 
     def test_document_init(self):
-        xsd_file = os.path.join(self.schemas_dir, 'qes.xsd')
+        schema = os.path.join(self.schemas_dir, 'qes.xsd')
 
-        document = XmlDocument(xsd_file)
+        document = XmlDocument(schema)
         self.assertIsInstance(document, XmlDocument)
         self.assertIsNone(document.root)
         self.assertIsNone(document.filename)
         self.assertIsNone(document.format)
-        self.assertEqual(document.xsd_file, xsd_file)
+        self.assertTrue(document.schema.url.endswith(schema))
         self.assertIsInstance(document.schema, XMLSchema)
 
         self.assertIsInstance(PwDocument(), PwDocument)
-        self.assertIsInstance(PwDocument(xsd_file=xsd_file), PwDocument)
+        self.assertIsInstance(PwDocument(schema=schema), PwDocument)
 
-        xsd_file = os.path.join(self.schemas_dir, 'ph_temp.xsd')
+        schema = os.path.join(self.schemas_dir, 'ph_temp.xsd')
         self.assertIsInstance(PhononDocument(), PhononDocument)
-        self.assertIsInstance(PhononDocument(xsd_file=xsd_file), PhononDocument)
+        self.assertIsInstance(PhononDocument(schema=schema), PhononDocument)
 
-        xsd_file = os.path.join(self.schemas_dir, 'qes_neb.xsd')
+        schema = os.path.join(self.schemas_dir, 'qes_neb.xsd')
         self.assertIsInstance(NebDocument(), NebDocument)
-        self.assertIsInstance(NebDocument(xsd_file=xsd_file), NebDocument)
+        self.assertIsInstance(NebDocument(schema=schema), NebDocument)
 
-        xsd_file = os.path.join(self.schemas_dir, 'tddfpt.xsd')
+        schema = os.path.join(self.schemas_dir, 'tddfpt.xsd')
         self.assertIsInstance(TdDocument(), TdDocument)
-        self.assertIsInstance(TdDocument(xsd_file=xsd_file), TdDocument)
+        self.assertIsInstance(TdDocument(schema=schema), TdDocument)
 
-        xsd_file = os.path.join(self.schemas_dir, 'qes_spectrum.xsd')
+        schema = os.path.join(self.schemas_dir, 'qes_spectrum.xsd')
         self.assertIsInstance(TdSpectrumDocument(), TdSpectrumDocument)
-        self.assertIsInstance(TdSpectrumDocument(xsd_file=xsd_file), TdSpectrumDocument)
+        self.assertIsInstance(TdSpectrumDocument(schema=schema), TdSpectrumDocument)
 
     def test_converted_property(self):
-        xsd_file = os.path.join(self.schemas_dir, 'qes.xsd')
-        document = XmlDocument(xsd_file, ParkerConverter)
+        schema = os.path.join(self.schemas_dir, 'qes.xsd')
+        document = XmlDocument(schema, ParkerConverter)
         self.assertIsInstance(document.converter, ParkerConverter)
 
     def test_namespaces_property(self):
-        xsd_file = os.path.join(self.schemas_dir, 'qes.xsd')
-        document = XmlDocument(xsd_file)
+        schema = os.path.join(self.schemas_dir, 'qes.xsd')
+        document = XmlDocument(schema)
         self.assertEqual(document.namespaces, {
             '': 'http://www.w3.org/2001/XMLSchema',
             'qes': 'http://www.quantum-espresso.org/ns/qes/qes-1.0',
@@ -312,7 +312,7 @@ class TestDocuments(unittest.TestCase):
 
     def test_unsupported_schema(self):
         with self.assertRaises(NotImplementedError):
-            PwDocument(xsd_file=os.path.join(self.test_dir, 'examples/dummy/schema.xsd'))
+            PwDocument(schema=os.path.join(self.test_dir, 'examples/dummy/schema.xsd'))
 
     def test_pw_document(self):
         xml_filename = os.path.join(self.test_dir, 'examples/pw/Al001_relax_bfgs.xml')

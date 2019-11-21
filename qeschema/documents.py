@@ -30,13 +30,14 @@ logger = logging.getLogger('qeschema')
 
 class XmlDocument(object):
     """
-    Generic XML schema based document. The XSD schema file associated is used for
-    checking types, validation of the XML data and for lookup of default values.
-    Loaded XML data is loader into memory into an ElementTree structure.
-    Data files can be also in JSON or YAML format. In these cases the data source
-    is converted to XML when loading.
+    Base class for a generic XML document based on an XSD schema. The schema
+    associated is used for checking types, validation of the XML data and for
+    lookup of default values. XML data is loaded into memory into an ElementTree
+    structure. Data files can be also in JSON or YAML format, in these cases the
+    data source is converted to XML when loading.
 
-    :param xsd_file: the filesystem path of the XSD reference schema.
+    :param schema: can be a :class:`XMLSchema` instance or a file-like object or \
+    a file path or an URL of a resource or a string containing the schema.
     :param converter: an alternative converter class or instance used for convert \
     the XML document to other formats (JSON and YAML). If nothing is passed the \
     default converter of the *xmlschema* library is created and used.
@@ -46,14 +47,16 @@ class XmlDocument(object):
     :ivar format: the format of the data source file (XML, JSON, YAML).
     :ivar errors: the list of detected validation errors.
     """
-    def __init__(self, xsd_file, converter=None):
+    def __init__(self, schema, converter=None):
         self.root = None
         self.filename = None
         self.format = None
         self.errors = []
 
-        self.xsd_file = xsd_file
-        self.schema = xmlschema.XMLSchema(xsd_file, converter=converter)
+        if isinstance(schema, xmlschema.XMLSchemaBase):
+            self.schema = schema
+        else:
+            self.schema = xmlschema.XMLSchema(schema, converter=converter)
 
     @property
     def converter(self):
@@ -67,8 +70,7 @@ class XmlDocument(object):
 
     def read(self, filename, validation='strict', converter=None):
         """
-        Read configuration from a text file in a specific data format. Input
-        data files can be XML, JSON or YAML.
+        Reads XML data from a file encoded in XML, JSON or YAML format.
 
         :param filename: filepath of the data source file.
         :param validation: validation mode, can be 'strict', 'lax' or 'skip'.
@@ -89,7 +91,7 @@ class XmlDocument(object):
             self.root, self.errors = self.from_json(filename, validation, converter)
             self.format = 'json'
         elif ext in ('yml', 'yaml'):
-            self.root, self.errors = self.from_yaml(filename, validation, converter)
+            self.root, self.errors = self.from_yaml(filename, validation, converter=xmlschema.UnorderedConverter)
             self.format = 'yaml'
         else:
             try:
@@ -183,6 +185,9 @@ class XmlDocument(object):
             data = yaml.load(source, Loader=yaml.Loader)
 
         preserve_root = kwargs.pop('preserve_root', True)
+        if 'path' not in kwargs and isinstance(data, dict) and len(data) == 1:
+            kwargs['path'] = list(data.keys())[0]
+
         obj = self.schema.encode(data, validation=validation, converter=converter,
                                  preserve_root=preserve_root, **kwargs)
         return obj if isinstance(obj, tuple) else (obj, [])
@@ -252,21 +257,24 @@ class XmlDocument(object):
 
     def to_json(self, filename=None, validation='strict', converter=None, **kwargs):
         """Converts the XML data to a JSON string."""
+        data = self.to_dict(validation, converter, **kwargs)
         if filename is None:
-            return json.dumps(self.to_dict(validation, converter, **kwargs), sort_keys=True, indent=4)
+            return json.dumps(data, sort_keys=True, indent=4)
 
         with open(filename, mode='w+') as f:
-            json.dump(self.to_dict(validation, converter, **kwargs), f, sort_keys=True, indent=4)
+            json.dump(data, f, sort_keys=True, indent=4)
 
     def to_yaml(self, filename=None, validation='strict', converter=None, **kwargs):
-        """Converts the configuration to YAML string."""
+        """Converts the XML data to YAML string."""
         if yaml is None:
             raise RuntimeError("PyYAML library is not installed!")
-        elif filename is None:
-            return yaml.dump(self.to_dict(validation, converter, **kwargs), default_flow_style=False)
+
+        data = self.to_dict(validation, converter, **kwargs)
+        if filename is None:
+            return yaml.dump(data, default_flow_style=False)
 
         with open(filename, mode='w+') as f:
-            yaml.dump(self.to_dict(validation, converter, **kwargs), stream=f, default_flow_style=False)
+            yaml.dump(data, stream=f, default_flow_style=False)
 
     # ElementTree API wrappers
 
@@ -308,8 +316,8 @@ class QeDocument(XmlDocument):
     """
     SCHEMAS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'schemas')
 
-    def __init__(self, xsd_file, input_builder):
-        super(QeDocument, self).__init__(xsd_file)
+    def __init__(self, schema, input_builder):
+        super(QeDocument, self).__init__(schema)
         self.input_builder = input_builder
 
         self.default_namespace = self.schema.target_namespace
@@ -318,15 +326,6 @@ class QeDocument(XmlDocument):
             raise NotImplementedError(
                 "Converter not implemented for this schema {}".format(self.default_namespace)
             )
-
-    def read_fortran_input(self, filename):
-        """
-        Reads a Fortran namelist input from file and converts to XML input.
-
-        :param filename: a filepath to the namelist file containing the Fortran input.
-        :return: the input XML Element.
-        """
-        raise NotImplementedError
 
     def write_fortran_input(self, filename):
         """
@@ -428,20 +427,20 @@ class PwDocument(QeDocument):
     """
     Class to manage PW XML documents.
     """
-    def __init__(self, xsd_file=None):
-        if xsd_file is None:
-            xsd_file = os.path.join(self.SCHEMAS_DIR, 'qes.xsd')
-        super(PwDocument, self).__init__(xsd_file, input_builder=PwInputConverter)
+    def __init__(self, schema=None):
+        if schema is None:
+            schema = os.path.join(self.SCHEMAS_DIR, 'qes.xsd')
+        super(PwDocument, self).__init__(schema, input_builder=PwInputConverter)
 
 
 class PhononDocument(QeDocument):
     """
     Class to manage Phonon XML documents.
     """
-    def __init__(self, xsd_file=None):
-        if xsd_file is None:
-            xsd_file = os.path.join(self.SCHEMAS_DIR, 'ph_temp.xsd')
-        super(PhononDocument, self).__init__(xsd_file, input_builder=PhononInputConverter)
+    def __init__(self, schema=None):
+        if schema is None:
+            schema = os.path.join(self.SCHEMAS_DIR, 'ph_temp.xsd')
+        super(PhononDocument, self).__init__(schema, input_builder=PhononInputConverter)
 
     @property
     def input_path(self):
@@ -464,20 +463,20 @@ class NebDocument(QeDocument):
     """
     Class to manage NEB XML documents.
     """
-    def __init__(self, xsd_file=None):
-        if xsd_file is None:
-            xsd_file = os.path.join(self.SCHEMAS_DIR, 'qes_neb.xsd')
-        super(NebDocument, self).__init__(xsd_file, input_builder=NebInputConverter)
+    def __init__(self, schema=None):
+        if schema is None:
+            schema = os.path.join(self.SCHEMAS_DIR, 'qes_neb.xsd')
+        super(NebDocument, self).__init__(schema, input_builder=NebInputConverter)
 
 
 class TdDocument(QeDocument):
     """
     Class to manage TDDFPT XML documents.
     """
-    def __init__(self, xsd_file=None):
-        if xsd_file is None:
-            xsd_file = os.path.join(self.SCHEMAS_DIR, 'tddfpt.xsd')
-        super(TdDocument, self).__init__(xsd_file, input_builder=TdInputConverter)
+    def __init__(self, schema=None):
+        if schema is None:
+            schema = os.path.join(self.SCHEMAS_DIR, 'tddfpt.xsd')
+        super(TdDocument, self).__init__(schema, input_builder=TdInputConverter)
 
     @property
     def input_path(self):
@@ -488,10 +487,10 @@ class TdSpectrumDocument(QeDocument):
     """
     Class to manage turbo-spectrum inputs
     """
-    def __init__(self, xsd_file=None):
-        if xsd_file is None:
-            xsd_file = os.path.join(self.SCHEMAS_DIR, 'qes_spectrum.xsd')
-        super(TdSpectrumDocument, self).__init__(xsd_file, input_builder=TdSpectrumInputConverter)
+    def __init__(self, schema=None):
+        if schema is None:
+            schema = os.path.join(self.SCHEMAS_DIR, 'qes_spectrum.xsd')
+        super(TdSpectrumDocument, self).__init__(schema, input_builder=TdSpectrumInputConverter)
 
     @property
     def input_path(self):

@@ -70,7 +70,6 @@ class ConverterTestCase(unittest.TestCase):
         os.system(command)
         self.assertTrue(os.path.isfile(in_filename), 'Test file %r missing!' % in_filename)
 
-    @unittest.skip
     def test_yaml2qeinput_script(self):
         xml_filename = os.path.join(self.test_dir, 'examples/pw/Al001_relax_bfgs.yml')
         in_filename = xml_filename[:-4] + '.in'

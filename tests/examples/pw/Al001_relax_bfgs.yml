@@ -1,6 +1,6 @@
-'{http://www.quantum-espresso.org/ns/qes/qes-1.0}espresso':
-  '@{http://www.w3.org/2001/XMLSchema-instance}schemaLocation': http://www.quantum-espresso.org/ns/qes/qes-1.0
-    ../../../qeschema/schemas/qes.xsd
+[CONTROL]:
+
+
   input:
     atomic_species:
       '@ntyp': 1
@@ -49,10 +49,7 @@
           - 0.4
           '@name': Al
       cell:
-        a1:
-        - 1.0
-        - 0.0
-        - 0.0
+        a1: [1.0, 0.0, 0.0]
         a2:
         - 0.0
         - 1.0
