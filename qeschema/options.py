@@ -13,6 +13,7 @@ Conversion functions for Quantum Espresso input options.
 import logging
 
 from .exceptions import XmlDocumentError
+from .utils import to_fortran
 
 logger = logging.getLogger('qeschema')
 
@@ -27,8 +28,8 @@ def get_specie_related_values(name, **kwargs):
     or matrix when
 
     :param name: parameter name
-    :param kwargs:
-    :return: string
+    :param kwargs: related input data
+    :return: a list
     """
     related_tag = kwargs['_related_tag']
     related_data = kwargs[related_tag]
@@ -47,7 +48,7 @@ def get_specie_related_values(name, **kwargs):
         tag_specie = value['@specie']
         tag_values = value['$']
         tag_spin = value.get('@spin')
-        if value.get('label') == 'no Hubbard':
+        if value.get('label') == 'no Hubbard':  # FIXME ?? (maybe '@label' instead?)
             continue
 
         specie_index = 1
@@ -79,10 +80,6 @@ def get_specie_related_values(name, **kwargs):
 def get_starting_magnetization(name, **kwargs):
     """
     Build starting magnetization vector from species data.
-
-    :param name: parameter name
-    :param kwargs:
-    :return: string
     """
     try:
         atomic_species = kwargs['atomic_species']
@@ -108,10 +105,6 @@ def get_starting_magnetization(name, **kwargs):
 def get_system_nspin(name, **kwargs):
     """
     Get the value for 'nspin' parameter of the SYSTEM namelist.
-
-    :param name:
-    :param kwargs:
-    :return:
     """
     try:
         lsda = kwargs['lsda']
@@ -136,12 +129,6 @@ def set_ibrav_to_zero(name, **_kwargs):
 
 
 def get_system_eamp(name, **kwargs):
-    """
-
-    :param name:
-    :param kwargs:
-    :return:
-    """
     try:
         electric_potential = kwargs['electric_potential']
         if electric_potential in ('Berry_Phase', 'homogenous_field'):
@@ -159,11 +146,6 @@ def get_system_eamp(name, **kwargs):
 
 
 def get_electrons_efield(name, **kwargs):
-    """
-    :param name:
-    :param kwargs:
-    :return:
-    """
     try:
         electric_potential = kwargs['electric_potential']
         if electric_potential in ('Berry_Phase', 'sawtooth_potential'):
@@ -181,11 +163,6 @@ def get_electrons_efield(name, **kwargs):
 
 
 def get_system_edir(name, **kwargs):
-    """
-    :param name:
-    :param kwargs:
-    :return:
-    """
     try:
         electric_potential = kwargs['electric_potential']
         electric_field_direction = kwargs['electric_field_direction']
@@ -208,7 +185,6 @@ def get_electric_potential_related(name, **kwargs):
                      "parameter '%s'! %s" % (name, err))
         return []
 
-    from .converters import to_fortran
     if name == 'tefield':
         return [' %s=%s' % (name, to_fortran(electric_potential == 'sawtooth_potential'))]
     elif name == 'lelfield':
@@ -219,11 +195,6 @@ def get_electric_potential_related(name, **kwargs):
 
 
 def get_control_gdir(name, **kwargs):
-    """
-    :param name:
-    :param kwargs:
-    :return:
-    """
     try:
         electric_potential = kwargs['electric_potential']
         electric_field_direction = kwargs['electric_field_direction']
@@ -263,27 +234,31 @@ def get_cell_dofree(name, **kwargs):
     if fix_area:
         cell_dofree = "cell_dofree = '2Dshape'"
     if isotropic:
-        cell_dofree = "cell_dofree = 'volume' "
+        cell_dofree = "cell_dofree = 'volume'"
     return [cell_dofree]
 
 
 def neb_set_system_nat(name, **kwargs):
     """
     Extract SYSTEM[nat] from the first element of the list of atomic_structure
+
     :param name: Variable name
     :param kwargs: list of dictionaries each containing an atomic_structure element
-    :return: list containin one string to be printed in system name list nat = nat_value
+    :return: list containing one string to be printed in system name list nat = nat_value
     """
     assert isinstance(name, str)
-    images = kwargs.get('atomic_structure', [])
-    if len(images) < 1:
+    try:
+        images = kwargs['atomic_structure']
+    except KeyError:
         logger.error('No atomic_structure element found !!!')
-        return ''
-    image = images[0]
-    nat_value = image.get('@nat', 0)
-    if nat_value <= 0:
+        return []
+
+    try:
+        nat_value = images[0]['@nat']
+    except (KeyError, IndexError):
         logger.error("error reading nat value from atomic_structure !!!")
-        return ''
+        return []
+
     return [' nat = {0}'.format(nat_value)]
 
 

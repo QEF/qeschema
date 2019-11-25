@@ -5,7 +5,7 @@
 # This file is distributed under the terms of the MIT License. See the
 # file 'LICENSE' in the root directory of the present distribution, or
 # http://opensource.org/licenses/MIT.
-# Authors: Davide Brunato, Giovanni Borghi
+# Authors: Davide Brunato
 #
 """
 Test classes for Quantum Espresso input converters.

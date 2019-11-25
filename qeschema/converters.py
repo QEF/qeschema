@@ -17,7 +17,7 @@ import re
 import os.path
 from collections.abc import Container
 
-from .utils import BiunivocalMap
+from .utils import to_fortran, BiunivocalMap
 from . import cards, options
 
 logger = logging.getLogger('qeschema')
@@ -111,20 +111,6 @@ def conversion_maps_builder(template_map):
                                  "'%s': '%s'" % (invariant_map.getkey(value[0]), value[0]))
 
     return invariant_map, variant_map
-
-
-def to_fortran(value):
-    """
-    Translate a Python value to the equivalent literal representation for Fortran input.
-    Leading and trailing spaces characters are removed from strings.
-    """
-    if isinstance(value, bool):
-        return '.true.' if value else '.false.'
-    elif isinstance(value, str):
-        return repr(value.strip())
-    elif isinstance(value, bytes):
-        return repr(value.decode('utf-8').strip())
-    return str(value)
 
 
 class RawInputConverter(Container):

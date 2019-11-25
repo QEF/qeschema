@@ -5,7 +5,7 @@
 # This file is distributed under the terms of the MIT License. See the
 # file 'LICENSE' in the root directory of the present distribution, or
 # http://opensource.org/licenses/MIT.
-# Authors: Davide Brunato, Giovanni Borghi
+# Authors: Davide Brunato
 #
 import unittest
 import tempfile
@@ -14,7 +14,7 @@ import sys
 from types import MethodType
 from xml.etree import ElementTree
 
-from qeschema.utils import set_logger, etree_iter_path, BiunivocalMap
+from qeschema.utils import set_logger, etree_iter_path, to_fortran, BiunivocalMap
 
 
 class TestHelperFunctions(unittest.TestCase):
@@ -91,6 +91,14 @@ class TestHelperFunctions(unittest.TestCase):
         self.assertEqual(next(values), (root[1][0], '/A/B2/C2'))
         self.assertEqual(next(values), (root[1][1], '/A/B2/C3'))
         self.assertRaises(StopIteration, next, values)
+
+    def test_to_fortran(self):
+        self.assertEqual(to_fortran(True), '.true.')
+        self.assertEqual(to_fortran(False), '.false.')
+        self.assertEqual(to_fortran(' a string '), repr('a string'))
+        self.assertEqual(to_fortran(b' a byte string '), repr('a byte string'))
+        self.assertEqual(to_fortran(10), '10')
+        self.assertEqual(to_fortran(999.1), '999.1')
 
 
 class TestBiunivocalMap(unittest.TestCase):

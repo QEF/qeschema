@@ -79,6 +79,20 @@ def etree_iter_path(elem, tag=None, path='.'):
             yield e, p
 
 
+def to_fortran(value):
+    """
+    Translate a Python value to the equivalent literal representation for Fortran input.
+    Leading and trailing spaces characters are removed from strings.
+    """
+    if isinstance(value, bool):
+        return '.true.' if value else '.false.'
+    elif isinstance(value, str):
+        return repr(value.strip())
+    elif isinstance(value, bytes):
+        return repr(value.decode('utf-8').strip())
+    return str(value)
+
+
 class BiunivocalMap(MutableMapping):
     """
     A dictionary that implements a bijective correspondence, namely with constraints

@@ -348,7 +348,7 @@ class QeDocument(XmlDocument):
         qe_input = self.input_builder(xml_file=self.filename)
         input_path = './%s' % self.input_path
 
-        input_root = self.find(input_path, self.namespaces)
+        input_root = self.find(input_path)
         if input_root is None:
             raise XmlDocumentError("Missing input {!r} in XML data!".format(input_path))
 
