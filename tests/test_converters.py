@@ -10,9 +10,12 @@
 """
 Test classes for Quantum Espresso input converters.
 """
-import os
 import unittest
+import os
+import glob
 import xml.etree.ElementTree as ElementTree
+
+import qeschema
 
 
 def make_test_function(xml_file, ref_in_file):
@@ -81,34 +84,24 @@ class ConverterTestCase(unittest.TestCase):
         self.assertTrue(os.path.isfile(in_filename), 'Test output file %r missing!' % in_filename)
 
 
+##
+# Create test classes for examples
+#
+test_dir = os.path.dirname(os.path.abspath(__file__))
+
+for filename in glob.glob(os.path.join(test_dir, "examples/*/*.xml")):
+    qe_input_filename = '%s.in.test' % filename[:-4]
+    if not os.path.isfile(qe_input_filename):
+        continue
+
+    test_func = make_test_function(filename, qe_input_filename)
+    test_name = os.path.relpath(filename)
+    klassname = 'Test_{0}'.format(test_name.replace('/', '__'))
+    globals()[klassname] = type(
+        klassname, (unittest.TestCase,),
+        {'test_converter_{0}'.format(test_name): test_func, 'longMessage': True}
+    )
+
+
 if __name__ == '__main__':
-    import glob
-    import sys
-
-    test_dir = os.path.dirname(os.path.abspath(__file__))
-    pkg_folder = os.path.dirname(test_dir)
-
-    try:
-        import qeschema
-    except ImportError:
-        sys.path.insert(0, pkg_folder)
-        import qeschema
-
-    header = "Test %r" % qeschema
-    print("*" * len(header) + '\n' + header + '\n' + "*" * len(header))
-
-    test_files = glob.glob(os.path.join(test_dir, "examples/*/*.xml"))
-
-    for filename in test_files:
-        qe_input_filename = '%s.in.test' % filename[:-4]
-        if not os.path.isfile(qe_input_filename):
-            continue
-
-        test_func = make_test_function(filename, qe_input_filename)
-        test_name = os.path.relpath(filename)
-        klassname = 'Test_{0}'.format(test_name)
-        globals()[klassname] = type(
-            klassname, (unittest.TestCase,),
-            {'test_converter_{0}'.format(test_name): test_func, 'longMessage': True}
-        )
     unittest.main()

@@ -36,6 +36,10 @@ class TestDocuments(unittest.TestCase):
         self.assertTrue(document.schema.url.endswith(schema))
         self.assertIsInstance(document.schema, XMLSchema)
 
+        document = XmlDocument(schema=XMLSchema(schema))
+        self.assertTrue(document.schema.url.endswith(schema))
+        self.assertIsInstance(document.schema, XMLSchema)
+
         self.assertIsInstance(PwDocument(), PwDocument)
         self.assertIsInstance(PwDocument(schema=schema), PwDocument)
 
@@ -71,6 +75,13 @@ class TestDocuments(unittest.TestCase):
 
     def test_exception_class(self):
         document = PwDocument()
+
+        with self.assertRaises(XmlDocumentError):
+            document.get_fortran_input()
+
+        schema = os.path.join(self.schemas_dir, 'qes.xsd')
+        document = TdSpectrumDocument(schema=schema)
+        document.read(os.path.join(self.test_dir, 'examples/pw/Al001_relax_bfgs.xml'))
 
         with self.assertRaises(XmlDocumentError):
             document.get_fortran_input()
@@ -134,6 +145,11 @@ class TestDocuments(unittest.TestCase):
         filename = os.path.join(self.test_dir, 'examples/dummy/instance.xml')
 
         root, errors = document.from_xml(filename)
+        self.assertTrue(hasattr(root, 'tag'))
+        self.assertEqual(root.tag, 'root')
+        self.assertListEqual(errors, [])
+
+        root, errors = document.from_xml(filename, validation='skip')
         self.assertTrue(hasattr(root, 'tag'))
         self.assertEqual(root.tag, 'root')
         self.assertListEqual(errors, [])

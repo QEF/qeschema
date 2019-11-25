@@ -346,14 +346,22 @@ class QeDocument(XmlDocument):
             raise XmlDocumentError("XML data is not loaded!")
 
         qe_input = self.input_builder(xml_file=self.filename)
-        input_path = '//%s' % self.input_path
+        input_path = './%s' % self.input_path
 
-        input_root = self.find(input_path)
+        input_root = self.find(input_path, self.namespaces)
+        if input_root is None:
+            raise XmlDocumentError("Missing input {!r} in XML data!".format(input_path))
+
+        for schema_root in self.schema.elements.values():
+            if schema_root.find(input_path):
+                break
+        else:
+            raise XmlDocumentError("Missing input element in XSD schema!")
+
         # Extract values from input's subtree of the XML document
         for elem, path in etree_iter_path(input_root, path=input_path):
-
             rel_path = path.replace(input_path, '.')
-            xsd_element = self.schema.find(path)
+            xsd_element = schema_root.find(path)
             if xsd_element is None:
                 logger.error("%r doesn't match any element!" % path)
                 continue
@@ -379,42 +387,6 @@ class QeDocument(XmlDocument):
                 logger.debug("Element's path '%s' not in converter!" % path_key)
                 continue
             qe_input.set_path(path_key, elem.tag, node_dict)
-
-        if use_defaults:
-            # Add defaults for elements not included in input XML subtree
-            for path in filter(
-                    lambda x: x.startswith(input_path) and self.find(x) is None,
-                    self.schema.elements
-            ):
-                rel_path = path.replace(input_path, '.')
-                tag = rel_path.rsplit('/', 1)[-1]
-                xsd_attributes = self.schema.get_attributes(path)
-                defaults_dict = {}
-                defaults_path_keys = []
-
-                try:
-                    # Add default values for attributes
-                    for attr_name, xsd_attribute in xsd_attributes.items():
-                        default_value = xsd_attribute.get_default()
-                        if default_value is not None:
-                            path_key = '%s/%s' % (rel_path, attr_name)
-                            xsd_type = xsd_attribute.xsd_type
-                            value = xsd_type.decode(default_value)
-                            defaults_dict[attr_name] = value
-                            defaults_path_keys.append(path_key)
-                except AttributeError:
-                    pass
-
-                default_value = self.schema.get_element_default(path)
-                if default_value is not None:
-                    path_key = '%s/$' % rel_path if xsd_attributes else rel_path
-                    xsd_type = self.schema.get_element_type(path)
-                    value = xsd_type.decode(default_value)
-                    defaults_dict[path_key.rsplit("/")[-1]] = value
-                    defaults_path_keys.append(path_key)
-
-                for path_key in defaults_path_keys:
-                    qe_input.set_path(path_key, tag, defaults_dict)
 
         return qe_input.get_qe_input()
 
