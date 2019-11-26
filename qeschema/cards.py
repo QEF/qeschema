@@ -91,8 +91,11 @@ def get_atomic_positions_cell_card(name, **kwargs):
     # Add atomic positions
     lines = ['%s %s' % (name, 'crystal_sg' if is_wyckoff else 'bohr')]
     for k in range(len(atoms)):
-        line = '{:4}'.format(atoms[k]['@name'])
-        line += ' {:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k]['$'])
+        try:
+            line = '{:4}'.format(atoms[k].get('@name'))
+            line += ' {:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k].get('$'))
+        except TypeError:
+            continue
 
         if free_positions and \
                 free_positions[3 * k] + free_positions[3 * k + 1] + free_positions[3 * k + 2] != 3:
@@ -114,9 +117,8 @@ def get_atomic_constraints_card(name, **kwargs):
         num_of_constraints = kwargs['num_of_constraints']
         tolerance = kwargs['tolerance']
         atomic_constraints = kwargs['atomic_constraints']
-
     except KeyError:
-        logger.error("Missing required arguments when building ATOMIC_POSITIONS card!")
+        logger.error("Missing required arguments when building CONSTRAINTS card!")
         return []
 
     lines = [name, '{0} {1}'.format(num_of_constraints, tolerance)]
@@ -165,7 +167,7 @@ def get_k_points_card(name, **kwargs):
 
     lines = [name] if k_attrib is None else ['%s %s' % (name, k_attrib)]
     if k_attrib is None:
-        lines.append(' %d' % nk)
+        lines.append(' {}'.format(nk))
         for point in k_point:
             lines.append(' {0} {1}'.format(
                 ' '.join([str(value) for value in point['$']]),
@@ -215,7 +217,7 @@ def get_cell_parameters_card(name, **kwargs):
     try:
         atomic_structure = kwargs['atomic_structure']
     except KeyError:
-        logger.error("Missing required arguments when building ATOMIC_POSITIONS card!")
+        logger.error("Missing required arguments when building CELL_PARAMETERS card!")
         return []
 
     # Add cell parameters card
@@ -239,17 +241,11 @@ def get_qpoints_card(name, **kwargs):
         ldisp = kwargs['ldisp']
     except KeyError:
         ldisp = False
-    if ldisp:
-        return []
+    else:
+        if ldisp:
+            return []
 
-    try:
-        qplot = kwargs['qplot']
-    except KeyError:
-        qplot = False
-    try:
-        ldisp = kwargs['ldisp']
-    except KeyError:
-        ldisp = False
+    qplot = kwargs.get('qplot', False)
     if not (qplot or ldisp):
         try:
             xq = kwargs['xq_dir']
@@ -257,6 +253,7 @@ def get_qpoints_card(name, **kwargs):
             xq = [0.e0, 0.e0, 0.e0]
         line = "{:6.4f}  {:8.4f}  {:8.4f}".format(xq[0], xq[1], xq[2])
         return [line]
+
     lines = []
     if qplot:
         try:
@@ -275,12 +272,11 @@ def get_qpoints_card(name, **kwargs):
 
 def get_climbing_images(name, **kwargs):
     assert isinstance(name, str)
-    manual_images = False
     try:
-        if kwargs['climbingImage'] == 'manual' or kwargs['climbingImage'] == 'MANUAL':
-            manual_images = True
+        manual_images = kwargs['climbingImage'] == 'manual' or kwargs['climbingImage'] == 'MANUAL'
     except KeyError:
         manual_images = False
+
     if manual_images:
         if isinstance(kwargs['climbingImageIndex'], list):
             line = [int(l) for l in kwargs['climbingImageIndex']]
@@ -402,7 +398,7 @@ def get_neb_cell_parameters_card(name, **kwargs):
 
     if len(images) < 1:
         logger.error(" No atomic_structure element found in kwargs !!!")
-        return ''
+        return []
 
     atomic_structure = images[0]
     cells = atomic_structure.get('cell', {})
@@ -417,5 +413,6 @@ def get_neb_cell_parameters_card(name, **kwargs):
 
 
 def get_neb_atomic_forces_card(name, **kwargs):
+    # TODO
     assert isinstance(name, str)
-    print(kwargs)
+    assert isinstance(kwargs, dict)
