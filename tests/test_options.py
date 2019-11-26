@@ -35,7 +35,6 @@ class TestConversionFunctions(unittest.TestCase):
             'Hubbard_U': [{'@specie': 'O1', '@label': 'no Hubbard', '$': 0.0},
                           {'@specie': 'Fe1', '@label': 'no Hubbard', '$': 0.3160442},
                           {'@specie': 'Fe2', '@label': 'no Hubbard', '$': 0.3160442}],
-            '_get_qe_input': get_specie_related_values,
             '_related_tag': 'Hubbard_U'
         }
         result = get_specie_related_values('Hubbard_U', **kwargs)
@@ -60,10 +59,9 @@ class TestConversionFunctions(unittest.TestCase):
     def test_get_starting_magnetization(self):
         kwargs = {
             'atomic_species': {
-                'species':[{'@name': 'Al', 'mass': 26.981538, 'pseudo_file': 'Al.pbe-n-van.UPF'},
-                           {'@name': 'H', 'mass': 1.00794, 'pseudo_file': 'H.pbe-van_ak.UPF'}]
+                'species': [{'@name': 'Al', 'mass': 26.981538, 'pseudo_file': 'Al.pbe-n-van.UPF'},
+                            {'@name': 'H', 'mass': 1.00794, 'pseudo_file': 'H.pbe-van_ak.UPF'}]
             },
-            '_get_qe_input': get_starting_magnetization,
             '_related_tag': 'atomic_species'
         }
         result = get_starting_magnetization('starting_magnetization', **kwargs)
@@ -78,8 +76,7 @@ class TestConversionFunctions(unittest.TestCase):
                                           "parameter 'starting_magnetization'! 'atomic_species'"])
 
     def test_get_system_nspin(self):
-        kwargs = {'lsda': True, '_get_qe_input': get_system_nspin ,
-                  '_related_tag': 'noncolin', 'noncolin': False}
+        kwargs = {'lsda': True, '_related_tag': 'noncolin', 'noncolin': False}
 
         result = get_system_nspin('nspin', **kwargs)
         self.assertListEqual(result, [' nspin=2'])
@@ -96,8 +93,7 @@ class TestConversionFunctions(unittest.TestCase):
         self.assertListEqual(set_ibrav_to_zero('name'), [' ibrav=0'])
 
     def test_get_system_eamp(self):
-        kwargs = {'electric_potential': 'Berry_Phase', '_get_qe_input': get_system_eamp,
-                  '_related_tag': 'electric_potential'}
+        kwargs = {'electric_potential': 'Berry_Phase', '_related_tag': 'electric_potential'}
 
         result = get_system_eamp('eamp', **kwargs)
         self.assertListEqual(result, [])
@@ -119,8 +115,7 @@ class TestConversionFunctions(unittest.TestCase):
         self.assertListEqual(result, [])
 
     def test_get_electrons_efield(self):
-        kwargs = {'electric_potential': 'Berry_Phase', '_get_qe_input': get_electrons_efield,
-                  '_related_tag': 'electric_potential'}
+        kwargs = {'electric_potential': 'Berry_Phase', '_related_tag': 'electric_potential'}
 
         result = get_electrons_efield('efield', **kwargs)
         self.assertListEqual(result, [])
@@ -142,8 +137,9 @@ class TestConversionFunctions(unittest.TestCase):
         self.assertListEqual(result, [])
 
     def test_get_system_edir(self):
-        kwargs = {'electric_potential': 'Berry_Phase', '_get_qe_input': get_system_edir,
-                 '_related_tag': 'electric_field_direction', 'electric_field_direction': 3}
+        kwargs = {'electric_potential': 'Berry_Phase',
+                  '_related_tag': 'electric_field_direction',
+                  'electric_field_direction': 3}
 
         result = get_system_edir('edir', **kwargs)
         self.assertListEqual(result, [])
@@ -250,13 +246,35 @@ class TestConversionFunctions(unittest.TestCase):
         self.assertListEqual(result, [' amass(1)= 26.980', ' amass(2)= 74.920'])
 
     def test_set_lda_plus_u_flag(self):
-        pass
+        kwargs = {
+            '_related_tag': 'Hubbard_U',
+            'Hubbard_U': [{'@specie': 'O1', '@label': 'no Hubbard', '$': 0.0},
+                          {'@specie': 'Fe1', '$': 0.3160442},
+                          {'@specie': 'Fe2', '$': 0.3160442}],
+        }
+
+        result = set_lda_plus_u_flag('lda_plus', **kwargs)
+        self.assertListEqual(result, ['lda_plus_u = .t.'])
+
+        result = set_lda_plus_u_flag('lda_plus', _related_tag='Hubbard_U', Hubbard_U=[])
+        self.assertListEqual(result, [])
 
     def test_set_boolean_flag(self):
-        pass
+        result = set_boolean_flag('restart', restart=False, _related_tag='restart')
+        self.assertListEqual(result, [' restart = .false.'])
+
+        result = set_boolean_flag('pseudo_hermitian', pseudo_hermitian=True, _related_tag='pseudo_hermitian')
+        self.assertListEqual(result, [' pseudo_hermitian = .true.'])
 
     def test_set_what_td_calculation(self):
-        pass
+        result = set_what_td_calculation('what', whatTD='davidson')
+        self.assertListEqual(result, ['davidson'])
+
+        with self.assertRaises(AssertionError):
+            set_what_td_calculation(True, whatTD='davidson')
+
+        with self.assertRaises(KeyError):
+            set_what_td_calculation('what')
 
 
 if __name__ == '__main__':

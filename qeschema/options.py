@@ -38,7 +38,7 @@ def get_specie_related_values(name, **kwargs):
         species = atomic_species['species']
     except KeyError as err:
         key = str(err).strip("'")
-        if key != '_text':
+        if key != '$':
             logger.error("Missing required arguments when building "
                          "parameter '%s'! %s" % (name, key))
         return []
@@ -290,7 +290,7 @@ def set_lda_plus_u_flag(name, **kwargs):
     related_data = kwargs[related_tag]
 
     for value in iter(related_data if isinstance(related_data, list) else [related_data]):
-        if value.get('label') == 'no Hubbard' or value['_text'] <= 0:
+        if value.get('@label') == 'no Hubbard' or value['$'] <= 0:
             continue
         lines.append('lda_plus_u = .t.')
         break
@@ -302,7 +302,8 @@ def set_boolean_flag(name, **kwargs):
     lines = []
     related_tag = kwargs['_related_tag']
     related_data = kwargs[related_tag]
-    if related_data in ['true', 'True', 'TRUE']:
+    if related_data is True or isinstance(related_data, str) and \
+            related_data.strip() in ['true', 'True', 'TRUE', '1']:
         lines.append(' %s = .true.' % related_tag)
     else:
         lines.append(' %s = .false.' % related_tag)
