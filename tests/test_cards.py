@@ -92,6 +92,19 @@ class TestCardsFunctions(unittest.TestCase):
         self.assertEqual(context.output, ['ERROR:qeschema:Missing required arguments '
                                           'when building CONSTRAINTS card!'])
 
+        result = get_atomic_constraints_card(
+            'CONSTRAINTS', num_of_constraints=1, tolerance=0.2, atomic_constraints=[]
+        )
+        self.assertListEqual(result, ['CONSTRAINTS', '1 0.2'])
+        result = get_atomic_constraints_card(
+            'CONSTRAINTS', num_of_constraints=1, tolerance=0.2, atomic_constraints=[{
+                'constr_parms': [0.2, 0.3, 0.1, 0.9],
+                'constr_type': 'test_constraint',
+                'constr_target': 0.3,
+            }]
+        )
+        self.assertListEqual(result, ['CONSTRAINTS', '1 0.2', 'test_constraint 0.2 0.3 0.1 0.9 0.3'])
+
     def test_get_k_points_card(self):
         result = get_k_points_card('K_POINTS', k_points_IBZ={
             'monkhorst_pack': {'@nk1': 6, '@nk2': 6, '@nk3': 1, '@k1': 1, '@k2': 1, '@k3': 1}
@@ -122,6 +135,10 @@ class TestCardsFunctions(unittest.TestCase):
         self.assertListEqual(result, [])
         self.assertEqual(context.output, ['DEBUG:qeschema:Missing required arguments '
                                           'when building ATOMIC_FORCES card!'])
+
+        # FIXME: a fix is required in get_atomic_forces_card()
+        # result = get_atomic_forces_card('ATOMIC_FORCES', external_atomic_forces=[0.1, 0.2], **kwargs)
+        # self.assertListEqual(result, [])
 
     def test_get_cell_parameters_card(self):
         kwargs = {
