@@ -33,8 +33,8 @@ class TestConversionFunctions(unittest.TestCase):
                     {'@name': 'Fe2', 'mass': 1.0, 'pseudo_file': 'Fe.pz-nd-rrkjus.UPF',
                      'starting_magnetization': -0.5}]},
             'Hubbard_U': [{'@specie': 'O1', '@label': 'no Hubbard', '$': 0.0},
-                          {'@specie': 'Fe1', '@label': 'no Hubbard', '$': 0.3160442},
-                          {'@specie': 'Fe2', '@label': 'no Hubbard', '$': 0.3160442}],
+                          {'@specie': 'Fe1', '@label': '3d', '$': 0.3160442},
+                          {'@specie': 'Fe2', '@label': '3d', '$': 0.3160442}],
             '_related_tag': 'Hubbard_U'
         }
         result = get_specie_related_values('Hubbard_U', **kwargs)

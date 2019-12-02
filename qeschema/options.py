@@ -48,7 +48,7 @@ def get_specie_related_values(name, **kwargs):
         tag_specie = value['@specie']
         tag_values = value['$']
         tag_spin = value.get('@spin')
-        if value.get('label') == 'no Hubbard':  # FIXME ?? (maybe '@label' instead?)
+        if value.get('@label') == 'no Hubbard': 
             continue
 
         specie_index = 1
