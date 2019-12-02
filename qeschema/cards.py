@@ -193,16 +193,19 @@ def get_atomic_forces_card(name, **kwargs):
         logger.debug("Missing required arguments when building ATOMIC_FORCES card!")
         return []
 
+
     # Warning if number of atoms in atomic positions differ with forces
     atomic_positions = kwargs.get('atomic_positions', {})
     atoms = atomic_positions.get('atom', [])
-    if atoms and len(atoms) != len(external_atomic_forces):
+    if atoms and len(atoms) != len(external_atomic_forces)/3:
         logger.error("incorrect number of atomic forces")
 
     # Build input card text lines
     lines = [name]
-    for forces in external_atomic_forces:
-        lines.append(' {0}'.format(' '.join([str(value) for value in forces])))
+    f = external_atomic_forces
+    for at in atoms:
+        lines.append(f'{at["@name"]:<3s}  {f[0]:14.8f} {f[1]:14.8f} {f[2]:14.8f}')
+        f = f[3:]
     return lines
 
 
