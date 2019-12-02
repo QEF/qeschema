@@ -311,8 +311,21 @@ class QeDocument(XmlDocument):
     Base class for schema based data for Quantum ESPRESSO applications.
     """
     SCHEMAS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'schemas')
+    RELEASES_DIR = os.path.join(SCHEMAS_DIR, 'releases')
 
     def __init__(self, schema, input_builder):
+        # Check and fetch the schema if a filepath is provided
+        if not isinstance(schema, str) or schema.strip().startswith('<'):
+            pass  # schema is not a file path
+        elif os.path.isfile(schema):
+            pass  # schema file exists
+        elif not schema.strip().startswith('/'):
+            print(self.SCHEMAS_DIR, schema)
+            if os.path.isfile(os.path.join(self.SCHEMAS_DIR, schema)):
+                schema = os.path.join(self.SCHEMAS_DIR, schema)
+            elif os.path.isfile(os.path.join(self.RELEASES_DIR, schema)):
+                schema = os.path.join(self.RELEASES_DIR, schema)
+
         super(QeDocument, self).__init__(schema)
         self.input_builder = input_builder
 
