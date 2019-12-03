@@ -120,21 +120,32 @@ class TestCardsFunctions(unittest.TestCase):
 
     def test_get_atomic_forces_card(self):
         kwargs = {
-            'atomic_positions': [
-                {'atom': [{'@name': 'H', '@index': 1, '$': [-4.56670009, 0.0, 0.0]},
-                          {'@name': 'H', '@index': 2, '$': [0.0, 0.0, 0.0]},
-                          {'@name': 'H', '@index': 3, '$': [1.55776676, 0.0, 0.0]}]},
-                {'atom': [{'@name': 'H', '@index': 1, '$': [-1.55776676, 0.0, 0.0]},
-                          {'@name': 'H', '@index': 2, '$': [0.0, 0.0, 0.0]},
-                          {'@name': 'H', '@index': 3, '$': [4.56670009, 0.0, 0.0]}]}
-            ]}
-
-        with self.assertLogs(logger, level='DEBUG') as context:
-            result = get_atomic_forces_card('ATOMIC_FORCES', **kwargs)
-
-        self.assertListEqual(result, [])
-        self.assertEqual(context.output, ['DEBUG:qeschema:Missing required arguments '
-                                          'when building ATOMIC_FORCES card!'])
+            'atomic_positions': {'atom': [{'@name': 'H', '@index': 1, '$': [-4.56670009, 0.0, 0.0]},
+                                          {'@name': 'H', '@index': 2, '$': [0.0, 0.0, 0.0]},
+                                          {'@name': 'H', '@index': 3, '$': [1.55776676, 0.0, 0.0]},
+                                          {'@name': 'H', '@index': 1, '$': [-1.55776676, 0.0, 0.0]},
+                                          {'@name': 'H', '@index': 2, '$': [0.0, 0.0, 0.0]},
+                                          {'@name': 'H', '@index': 3, '$': [4.56670009, 0.0, 0.0]}]},
+            'external_atomic_forces' :[ 0.0, 0.0,  0.0,
+                                        0.0, 0.0,  0.1,
+                                        0.0, 0.0, -0.1,
+                                        0.2, 0.0,  0.0,
+                                       -0.2, 0.0,  0.0,
+                                        0.0, 0.0,  0.0]
+        }
+        result = get_atomic_forces_card('ATOMIC_FORCES', **kwargs)
+        self.assertListEqual(result, ['ATOMIC_FORCES', 
+                                       'H        0.00000000     0.00000000     0.00000000', 
+                                       'H        0.00000000     0.00000000     0.10000000', 
+                                       'H        0.00000000     0.00000000    -0.10000000', 
+                                       'H        0.20000000     0.00000000     0.00000000', 
+                                       'H       -0.20000000     0.00000000     0.00000000', 
+                                       'H        0.00000000     0.00000000     0.00000000']  )
+        #with self.assertLogs(logger, level='DEBUG') as context:
+        #    result = get_atomic_forces_card('ATOMIC_FORCES', **kwargs)
+        #self.assertListEqual(result,[]) 
+        #self.assertEqual(context.output, ['DEBUG:qeschema:Missing required arguments '
+        #                                  'when building ATOMIC_FORCES card!'])
 
         # FIXME: a fix is required in get_atomic_forces_card()
         # result = get_atomic_forces_card('ATOMIC_FORCES', external_atomic_forces=[0.1, 0.2], **kwargs)
