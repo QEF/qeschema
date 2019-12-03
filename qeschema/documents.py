@@ -46,6 +46,7 @@ class XmlDocument(object):
     :ivar filename: the filepath of the data source file.
     :ivar format: the format of the data source file (XML, JSON, YAML).
     :ivar errors: the list of detected validation errors.
+    :ivar schema: the :class:`XMLSchema` instance associated with the document.
     """
     def __init__(self, schema, converter=None):
         self.root = None

@@ -1,10 +1,12 @@
 =====================================================
-Quantum Espresso tools for XML Schema based Documents
+Quantum Espresso tools for XML Schema based documents
 =====================================================
 
-Tools for converting XML data produced by the Quantum ESPRESSO suite of codes 
-(ESPRESSO: opEn-Source Package for Research in Electronic Structure, Simulation, 
-and Optimization).
+.. qeschema-introduction
+
+The `qeschema <https://github.com/QEF/qeschema>`_ package provides tools for
+converting XML data produced by the Quantum ESPRESSO suite of codes (ESPRESSO:
+opEn-Source Package for Research in Electronic Structure, Simulation and Optimization).
 
 Requirements
 ------------
@@ -32,16 +34,19 @@ Define you data document using:
 .. code-block:: pycon
 
     >>> import qeschema
-    >>> my_document = qeschema.PwDocument()
+    >>> pw_document = qeschema.PwDocument()
 
 and then read XML data from a file processed by the corresponding application of
 Quantum ESPRESSO suite:
 
 .. code-block:: pycon
 
-    >>> my_document.read("my_data.xml")
+    >>> pw_document.read("tests/examples/pw/Al001_relax_bfgs.xml")
 
-Loaded data can be decoded to Python data dictionary or written to JSON or YAML formats.
+Loaded data can be decoded to Python data dictionary or written to JSON or YAML formats:
+
+    >>> xml_data = pw_document.to_dict()
+    >>> json_data = pw_document.to_json()
 
 
 Authors
