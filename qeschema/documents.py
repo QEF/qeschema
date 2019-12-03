@@ -66,8 +66,22 @@ class XmlDocument(object):
 
     @property
     def namespaces(self):
-        """Schema namespaces, that is a dictionary that maps prefixes to URI."""
+        """Schema namespaces map, a dictionary that maps prefixes to URI."""
         return self.schema.namespaces
+
+    @property
+    def xml_namespaces(self):
+        """
+        XML data namespaces map, a dictionary that maps prefixes to URI. An empty
+        dictionary if the XML data file is not loaded or it doesn't contain any
+        namespace declaration.
+        """
+        if self.filename is None:
+            return {}
+        elif self.format == 'xml':
+            return xmlschema.XMLResource(self.filename).get_namespaces()
+        else:
+            return {}
 
     def read(self, filename, validation='strict', converter=None):
         """
@@ -251,6 +265,7 @@ class XmlDocument(object):
             source=self.root,
             validation=validation,
             converter=converter,
+            namespaces=kwargs.get('namespaces') or self.xml_namespaces,
             preserve_root=kwargs.pop('preserve_root', True),
             **kwargs
         )
@@ -331,7 +346,8 @@ class QeDocument(XmlDocument):
         self.input_builder = input_builder
 
         self.default_namespace = self.schema.target_namespace
-        qe_nslist = list(map(self.namespaces.get, ['qes', 'neb', 'qes_ph', 'qes_lr', 'qes_spectrum']))
+        qe_prefixes = ['qes', 'neb', 'qes_ph', 'qes_lr', 'qes_spectrum']
+        qe_nslist = list(map(self.namespaces.get, qe_prefixes))
         if self.default_namespace not in qe_nslist:
             raise NotImplementedError(
                 "Converter not implemented for this schema {}".format(self.default_namespace)
