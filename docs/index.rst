@@ -13,3 +13,4 @@ Quantum Espresso XML Schema tools documentation
 
    intro
    api
+   usage
