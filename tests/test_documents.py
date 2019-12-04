@@ -10,7 +10,7 @@
 import os
 import unittest
 import xml.etree.ElementTree as ElementTree
-from xmlschema import XMLSchemaValidationError, XMLSchema, ParkerConverter
+from xmlschema import XMLSchemaValidationError, XMLSchema
 
 from qeschema import PwDocument, PhononDocument, NebDocument, TdDocument, \
     TdSpectrumDocument, XmlDocumentError
@@ -58,11 +58,6 @@ class TestDocuments(unittest.TestCase):
         schema = os.path.join(self.schemas_dir, 'qes_spectrum.xsd')
         self.assertIsInstance(TdSpectrumDocument(), TdSpectrumDocument)
         self.assertIsInstance(TdSpectrumDocument(schema=schema), TdSpectrumDocument)
-
-    def test_converted_property(self):
-        schema = os.path.join(self.schemas_dir, 'qes.xsd')
-        document = XmlDocument(schema, ParkerConverter)
-        self.assertIsInstance(document.converter, ParkerConverter)
 
     def test_namespaces_property(self):
         schema = os.path.join(self.schemas_dir, 'qes.xsd')
