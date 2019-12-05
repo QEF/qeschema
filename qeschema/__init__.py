@@ -14,7 +14,6 @@ from .converters import RawInputConverter, PwInputConverter, PhononInputConverte
     NebInputConverter, TdInputConverter, TdSpectrumInputConverter
 from .exceptions import QESchemaError, XmlDocumentError
 from .utils import set_logger
-from .pwdata import  get_atomic_positions
 
 __version__ = '1.0.0'
 
