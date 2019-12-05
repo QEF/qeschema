@@ -139,15 +139,15 @@ class TestDocuments(unittest.TestCase):
         document = XmlDocument(os.path.join(self.test_dir, 'examples/dummy/schema.xsd'))
         filename = os.path.join(self.test_dir, 'examples/dummy/instance.xml')
 
-        root, errors = document.from_xml(filename)
-        self.assertTrue(hasattr(root, 'tag'))
-        self.assertEqual(root.tag, 'root')
-        self.assertListEqual(errors, [])
+        document.from_xml(filename)
+        self.assertTrue(hasattr(document.root, 'tag'))
+        self.assertEqual(document.root.tag, 'root')
+        self.assertListEqual(document.errors, [])
 
-        root, errors = document.from_xml(filename, validation='skip')
-        self.assertTrue(hasattr(root, 'tag'))
-        self.assertEqual(root.tag, 'root')
-        self.assertListEqual(errors, [])
+        document.from_xml(filename, validation='skip')
+        self.assertTrue(hasattr(document.root, 'tag'))
+        self.assertEqual(document.root.tag, 'root')
+        self.assertListEqual(document.errors, [])
 
         root = ElementTree.parse(filename).getroot()
         with self.assertRaises(TypeError):
@@ -156,19 +156,19 @@ class TestDocuments(unittest.TestCase):
         with self.assertRaises(XMLSchemaValidationError):
             document.from_xml("<root><node/><unknown/></root>")
 
-        root, errors = document.from_xml("<root><node/><unknown/></root>", validation='lax')
-        self.assertTrue(hasattr(root, 'tag'))
-        self.assertEqual(root.tag, 'root')
-        self.assertEqual(len(errors), 1)
+        document.from_xml("<root><node/><unknown/></root>", validation='lax')
+        self.assertTrue(hasattr(document.root, 'tag'))
+        self.assertEqual(document.root.tag, 'root')
+        self.assertEqual(len(document.errors), 1)
 
     def test_from_json_method(self):
         document = XmlDocument(os.path.join(self.test_dir, 'examples/dummy/schema.xsd'))
         filename = os.path.join(self.test_dir, 'examples/dummy/instance.json')
 
-        root, errors = document.from_json(filename)
-        self.assertTrue(hasattr(root, 'tag'))
-        self.assertEqual(root.tag, 'root')
-        self.assertListEqual(errors, [])
+        document.from_json(filename)
+        self.assertTrue(hasattr(document.root, 'tag'))
+        self.assertEqual(document.root.tag, 'root')
+        self.assertListEqual(document.errors, [])
 
         with self.assertRaises(TypeError):
             with open(filename) as f:
@@ -177,19 +177,19 @@ class TestDocuments(unittest.TestCase):
         with self.assertRaises(XMLSchemaValidationError):
             document.from_json('{"root": {"node": null, "unknown": null}}')
 
-        root, errors = document.from_json('{"root": {"node": null, "unknown": null}}', validation='lax')
-        self.assertTrue(hasattr(root, 'tag'))
-        self.assertEqual(root.tag, 'root')
-        self.assertGreaterEqual(len(errors), 1)
+        document.from_json('{"root": {"node": null, "unknown": null}}', validation='lax')
+        self.assertTrue(hasattr(document.root, 'tag'))
+        self.assertEqual(document.root.tag, 'root')
+        self.assertGreaterEqual(len(document.errors), 1)
 
     def test_from_yaml_method(self):
         document = XmlDocument(os.path.join(self.test_dir, 'examples/dummy/schema.xsd'))
         filename = os.path.join(self.test_dir, 'examples/dummy/instance.yaml')
 
-        root, errors = document.from_yaml(filename)
-        self.assertTrue(hasattr(root, 'tag'))
-        self.assertEqual(root.tag, 'root')
-        self.assertListEqual(errors, [])
+        document.from_yaml(filename)
+        self.assertTrue(hasattr(document.root, 'tag'))
+        self.assertEqual(document.root.tag, 'root')
+        self.assertListEqual(document.errors, [])
 
         with self.assertRaises(TypeError):
             with open(filename) as f:
@@ -198,26 +198,26 @@ class TestDocuments(unittest.TestCase):
         with self.assertRaises(XMLSchemaValidationError):
             document.from_yaml('root:\n  node: null\n  unknown: null\n')
 
-        root, errors = document.from_yaml('root:\n  node: null\n  unknown: null\n', validation='lax')
-        self.assertTrue(hasattr(root, 'tag'))
-        self.assertEqual(root.tag, 'root')
-        self.assertGreaterEqual(len(errors), 1)
+        document.from_yaml('root:\n  node: null\n  unknown: null\n', validation='lax')
+        self.assertTrue(hasattr(document.root, 'tag'))
+        self.assertEqual(document.root.tag, 'root')
+        self.assertGreaterEqual(len(document.errors), 1)
 
     def test_from_dict_method(self):
         document = XmlDocument(os.path.join(self.test_dir, 'examples/dummy/schema.xsd'))
 
-        root, errors = document.from_dict({'root': {'node': [None, None, None]}})
-        self.assertTrue(hasattr(root, 'tag'))
-        self.assertEqual(root.tag, 'root')
-        self.assertListEqual(errors, [])
+        document.from_dict({'root': {'node': [None, None, None]}})
+        self.assertTrue(hasattr(document.root, 'tag'))
+        self.assertEqual(document.root.tag, 'root')
+        self.assertListEqual(document.errors, [])
 
         with self.assertRaises(XMLSchemaValidationError):
             document.from_dict({'root': {'node': None, 'unknown': None}})
 
-        root, errors = document.from_dict({'root': {'node': None, 'unknown': None}}, validation='lax')
-        self.assertTrue(hasattr(root, 'tag'))
-        self.assertEqual(root.tag, 'root')
-        self.assertGreaterEqual(len(errors), 1)
+        document.from_dict({'root': {'node': None, 'unknown': None}}, validation='lax')
+        self.assertTrue(hasattr(document.root, 'tag'))
+        self.assertEqual(document.root.tag, 'root')
+        self.assertGreaterEqual(len(document.errors), 1)
 
     def test_write_method(self):
         document = XmlDocument(os.path.join(self.test_dir, 'examples/dummy/schema.xsd'))

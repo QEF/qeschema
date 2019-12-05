@@ -121,34 +121,26 @@ class XmlDocument(object):
         ext = filename.strip().lower().rpartition('.')[2] if '.' in filename else None
 
         if ext == 'xml':
-            self.root, self.errors = self.from_xml(filename, validation)
-            self.format = 'xml'
+            self.from_xml(filename, validation)
         elif ext == 'json':
-            self.root, self.errors = self.from_json(filename, validation, **kwargs)
-            self.format = 'json'
+            self.from_json(filename, validation, **kwargs)
         elif ext in ('yml', 'yaml'):
-            self.root, self.errors = self.from_yaml(filename, validation, **kwargs)
-            self.format = 'yaml'
+            self.from_yaml(filename, validation, **kwargs)
         else:
             try:
-                self.root, self.errors = self.from_xml(filename, validation)
-                self.format = 'xml'
+                self.from_xml(filename, validation)
             except ElementTree.ParseError:
                 try:
-                    self.root, self.errors = self.from_json(filename, validation, **kwargs)
-                    self.format = 'json'
+                    self.from_json(filename, validation, **kwargs)
                 except json.JSONDecodeError:
                     try:
-                        self.root, self.errors = self.from_yaml(filename, validation, **kwargs)
-                        self.format = 'yaml'
+                        self.from_yaml(filename, validation, **kwargs)
                     except yaml.YAMLError:
                         raise ValueError("input file is not in neither of XML, JSON or YAML formats")
 
-        self.filename = filename
-
     def from_xml(self, source, validation='strict', **kwargs):
         """
-        Parse source data from an XML file. Data is validated against the schema.
+        Load XML data. Data is validated against the schema.
 
         :param source: a filepath to an XML file or a string containing XML data.
         :param validation: validation mode, can be 'strict', 'lax' or 'skip'.
@@ -161,8 +153,10 @@ class XmlDocument(object):
             raise TypeError("the source argument must be a string!")
         elif '\n' not in source and not source.strip().startswith('<'):
             root = ElementTree.parse(source).getroot()
+            filename = source.strip()
         else:
             root = ElementTree.XML(source)
+            filename = None
 
         resource = xmlschema.XMLResource(source, **kwargs)
         schema_names = [
@@ -177,16 +171,21 @@ class XmlDocument(object):
         else:
             logger.warning("XML data {!r} seems built for schema {!r}".format(source, schema_names[0]))
 
-        if validation == 'lax':
-            return root, [e for e in self.schema.iter_errors(source)]
-        elif validation != 'skip':
+        errors = []
+        if validation == 'strict':
             self.schema.validate(source)
-        return root, []
+        elif validation == 'lax':
+            errors.extend(e for e in self.schema.iter_errors(source))
+
+        self.root = root
+        self.errors = errors
+        self.filename = filename
+        self.format = 'xml'
 
     def from_json(self, source, validation='strict', **kwargs):
         """
-        Converts a JSON encoded file to an XML ElementTree structure.
-        Data is validated against the schema during conversion.
+        Load JSON encoded data. Data is converted to an XML ElementTree structure
+        and validated against the schema.
 
         :param source: a filepath to a JSON file or a string containing JSON data.
         :param validation: validation mode, can be 'strict', 'lax' or 'skip'.
@@ -206,11 +205,18 @@ class XmlDocument(object):
             with open(source) as f:
                 obj = xmlschema.from_json(f, self.schema, validation=validation,
                                           preserve_root=preserve_root)
+            filename = source.strip()
         else:
             obj = xmlschema.from_json(source, self.schema, validation=validation,
                                       preserve_root=preserve_root)
+            filename = None
 
-        return obj if isinstance(obj, tuple) else (obj, [])
+        if isinstance(obj, tuple):
+            self.root, self.errors = obj
+        else:
+            self.root, self.errors = obj, []
+        self.filename = filename
+        self.format = 'json' if filename else None
 
     def from_yaml(self, source, validation='strict', **kwargs):
         """
@@ -230,8 +236,10 @@ class XmlDocument(object):
         elif '\n' not in source and not source.strip().startswith('<'):
             with open(source) as f:
                 data = yaml.load(f, Loader=yaml.Loader)
+            filename = source.strip()
         else:
             data = yaml.load(source, Loader=yaml.Loader)
+            filename = None
 
         preserve_root = kwargs.pop('preserve_root', True)
         converter = kwargs.pop('converter', xmlschema.UnorderedConverter)
@@ -240,7 +248,13 @@ class XmlDocument(object):
 
         obj = self.schema.encode(data, validation=validation, converter=converter,
                                  preserve_root=preserve_root, **kwargs)
-        return obj if isinstance(obj, tuple) else (obj, [])
+
+        if isinstance(obj, tuple):
+            self.root, self.errors = obj
+        else:
+            self.root, self.errors = obj, []
+        self.filename = filename
+        self.format = 'yaml' if filename else None
 
     def from_dict(self, data, validation='strict', **kwargs):
         """
@@ -255,7 +269,11 @@ class XmlDocument(object):
         """
         preserve_root = kwargs.pop('preserve_root', True)
         obj = self.schema.encode(data, validation=validation, preserve_root=preserve_root, **kwargs)
-        return obj if isinstance(obj, tuple) else (obj, [])
+        if isinstance(obj, tuple):
+            self.root, self.errors = obj
+        else:
+            self.root, self.errors = obj, []
+        self.filename = self.format = None
 
     def write(self, filename, output_format='xml', validation='strict', **kwargs):
         """
