@@ -40,17 +40,29 @@ class XmlDocument(object):
     :param schema: can be a :class:`XMLSchema` instance or a file-like object or \
     a file path or an URL of a resource or a string containing the schema.
 
+    :cvar SEARCH_PATHS: the sequence of search paths used by :method:`fetch_schema` \
+    for fetching schemas.
     :ivar root: the root element of the XML tree.
     :ivar filename: the filepath of the data source file.
     :ivar format: the format of the data source file (XML, JSON, YAML).
     :ivar errors: the list of detected validation errors.
     :ivar schema: the :class:`XMLSchema` instance associated with the document.
     """
+    SEARCH_PATHS = ('.',)
+
     def __init__(self, schema):
         self.root = None
         self.filename = None
         self.format = None
         self.errors = []
+
+        # Check and fetch the schema if a filepath is provided
+        if not isinstance(schema, str) or schema.strip().startswith('<'):
+            pass  # schema is not a file path
+        else:
+            _schema = self.fetch_schema(schema)
+            if _schema is not None:
+                schema = _schema
 
         if isinstance(schema, xmlschema.XMLSchemaBase):
             self.schema = schema
@@ -75,6 +87,22 @@ class XmlDocument(object):
             return xmlschema.XMLResource(self.filename).get_namespaces()
         else:
             return {}
+
+    @classmethod
+    def fetch_schema(cls, filename):
+        filename = filename.strip()
+        if os.path.isfile(filename):
+            return filename
+
+        if not filename.startswith('/'):
+            for base_path in cls.SEARCH_PATHS:
+                if os.path.isfile(os.path.join(base_path, filename)):
+                    return os.path.join(base_path, filename)
+
+        base_name = os.path.basename(filename)
+        for base_path in cls.SEARCH_PATHS:
+            if os.path.isfile(os.path.join(base_path, base_name)):
+                return os.path.join(base_path, base_name)
 
     def read(self, filename, validation='strict', **kwargs):
         """
@@ -118,12 +146,14 @@ class XmlDocument(object):
 
         self.filename = filename
 
-    def from_xml(self, source, validation='strict'):
+    def from_xml(self, source, validation='strict', **kwargs):
         """
-        Load source data from an XML file. Data is validated against the schema.
+        Parse source data from an XML file. Data is validated against the schema.
 
         :param source: a filepath to an XML file or a string containing XML data.
         :param validation: validation mode, can be 'strict', 'lax' or 'skip'.
+        :param kwargs: other options for creating the :class:`xmlschema.XMLResource` \
+        instance used for reading the XML data.
         :return: a couple with the root element of the XML ElementTree a list \
         containing the detected errors.
         """
@@ -134,17 +164,18 @@ class XmlDocument(object):
         else:
             root = ElementTree.XML(source)
 
-        try:
-            basename = os.path.basename(xmlschema.fetch_schema(source))
-        except ValueError:
+        resource = xmlschema.XMLResource(source, **kwargs)
+        schema_names = [
+            os.path.basename(location) for ns, location in resource.iter_location_hints()
+            if ns == resource.namespace
+        ]
+        if not schema_names or self.schema.url is None or \
+                any(self.schema.url.endswith(x) for x in schema_names):
             pass
+        elif '\n' in source:
+            logger.warning("XML data seems built for schema {!r}".format(schema_names[0]))
         else:
-            if self.schema.url is None or self.schema.url.endswith(basename):
-                pass
-            elif '\n' in source:
-                logger.warning("XML data seems built for schema {!r}".format(basename))
-            else:
-                logger.warning("XML data {!r} seems built for schema {!r}".format(source, basename))
+            logger.warning("XML data {!r} seems built for schema {!r}".format(source, schema_names[0]))
 
         if validation == 'lax':
             return root, [e for e in self.schema.iter_errors(source)]
@@ -160,8 +191,10 @@ class XmlDocument(object):
         :param source: a filepath to a JSON file or a string containing JSON data.
         :param validation: validation mode, can be 'strict', 'lax' or 'skip'.
         :param kwargs: other options to pass to the encoding method of the schema instance.
-        :return: a couple with the root element of the XML ElementTree a list \
+        :return: the root element of the XML ElementTree data structure and a list \
         containing the detected errors.
+        :raise: an :class:`xmlschema.XMLSchemaValidationError` if validation is strict \
+        and at least an error is found.
         """
         if not isinstance(source, str):
             raise TypeError("the source argument must be a string!")
@@ -226,7 +259,7 @@ class XmlDocument(object):
 
     def write(self, filename, output_format='xml', validation='strict', **kwargs):
         """
-        Write XML data to a file.
+        Write loaded XML data to a file.
 
         :param filename: filepath of the destination file.
         :param output_format: the data format of the output file.
@@ -260,7 +293,7 @@ class XmlDocument(object):
 
     def to_dict(self, validation='strict', **kwargs):
         """
-        Convert XML data to a nested dictionary.
+        Convert loaded XML data to a nested dictionary.
 
         :param validation: validation mode, can be 'strict', 'lax' or 'skip'.
         :param kwargs: other options for the decoding method of the schema instance.
@@ -279,7 +312,7 @@ class XmlDocument(object):
 
     def to_json(self, filename=None, validation='strict', **kwargs):
         """
-        Converts the XML data to a JSON string.
+        Converts loaded XML data to a JSON string.
 
         :param filename: filepath of the destination file.
         :param validation: validation mode, can be 'strict', 'lax' or 'skip'.
@@ -294,7 +327,7 @@ class XmlDocument(object):
 
     def to_yaml(self, filename=None, validation='strict', **kwargs):
         """
-        Converts the XML data to YAML string.
+        Converts loaded XML data to YAML string.
 
         :param filename: filepath of the destination file.
         :param validation: validation mode, can be 'strict', 'lax' or 'skip'.
@@ -345,20 +378,9 @@ class QeDocument(XmlDocument, metaclass=ABCMeta):
     Abstract base class for schema-based XML documents of Quantum ESPRESSO applications.
     """
     SCHEMAS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'schemas')
-    RELEASES_DIR = os.path.join(SCHEMAS_DIR, 'releases')
+    SEARCH_PATHS = (SCHEMAS_DIR, os.path.join(SCHEMAS_DIR, 'releases'), '.')
 
     def __init__(self, schema, input_builder):
-        # Check and fetch the schema if a filepath is provided
-        if not isinstance(schema, str) or schema.strip().startswith('<'):
-            pass  # schema is not a file path
-        elif os.path.isfile(schema):
-            pass  # schema file exists
-        elif not schema.strip().startswith('/'):
-            if os.path.isfile(os.path.join(self.SCHEMAS_DIR, schema)):
-                schema = os.path.join(self.SCHEMAS_DIR, schema)
-            elif os.path.isfile(os.path.join(self.RELEASES_DIR, schema)):
-                schema = os.path.join(self.RELEASES_DIR, schema)
-
         super(QeDocument, self).__init__(schema)
 
         if not issubclass(input_builder, RawInputConverter):
