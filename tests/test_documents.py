@@ -59,10 +59,10 @@ class TestDocuments(unittest.TestCase):
         self.assertIsInstance(TdSpectrumDocument(), TdSpectrumDocument)
         self.assertIsInstance(TdSpectrumDocument(schema=schema), TdSpectrumDocument)
 
-    def test_namespaces_property(self):
+    def test_schema_namespaces(self):
         schema = os.path.join(self.schemas_dir, 'qes.xsd')
         document = XmlDocument(schema)
-        self.assertEqual(document.namespaces, {
+        self.assertEqual(document.schema.namespaces, {
             '': 'http://www.w3.org/2001/XMLSchema',
             'qes': 'http://www.quantum-espresso.org/ns/qes/qes-1.0',
             'xml': 'http://www.w3.org/XML/1998/namespace'

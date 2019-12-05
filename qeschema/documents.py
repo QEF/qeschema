@@ -55,6 +55,7 @@ class XmlDocument(object):
         self.filename = None
         self.format = None
         self.errors = []
+        self._namespaces = {}
 
         # Check and fetch the schema if a filepath is provided
         if not isinstance(schema, str) or schema.strip().startswith('<'):
@@ -71,22 +72,12 @@ class XmlDocument(object):
 
     @property
     def namespaces(self):
-        """Schema namespaces map, a dictionary that maps prefixes to URI."""
-        return self.schema.namespaces
-
-    @property
-    def xml_namespaces(self):
         """
         XML data namespaces map, a dictionary that maps prefixes to URI. An empty
         dictionary if the XML data file is not loaded or it doesn't contain any
         namespace declaration.
         """
-        if self.filename is None:
-            return {}
-        elif self.format == 'xml':
-            return xmlschema.XMLResource(self.filename).get_namespaces()
-        else:
-            return {}
+        return {k: v for k, v in self._namespaces.items()}
 
     @classmethod
     def fetch_schema(cls, filename):
@@ -180,7 +171,8 @@ class XmlDocument(object):
         self.root = root
         self.errors = errors
         self.filename = filename
-        self.format = 'xml'
+        self.format = 'xml' if filename else None
+        self._namespaces = resource.get_namespaces()
 
     def from_json(self, source, validation='strict', **kwargs):
         """
@@ -322,7 +314,7 @@ class XmlDocument(object):
         obj = self.schema.to_dict(
             source=self.root,
             validation=validation,
-            namespaces=kwargs.get('namespaces') or self.xml_namespaces,
+            namespaces=kwargs.get('namespaces') or self.namespaces,
             preserve_root=kwargs.pop('preserve_root', True),
             **kwargs
         )
@@ -407,7 +399,7 @@ class QeDocument(XmlDocument, metaclass=ABCMeta):
 
         self.default_namespace = self.schema.target_namespace
         qe_prefixes = ['qes', 'neb', 'qes_ph', 'qes_lr', 'qes_spectrum']
-        qe_nslist = list(map(self.namespaces.get, qe_prefixes))
+        qe_nslist = list(map(self.schema.namespaces.get, qe_prefixes))
         if self.default_namespace not in qe_nslist:
             raise NotImplementedError(
                 "Converter not implemented for this schema {}".format(self.default_namespace)
