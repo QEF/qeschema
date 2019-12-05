@@ -28,5 +28,6 @@ the desired dictionary:
     >>>bsdict = doc.schema.find(path).decode(doc.find(path) 
 
 
+In the pwdata module can be found a group of helper functions for extracting data from a XML data file produced by pw.x. It is sufficient give in input the path to the XML data file. If one provides the path to the schema file a strict validation of the file format is also done.  
 
-
+.. autofunction:: qeschema.pwdata.get_total_energy 
