@@ -12,8 +12,6 @@ Generic XML document API
 .. autoclass:: qeschema.XmlDocument
 
     .. autoattribute:: namespaces
-    .. autoattribute:: xml_namespaces
-
     .. automethod:: read
     .. automethod:: from_xml
     .. automethod:: from_json
@@ -31,6 +29,12 @@ Generic XML document API
 QE applications XML document API
 --------------------------------
 
+Specialized classes for QE applications can extend the base class :class:`qeschema.XmlDocument`
+with helper functions for extracting data from XML data files produced by each application.
+These classes have a common base class :class:`qeschema.QeDocument` that defines common methods
+an properties for accessing input and ouput data and for converting XML input to legacy
+Fortran namelist input.
+
 .. autoclass:: qeschema.QeDocument
 
     .. autoattribute:: input_path
@@ -40,7 +44,19 @@ QE applications XML document API
     .. automethod:: write_fortran_input
 
 .. autoclass:: qeschema.PwDocument
+
+    .. automethod:: get_atomic_positions
+    .. automethod:: get_cell_parameters
+    .. automethod:: get_stress
+    .. automethod:: get_forces
+    .. automethod:: get_k_points
+    .. automethod:: get_ks_eigenvalues
+    .. automethod:: get_total_energy
+
 .. autoclass:: qeschema.PhononDocument
+
+    .. automethod:: get_fortran_input
+
 .. autoclass:: qeschema.NebDocument
 .. autoclass:: qeschema.TdDocument
 .. autoclass:: qeschema.TdSpectrumDocument

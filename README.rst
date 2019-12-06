@@ -39,11 +39,25 @@ Define you data document using:
 and then read XML data from a file processed by the corresponding application of
 Quantum ESPRESSO suite:
 
+.. testsetup::
+
+    import qeschema
+    pw_document = qeschema.PwDocument()
+
 .. code-block:: pycon
 
     >>> pw_document.read("tests/examples/pw/Al001_relax_bfgs.xml")
 
 Loaded data can be decoded to Python data dictionary or written to JSON or YAML formats:
+
+.. testsetup::
+
+    import qeschema
+    import os
+    os.chdir('..')
+    pw_document = qeschema.PwDocument("tests/examples/pw/Al001_relax_bfgs.xml")
+
+.. code-block:: pycon
 
     >>> xml_data = pw_document.to_dict()
     >>> json_data = pw_document.to_json()

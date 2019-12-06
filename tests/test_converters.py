@@ -26,15 +26,15 @@ def make_test_function(xml_file, ref_in_file):
         element_name = root.tag.split('}')[-1]
 
         if element_name == 'espresso':
-            xml_conf = qeschema.PwDocument()
+            xml_conf = qeschema.PwDocument(source=xml_file)
         elif element_name == 'nebRun':
-            xml_conf = qeschema.NebDocument()
+            xml_conf = qeschema.NebDocument(source=xml_file)
         elif element_name == 'espressoph':
-            xml_conf = qeschema.PhononDocument()
+            xml_conf = qeschema.PhononDocument(source=xml_file)
         elif element_name == 'tddfpt':
-            xml_conf = qeschema.TdDocument()
+            xml_conf = qeschema.TdDocument(source=xml_file)
         elif element_name == 'spectrumDoc':
-            xml_conf = qeschema.TdSpectrumDocument()
+            xml_conf = qeschema.TdSpectrumDocument(source=xml_file)
         else:
             raise ValueError("XML file %r is not a Quantum ESPRESSO document!" % xml_file)
 

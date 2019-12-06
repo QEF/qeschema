@@ -34,11 +34,11 @@ logger = logging.getLogger('qeschema')
 def requires_xml_data(method):
     """A decorator for XML document methods that require XML data to be loaded."""
     @wraps(method)
-    def wrapper(self, *args, **kwargs):
+    def check_xml_data(self, *args, **kwargs):
         if self.root is None:
             raise XmlDocumentError("No XML data loaded!")
         return method(self, *args, **kwargs)
-    return wrapper
+    return check_xml_data
 
 
 class XmlDocument(object):
@@ -54,7 +54,7 @@ class XmlDocument(object):
     :param schema: can be a :class:`xmlschema.XMLSchema` instance or a file-like \
     object or a file path or an URL of a resource or a string containing the XSD schema.
 
-    :cvar SEARCH_PATHS: the sequence of search paths used by :method:`fetch_schema` \
+    :cvar SEARCH_PATHS: the sequence of search paths used by :meth:`fetch_schema` \
     for fetching schemas.
     :ivar root: the root element of the XML tree.
     :ivar filename: the filepath of the data source file.
@@ -92,6 +92,11 @@ class XmlDocument(object):
             if schema is None:
                 if alt_schema is None:
                     raise XmlDocumentError("missing schema for XML data!")
+                schema = alt_schema
+            elif alt_schema is None or not isinstance(schema, str):
+                pass
+            elif '\n' not in schema and not schema.strip().startswith('<') \
+                    and os.path.basename(schema) != os.path.basename(alt_schema):
                 schema = alt_schema
 
         if isinstance(schema, xmlschema.XMLSchemaBase):
@@ -541,8 +546,7 @@ class PwDocument(QeDocument):
         """
         Gets atomic symbols and atomic positions from XML output data.
 
-        :return: the list of atomic symbols and a nested list containing the
-        coordinates
+        :return: the list of atomic symbols and a nested list containing the coordinates
         """
         path = './/output//atomic_positions'
         atomic_positions = self.schema.find(path).decode(self.find(path))
@@ -582,8 +586,8 @@ class PwDocument(QeDocument):
         """
         Gets forces from the XML output data, if present.
 
-        :return: the list of atomic symbols plus a nested list with the forces in
-        atomic units
+        :return: the list of atomic symbols plus a nested list with the forces \
+        in atomic units
         """
         path = './/output/forces'
         if self.find(path) is None:
