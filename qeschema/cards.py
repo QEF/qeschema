@@ -281,7 +281,7 @@ def get_climbing_images(name, **kwargs):
 
     if manual_images:
         if isinstance(kwargs['climbingImageIndex'], list):
-            line = [int(l) for l in kwargs['climbingImageIndex']]
+            line = [int(x) for x in kwargs['climbingImageIndex']]
             fmt = len(line) * ' %d, '
             line = fmt % tuple(line)
         else:

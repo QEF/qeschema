@@ -19,7 +19,7 @@ setup(
     install_requires=['xmlschema~=1.0.15', 'pyyaml'],
     packages=['qeschema'],
     package_data={'qeschema': ['schemas/*.xsd']},
-    scripts = ['scripts/xml2qeinput.py'],
+    scripts = ['scripts/xml2qeinput.py', 'scripts/yaml2qeinput.py'],
     url='https://github.com/QEF/qeschema',
     license='MIT',
     description='Schema-based tools and interfaces for Quantum Espresso data.',

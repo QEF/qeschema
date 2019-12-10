@@ -363,9 +363,8 @@ class TestDocuments(unittest.TestCase):
 
     def test_td_document(self):
         xml_filename = os.path.join(self.test_dir, 'examples/tddfpt/Ag.tddfpt-eels.xml')
-        document = TdDocument()
+        document = TdDocument(source=xml_filename)
 
-        document.read(xml_filename)
         self.assertTrue(hasattr(document.root, 'tag'))
         self.assertEqual(document.root.tag, '{http://www.quantum-espresso.org/ns/qes/qes_lr-1.0}tddfpt')
         self.assertEqual(document.filename, xml_filename)
