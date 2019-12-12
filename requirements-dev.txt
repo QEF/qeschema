@@ -1,6 +1,9 @@
-# Requirements for setup a development environment for the xmlschema package.
+# Requirements for setup a development environment for the qeschema package.
 setuptools
 tox
-xmlschema==0.9.30
+coverage
+xmlschema~=1.0.15
 pyyaml
+Sphinx
+sphinx_rtd_theme
 -e .

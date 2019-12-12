@@ -1,14 +1,14 @@
 #
-# Copyright (c), 2015-2017, Quantum Espresso Foundation and SISSA (Scuola
+# Copyright (c), 2015-2019, Quantum Espresso Foundation and SISSA (Scuola
 # Internazionale Superiore di Studi Avanzati). All rights reserved.
 # This file is distributed under the terms of the MIT License. See the
 # file 'LICENSE' in the root directory of the present distribution, or
 # http://opensource.org/licenses/MIT.
+#
 # Authors: Davide Brunato
 #
-
 import logging
-from collections import MutableMapping
+from collections.abc import MutableMapping
 
 logger = logging.getLogger('qeschema')
 
@@ -79,10 +79,24 @@ def etree_iter_path(elem, tag=None, path='.'):
             yield e, p
 
 
+def to_fortran(value):
+    """
+    Translate a Python value to the equivalent literal representation for Fortran input.
+    Leading and trailing spaces characters are removed from strings.
+    """
+    if isinstance(value, bool):
+        return '.true.' if value else '.false.'
+    elif isinstance(value, str):
+        return repr(value.strip())
+    elif isinstance(value, bytes):
+        return repr(value.decode('utf-8').strip())
+    return str(value)
+
+
 class BiunivocalMap(MutableMapping):
     """
     A dictionary that implements a bijective correspondence, namely with constraints
-    of uniqueness both on keys that on values.
+    of uniqueness both on keys and on values. Both keys and values must be hashable.
     """
     def __init__(self, *args, **kwargs):
         self.__map = {}
@@ -90,11 +104,12 @@ class BiunivocalMap(MutableMapping):
         self.update(*args, **kwargs)
 
     def __getitem__(self, key):
-        if key in self.__map:
+        try:
             return self.__map[key]
-        if hasattr(self.__class__, '__missing__'):
-            return getattr(self.__class__, '__missing__')(self, key)
-        raise KeyError(key)
+        except KeyError:
+            if not hasattr(self, '__missing__'):
+                raise
+            return getattr(self, '__missing__')(key)
 
     def __setitem__(self, key, item):
         try:
@@ -124,41 +139,21 @@ class BiunivocalMap(MutableMapping):
         return key in self.__map
 
     def __repr__(self):
-        return repr(self.__map)
+        return '%s(%s)' % (self.__class__.__name__, self.__map or '')
 
     def copy(self):
-        if self.__class__ is BiunivocalMap:
-            return BiunivocalMap(self.__map.copy())
-        import copy
-        __map = self.__map
-        try:
-            self.__map = {}
-            c = copy.copy(self)
-        finally:
-            self.__map = __map
-        c.update(self)
-        return c
+        return self.__class__(self.__map.copy())
 
-    @classmethod
-    def fromkeys(cls, iterable, value=None):
-        d = cls()
-        for key in iterable:
-            d[key] = value
-        return d
+    def inverse(self):
+        """Returns a copy of the inverse dictionary."""
+        return self.__inverse.copy()
 
     def getkey(self, value, default=None):
         """
-        If value is in dictionary's values, return the key correspondent
-        to the value, else return None.
-
-        :param value: Value to map
-        :param default: Default to return if the value is not in the map values
+        If *value* is in dictionary's values, returns the key correspondent to the value,
+        else returns the *default* argument.
         """
         try:
             return self.__inverse[value]
         except KeyError:
             return default
-
-    def inverse(self):
-        """Return a copy of the inverse dictionary."""
-        return self.__inverse.copy()

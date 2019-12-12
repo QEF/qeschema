@@ -10,7 +10,6 @@
 """
 Convert from XML input to Fortran input
 """
-
 import sys
 
 
@@ -19,13 +18,13 @@ def parse_args():
     import argparse
 
     parser = argparse.ArgumentParser(
-            description="This program converts an XML input to the an equivalent "
+            description="This program converts a YAML formatted input to the an equivalent "
                         "input file written in a format that is natively readable "
                         "by Fortran's codes of Quantum Espresso"
     )
     parser.add_argument("-v", "--verbosity", action="count", default=1,
                         help="Increase output verbosity.")
-    parser.add_argument('-in', metavar='FILE', required=True, help="XML input filename.")
+    parser.add_argument('-in', metavar='FILE', required=True, help="YAML input filename.")
     return parser.parse_args()
 
 
@@ -36,7 +35,7 @@ if __name__ == '__main__':
         sys.exit(1)
 
     args = parse_args()
-    print("Create Fortran input from XML file %r ...\n" % getattr(args, 'in'))
+    print("Create Fortran input from YAML file %r ...\n" % getattr(args, 'in'))
 
     if __package__ is None:
         from os import path
@@ -44,30 +43,33 @@ if __name__ == '__main__':
 
     import qeschema
     import os
-    import xml.etree.ElementTree as Etree
+    import yaml
 
     qeschema.set_logger(args.verbosity)
 
     input_fn = getattr(args, 'in')
-    tree = Etree.parse(input_fn)
-    root = tree.getroot()
-    element_name = root.tag.split('}')[-1]
-    if element_name == 'espresso':
-        xml_document = qeschema.PwDocument()
-    elif element_name == 'nebRun':
-        xml_document = qeschema.NebDocument()
-    elif element_name == 'espressoph':
-        xml_document = qeschema.PhononDocument()
-    elif element_name == 'tddfpt':
-        xml_document = qeschema.TdDocument()
-    elif element_name == 'spectrumDoc':
-        xml_document = qeschema.TdSpectrumDocument()
-    else:
-        sys.stderr.write("Could not find correct XML in %s, exiting...\n" % input_fn)
-        sys.exit(1)
 
-    root = None
-    tree = None
+    with open(input_fn) as f:
+        data = yaml.load(f, Loader=yaml.Loader)
+
+    for key in data:
+        element_name = key.split('}')[-1]
+        if element_name == 'espresso':
+            xml_document = qeschema.PwDocument()
+        elif element_name == 'nebRun':
+            xml_document = qeschema.NebDocument()
+        elif element_name == 'espressoph':
+            xml_document = qeschema.PhononDocument()
+        elif element_name == 'tddfpt':
+            xml_document = qeschema.TdDocument()
+        elif element_name == 'spectrumDoc':
+            xml_document = qeschema.TdSpectrumDocument()
+        else:
+            continue
+        break
+    else:
+        sys.stderr.write("Could not find correct document root in %r, exiting...\n" % input_fn)
+        sys.exit(1)
 
     xml_document.read(input_fn)
     qe_in = xml_document.get_fortran_input()

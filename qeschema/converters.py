@@ -1,22 +1,23 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (c), 2015-2016, Quantum Espresso Foundation and SISSA (Scuola
+# Copyright (c), 2015-2019, Quantum Espresso Foundation and SISSA (Scuola
 # Internazionale Superiore di Studi Avanzati). All rights reserved.
 # This file is distributed under the terms of the MIT License. See the
 # file 'LICENSE' in the root directory of the present distribution, or
 # http://opensource.org/licenses/MIT.
+#
 # Authors: Davide Brunato, Giovanni Borghi
 #
 """
-Data format converters for Quantum Espresso
+Data format converters for Quantum Espresso.
 """
 import copy
 import logging
 import re
 import os.path
+from collections.abc import Container
 
-from .compat import unicode_type
-from .utils import BiunivocalMap
+from .utils import to_fortran, BiunivocalMap
 from . import cards, options
 
 logger = logging.getLogger('qeschema')
@@ -112,30 +113,11 @@ def conversion_maps_builder(template_map):
     return invariant_map, variant_map
 
 
-def to_fortran(value):
-    """
-    Translate a Python value to the equivalent literal representation for Fortran input.
-    Leading and trailing spaces characters are removed from strings.
-    """
-    if isinstance(value, bool):
-        return '.true.' if value else '.false.'
-    elif isinstance(value, (str, unicode_type)):
-        return u"'%s'" % value.strip()
-    return str(value)
-
-
-try:
-    from collections.abc import Container
-except ImportError:
-    from collections import Container
-
-
 class RawInputConverter(Container):
     """
     A Fortran's namelist builder.
     """
-
-    target_pattern = re.compile('(\w+)(?:\[((?:\w+)(?:%\w+)*)\]|)')
+    target_pattern = re.compile(r'(\w+)(?:\[((?:\w+)(?:%\w+)*)\]|)')
     """RE pattern to extract Fortran input's namelist/card and name of a parameter"""
 
     def __init__(self, invariant_map, variant_map, input_namelists=None, input_cards=None):
@@ -323,7 +305,7 @@ class PwInputConverter(RawInputConverter):
             'press_conv_thr': "CELL[press_conv_thr]",
             'verbosity': "CONTROL[verbosity]",
             'print_every': "CONTROL[iprint]",
-            'nstep':       "CONTROL[nstep]",
+            'nstep': "CONTROL[nstep]",
         },
         # Card ATOMIC species with attributes
         'atomic_species': {
@@ -356,12 +338,12 @@ class PwInputConverter(RawInputConverter):
                     '@nqx2': 'SYSTEM[nqx2]',
                     '@nqx3': 'SYSTEM[nqx3]'
                 },
-                'ecutfock': ('SYSTEM[ecutfock]', options.Ha2Ry, None),
+                'ecutfock': ('SYSTEM[ecutfock]', options.ha2ry, None),
                 'exx_fraction': 'SYSTEM[exx_fraction]',
                 'screening_parameter': 'SYSTEM[screening_parameter]',
                 'exxdiv_treatment': 'SYSTEM[exxdiv_treatment]',
                 'x_gamma_extrapolation': 'SYSTEM[x_gamma_extrapolation]',
-                'ecutvcut': ('SYSTEM[ecutvcut]', options.Ha2Ry, None)
+                'ecutvcut': ('SYSTEM[ecutvcut]', options.ha2ry, None)
             },
             'dftU': {
                 'lda_plus_u_kind': 'SYSTEM[lda_plus_u_kind]',
@@ -511,7 +493,9 @@ class PwInputConverter(RawInputConverter):
             'qcutz': "SYSTEM[qcutz]",
             'q2sigma': "SYSTEM[q2sigma]"
         },
-        'external_atomic_forces': ('ATOMIC_FORCES', cards.get_atomic_forces_card, None),
+        'external_atomic_forces': {
+            '$': ('ATOMIC_FORCES', cards.get_atomic_forces_card, None)
+        },
         'free_positions': {
             '$': [("ATOMIC_POSITIONS", cards.get_atomic_positions_cell_card, None), ("CELL_PARAMETERS",)]},
         'electric_field': {
@@ -571,7 +555,7 @@ class PhononInputConverter(RawInputConverter):
             'tr2_ph': "INPUTPH[tr2_ph]",
             'niter_ph': "INPUTPH[niter_ph]",
             'alpha_mix': "INPUTPH[alpha_mix]",
-            'nmix_ph':   "INPUTPH[nmix_ph]"
+            'nmix_ph': "INPUTPH[nmix_ph]",
         },
         'files': {
             'prefix': "INPUTPH[prefix]",
@@ -579,7 +563,7 @@ class PhononInputConverter(RawInputConverter):
             'fildyn': "INPUTPH[fildyn]",
             'fildrho': "INPUTPH[fildrho]",
             'fildvscf': "INPUTPH[fildvscf]",
-            'lqdir': "INPUTPH[lqdir]"
+            'lqdir': "INPUTPH[lqdir]",
         },
         'control_ph': {
             'ldisp': ["INPUTPH[ldisp]", ('qPointsSpecs', cards.get_qpoints_card, None)],
@@ -590,15 +574,15 @@ class PhononInputConverter(RawInputConverter):
             'elop': "INPUTPH[elop]",
             'fpol': "INPUTPH[fpol]",
             'lraman': "INPUTPH[lraman]",
-            'search_sym': "INPUTPH[search_sym]"
+            'search_sym': "INPUTPH[search_sym]",
         },
         'control_job': {
             'recover': "INPUTPH[recover]",
-            'max_seconds': "INPUTPH[max_seconds]"
+            'max_seconds': "INPUTPH[max_seconds]",
         },
         'control_diel': {
             'lrpa': "INPUTPH[lrpa]",
-            'lnoloc': "INPUTPH[lnoloc]"
+            'lnoloc': "INPUTPH[lnoloc]",
         },
         'control_qplot': {
             'qplot': [('qPointsSpecs', cards.get_qpoints_card, None), "INPUTPH[qplot]"],
@@ -606,19 +590,19 @@ class PhononInputConverter(RawInputConverter):
             'q_in_band_form': "INPUTPH[q_in_band_form]"
         },
         'miscellanea': {
-            'amass': {'$': ("INPUTPH[amass]", options.setOneAmassLine, None)},
+            'amass': {'$': ("INPUTPH[amass]", options.set_one_amass_line, None)},
             'verbosity': "INPUTPH[verbosity]",
             'reduce_io': "INPUTPH[reduce_io]",
             'low_directory_check': "INPUTPH[low_directory_check]",
             'nogg': "INPUTPH[nogg]",
             'nscf_MPgrid': {
-                            'nk1': "INPUTPH[nk1]",
-                            'nk2': "INPUTPH[nk2]",
-                            'nk3': "INPUTPH[nk3]",
-                            'k1':  "INPUTPH[k1]",
-                            'k2':  "INPUTPH[k2]",
-                            'k3':  "INPUTPH[k3]"
-                          }
+                'nk1': "INPUTPH[nk1]",
+                'nk2': "INPUTPH[nk2]",
+                'nk3': "INPUTPH[nk3]",
+                'k1': "INPUTPH[k1]",
+                'k2': "INPUTPH[k2]",
+                'k3': "INPUTPH[k3]",
+            }
         },
         'irr_repr': {
             'start_q': "INPUTPH[start_q]",
@@ -628,7 +612,7 @@ class PhononInputConverter(RawInputConverter):
             'nat_todo': "INPUTPH[nat_todo]",
             'modenum': "INPUTPH[modenum]",
             'only_init': "INPUTPH[only_init]",
-            'ldiag': "INPUTPH[ldiag]"
+            'ldiag': "INPUTPH[ldiag]",
         },
         'electron_phonon_options': {
             'electron_phonon': "INPUTPH[electron_phonon]",
@@ -637,14 +621,14 @@ class PhononInputConverter(RawInputConverter):
                 'dir': "INPUTPH[dvscf_star%dir]",
                 'ext': "INPUTPH[dvscf_star%ext]",
                 'basis': "INPUTPH[dvscf_star%basis]",
-                'pat': "INPUTPH[dvscf_star%pat]"
+                'pat': "INPUTPH[dvscf_star%pat]",
             },
             'drho_star': {
-                'open':  "INPUTPH[drho_star%open]",
-                'dir':   "INPUTPH[drho_star%dir]",
-                'ext':   "INPUTPH[drho_star%ext]",
+                'open': "INPUTPH[drho_star%open]",
+                'dir': "INPUTPH[drho_star%dir]",
+                'ext': "INPUTPH[drho_star%ext]",
                 'basis': "INPUTPH[drho_star%basis]",
-                'pat':   "INPUTPH[drho_star%pat]"
+                'pat': "INPUTPH[drho_star%pat]",
             }
         },
         'lraman_options': {
@@ -715,7 +699,7 @@ class NebInputConverter(RawInputConverter):
             'crystal_positions': ('ATOMIC_FORCES', cards.get_atomic_forces_card, None),
             'wyckoff_positions': ('ATOMIC_FORCES', cards.get_atomic_forces_card, None)
         }
-        engine_template_map['free_positions']={
+        engine_template_map['free_positions'] = {
             '$': ("ATOMIC_POSITIONS", cards.get_neb_images_positions_card, None)
         }
         self.NEB_TEMPLATE_MAP.update({'engine': engine_template_map})
@@ -739,6 +723,7 @@ class NebInputConverter(RawInputConverter):
         qe_input += ['END_ENGINE_INPUT', 'END']
         return '\n'.join(qe_input)
 
+
 class TdInputConverter(RawInputConverter):
     """
     converts qes_lr schema to fortran input for turbo_lanczos, turbo_davidson and turbo_eels
@@ -758,22 +743,22 @@ class TdInputConverter(RawInputConverter):
         'lr_control': {
             'itermax': 'lr_control[itermax]',
             'n_pol': 'lr_control[n_ipol]',
-            'ipol' : 'lr_control[ipol]',
-            'ltammd': ('lr_control[ltammd]',options.set_boolean_flag, None),
+            'ipol': 'lr_control[ipol]',
+            'ltammd': ('lr_control[ltammd]', options.set_boolean_flag, None),
             'lrpa': ('lr_control[lrpa]', options.set_boolean_flag, None),
             'charge_response': ('lr_control[charge_response]', options.set_boolean_flag, None),
-            'tqr': ('lr_control[tqr]',options.set_boolean_flag, None),
+            'tqr': ('lr_control[tqr]', options.set_boolean_flag, None),
             'auto_rs': ('lr_control[auto_rs]', options.set_boolean_flag, None),
             'no_hxc': ('lr_control[no_hxc]', options.set_boolean_flag, None),
-            'lproject': ('lr_control[lproject]',options.set_boolean_flag, None),
+            'lproject': ('lr_control[lproject]', options.set_boolean_flag, None),
             'scissor': 'lr_control[scissor]',
             'ecutfock': 'lr_control[ecutfock]',
-            'pseudo_hermitian': ('lr_control[pseudo_hermitian]',options.set_boolean_flag, None),
-            'd0psi_rs': ('lr_control[d0psi_rs]',options.set_boolean_flag, None),
-            'lshift_d0psi':('lr_control[d0psi_rs]',options.set_boolean_flag, None),
-            'q1':'lr_control[q1]',
-            'q2':'lr_control[q2]',
-            'q3':'lr_control[q3]',
+            'pseudo_hermitian': ('lr_control[pseudo_hermitian]', options.set_boolean_flag, None),
+            'd0psi_rs': ('lr_control[d0psi_rs]', options.set_boolean_flag, None),
+            'lshift_d0psi': ('lr_control[d0psi_rs]', options.set_boolean_flag, None),
+            'q1': 'lr_control[q1]',
+            'q2': 'lr_control[q2]',
+            'q3': 'lr_control[q3]',
             'eels_approx': 'lr_control[approximation]'
         },
         'lr_davidson': {
@@ -781,35 +766,35 @@ class TdInputConverter(RawInputConverter):
             'num_init': 'lr_dav[num_init]',
             'num_basis_max': 'lr_dav[num_basis_max]',
             'res_conv_thr': 'lr_dav[res_conv_thr]',
-            'precondition': ('lr_dav[precondition]',options.set_boolean_flag,None),
+            'precondition': ('lr_dav[precondition]', options.set_boolean_flag, None),
             'reference': 'lr_dav[reference]',
-            'single_pole': ('lr_dav[single_pole]',options.set_boolean_flag, None),
-            'sort_contr': ('lr_dav[sort_contr',options.set_boolean_flag, None),
+            'single_pole': ('lr_dav[single_pole]', options.set_boolean_flag, None),
+            'sort_contr': ('lr_dav[sort_contr', options.set_boolean_flag, None),
             'diag_of_h': ('lr_dav[diag_of_h]', options.set_boolean_flag, None),
             'close_pre': ('lr_dav[close_pre]', options.set_boolean_flag, None),
             'broadening': 'lr_dav[broadening]',
-            'print_spectrum': ('lr_dav[print_spectrum]',options.set_boolean_flag, None),
+            'print_spectrum': ('lr_dav[print_spectrum]', options.set_boolean_flag, None),
             'start': 'lr_dav[start]',
             'finish': 'lr_dav[finish]',
             'step': 'lr_dav[step]',
-            'if_checkorth': ('lr_dav[if_checkorth]',options.set_boolean_flag, None),
-            'if_random_init': ('lr_dav[if_random_init]',options.set_boolean_flag, None),
-            'if_check_her': ('lr_dav[if_check_her]',options.set_boolean_flag, None),
+            'if_checkorth': ('lr_dav[if_checkorth]', options.set_boolean_flag, None),
+            'if_random_init': ('lr_dav[if_random_init]', options.set_boolean_flag, None),
+            'if_check_her': ('lr_dav[if_check_her]', options.set_boolean_flag, None),
             'p_nbnd_occ': 'lr_dav[p_nbnd_occ]',
             'p_nbnd_virt': 'lr_dav[p_nbnd_virt]',
-            'poor_of_ram': ('lr_dav[poor_of_ram]',options.set_boolean_flag, None),
+            'poor_of_ram': ('lr_dav[poor_of_ram]', options.set_boolean_flag, None),
             'max_iter': 'lr_dav[max_iter]',
             'ecutfock': 'lr_dav[ecutfock]',
-            'conv_assistant': ('lr_dav[conv_assistant]',options.set_boolean_flag, None),
-            'if_dft_spectrum': ('lr_dav[if_dft_spectrum]',options.set_boolean_flag, None),
-            'no_hxc': ('lr_dav[no_hxc]',options.set_boolean_flag, None),
-            'd0psi_rs': ('lr_dav[d0psi_rs]',options.set_boolean_flag, None),
-            'lshift_d0psi': ('lr_dav[lshift_d0psi]',options.set_boolean_flag, None),
-            'lplot_drho': ('lr_dav[lplot_drho]',options.set_boolean_flag, None),
+            'conv_assistant': ('lr_dav[conv_assistant]', options.set_boolean_flag, None),
+            'if_dft_spectrum': ('lr_dav[if_dft_spectrum]', options.set_boolean_flag, None),
+            'no_hxc': ('lr_dav[no_hxc]', options.set_boolean_flag, None),
+            'd0psi_rs': ('lr_dav[d0psi_rs]', options.set_boolean_flag, None),
+            'lshift_d0psi': ('lr_dav[lshift_d0psi]', options.set_boolean_flag, None),
+            'lplot_drho': ('lr_dav[lplot_drho]', options.set_boolean_flag, None),
             'vccouple_shift': 'lr_dav[vccouple_shift]',
             'ltammd': ('lr_dav[ltammd]', options.set_boolean_flag, None)
         },
-        'lr_post':{
+        'lr_post': {
             'omeg': 'lr_post[omeg]',
             'beta_z_gamma_prefix': 'lr_post[beta_z_gamma_prefix]',
             'w_T_npol': 'lr_post[w_T_npol]',
@@ -820,43 +805,46 @@ class TdInputConverter(RawInputConverter):
         }
     }
 
-    def __init__(self, **kwargs):
-        super (TdInputConverter, self).__init__(*conversion_maps_builder(self.TD_TEMPLATE_MAP),
-                                                input_namelists=('cache','lr_input', 'lr_control', 'lr_dav', 'lr_post' ))
+    def __init__(self, **_kwargs):
+        super(TdInputConverter, self).__init__(
+            *conversion_maps_builder(self.TD_TEMPLATE_MAP),
+            input_namelists=('cache', 'lr_input', 'lr_control', 'lr_dav', 'lr_post')
+        )
 
     def get_qe_input(self):
         """
-        overrides get_qe_input calling super get_qe_input with use_defaults set to False. 
+        Overrides superclass get_qe_input with use_defaults set to False.
         :return: the input as obtained from its input builder
         """
         temp = super(TdInputConverter, self).get_qe_input().split('\n')
         td = temp[1]
         start = temp.index('&lr_input')
         end = start + temp[start:].index('/')
-        qe_input = '\n'.join(temp[start:end+1])
+        qe_input = '\n'.join(temp[start:end + 1])
         """ put lr_input in qe_input """
 
-        if td.lower() in ['lanczos','eels']:
+        if td.lower() in ('lanczos', 'eels'):
             start = temp.index('&lr_control')
         elif td.lower() == 'davidson':
             start = temp.index('&lr_dav')
         end = start + temp[start:].index('/')
-        qe_input = qe_input + '\n' + '\n'.join(temp[start:end+1])
-        """ put one of lr_control(lanzsos) or lr_davidson in qe_input"""
+        qe_input = qe_input + '\n' + '\n'.join(temp[start:end + 1])
+        """ put one of lr_control(lanczos) or lr_davidson in qe_input"""
 
         start = temp.index('&lr_post')
         end = start + temp[start:].index('/')
         if end - start > 1:
-            qe_input = qe_input + '\n' + '\n'.join(temp[start:end+1])
+            qe_input = qe_input + '\n' + '\n'.join(temp[start:end + 1])
         """ if not empty add lr_post namelist to qe_input """
         return qe_input
 
 
-class TD_spctInConverter(RawInputConverter):
+class TdSpectrumInputConverter(RawInputConverter):
     """
-    converts the xml input file described by qes_spectrum scheme in namelist input for turbo_spectrum post-processing tool
+    Converts the XML input file described by qes_spectrum scheme in
+    namelist input for turbo_spectrum post-processing tool.
     """
-    SPEC_TEMPLACE_MAP = {
+    SPEC_TEMPLATE_MAP = {
         'itermax': 'lr_input[itermax]',
         'itermax0': 'lr_input[itermax0]',
         'itermax_actual': 'lr_input[itermax_actual]',
@@ -867,15 +855,20 @@ class TD_spctInConverter(RawInputConverter):
         'ipol': 'lr_input[ipol]',
         'outdir': 'lr_input[outdir]',
         'prefix': 'lr_input[prefix]',
-        'epsil':   'lr_input[epsil]',
+        'epsil': 'lr_input[epsil]',
         'sym_op': 'lr_input[sym_op]',
         'verbosity': 'lr_input[verbosity]',
         'units': 'lr_input[units]',
         'td': 'lr_input[td]',
         'eign_file': 'lr_input[eign_file]',
-        'eels': ('lr_input[eels]', options.set_boolean_flag, None)
+        'eels': ('lr_input[eels]', options.set_boolean_flag, None),
     }
 
-    def __init__(self, **kwargs):
-        super(TD_spctInConverter, self).__init__(*conversion_maps_builder(self.SPEC_TEMPLACE_MAP),
-                                                 input_namelists = ['lr_input'] )
+    def __init__(self, **_kwargs):
+        super(TdSpectrumInputConverter, self).__init__(
+            *conversion_maps_builder(self.SPEC_TEMPLATE_MAP),
+            input_namelists=['lr_input']
+        )
+
+
+TD_spctInConverter = TdSpectrumInputConverter

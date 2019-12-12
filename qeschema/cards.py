@@ -1,18 +1,16 @@
 #
-# Copyright (c), 2015-2016, Quantum Espresso Foundation and SISSA (Scuola
+# Copyright (c), 2015-2019, Quantum Espresso Foundation and SISSA (Scuola
 # Internazionale Superiore di Studi Avanzati). All rights reserved.
 # This file is distributed under the terms of the MIT License. See the
 # file 'LICENSE' in the root directory of the present distribution, or
 # http://opensource.org/licenses/MIT.
+#
 # Authors: Davide Brunato, Giovanni Borghi
 #
 """
 Conversion functions for Quantum Espresso cards.
 """
-
 import logging
-
-# from .utils import set_logger
 
 logger = logging.getLogger('qeschema')
 
@@ -79,13 +77,13 @@ def get_atomic_positions_cell_card(name, **kwargs):
 
     # Check atoms with position constraints
     free_positions = kwargs.get('free_positions')
-    if free_positions: free_positions=free_positions.get('$',[])
+    if free_positions:
+        free_positions = free_positions.get('$', [])
 
     if free_positions:
         # Cover the case when free positions are provided for only one atom
-        if type(free_positions )  not in (list, tuple):
+        if not isinstance(free_positions, (list, tuple)):
             free_positions = [free_positions]
-
 
         if len(free_positions) != 3 * len(atoms):
             logger.error("ATOMIC_POSITIONS: incorrect number of position constraints!")
@@ -93,11 +91,15 @@ def get_atomic_positions_cell_card(name, **kwargs):
     # Add atomic positions
     lines = ['%s %s' % (name, 'crystal_sg' if is_wyckoff else 'bohr')]
     for k in range(len(atoms)):
-        line = '{:4}'.format( atoms[k]['@name'] )
-        line += ' {:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k]['$'])
+        try:
+            line = '{:4}'.format(atoms[k].get('@name'))
+            line += ' {:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k].get('$'))
+        except TypeError:
+            continue
 
-        if free_positions and free_positions[3*k]+free_positions[3*k+1]+free_positions[3*k+2] != 3:
-            line += ' {:4d}{:4d}{:4d}'.format(*map(int, free_positions[3*k:3*k+3]))
+        if free_positions and \
+                free_positions[3 * k] + free_positions[3 * k + 1] + free_positions[3 * k + 2] != 3:
+            line += ' {:4d}{:4d}{:4d}'.format(*map(int, free_positions[3 * k:3 * k + 3]))
         lines.append(line)
 
     return lines
@@ -115,9 +117,8 @@ def get_atomic_constraints_card(name, **kwargs):
         num_of_constraints = kwargs['num_of_constraints']
         tolerance = kwargs['tolerance']
         atomic_constraints = kwargs['atomic_constraints']
-
     except KeyError:
-        logger.error("Missing required arguments when building ATOMIC_POSITIONS card!")
+        logger.error("Missing required arguments when building CONSTRAINTS card!")
         return []
 
     lines = [name, '{0} {1}'.format(num_of_constraints, tolerance)]
@@ -166,7 +167,7 @@ def get_k_points_card(name, **kwargs):
 
     lines = [name] if k_attrib is None else ['%s %s' % (name, k_attrib)]
     if k_attrib is None:
-        lines.append(' %d' % nk)
+        lines.append(' {}'.format(nk))
         for point in k_point:
             lines.append(' {0} {1}'.format(
                 ' '.join([str(value) for value in point['$']]),
@@ -195,13 +196,15 @@ def get_atomic_forces_card(name, **kwargs):
     # Warning if number of atoms in atomic positions differ with forces
     atomic_positions = kwargs.get('atomic_positions', {})
     atoms = atomic_positions.get('atom', [])
-    if atoms and len(atoms) != len(external_atomic_forces):
+    if atoms and len(atoms) != len(external_atomic_forces) / 3:
         logger.error("incorrect number of atomic forces")
 
     # Build input card text lines
     lines = [name]
-    for forces in external_atomic_forces:
-        lines.append(' {0}'.format(' '.join([str(value) for value in forces])))
+    f = external_atomic_forces
+    for at in atoms:
+        lines.append('{:<3s}  {:14.8f} {:14.8f} {:14.8f}'.format(at["@name"], f[0], f[1], f[2]))
+        f = f[3:]
     return lines
 
 
@@ -216,7 +219,7 @@ def get_cell_parameters_card(name, **kwargs):
     try:
         atomic_structure = kwargs['atomic_structure']
     except KeyError:
-        logger.error("Missing required arguments when building ATOMIC_POSITIONS card!")
+        logger.error("Missing required arguments when building CELL_PARAMETERS card!")
         return []
 
     # Add cell parameters card
@@ -226,7 +229,7 @@ def get_cell_parameters_card(name, **kwargs):
         for key in sorted(cells):
             if key not in ['a1', 'a2', 'a3']:
                 continue
-            lines.append( (3*'{:12.8f} ').format(*cells[key]))
+            lines.append((3 * '{:12.8f} ').format(*cells[key]))
         return lines
     return []
 
@@ -235,40 +238,31 @@ def get_cell_parameters_card(name, **kwargs):
 # Phonon Cards
 #
 def get_qpoints_card(name, **kwargs):
-    """
-    :param name:
-    :param kwargs:
-    :return:
-    """
+    assert isinstance(name, str)
     try:
         ldisp = kwargs['ldisp']
     except KeyError:
         ldisp = False
-    if ldisp:
-        return []
+    else:
+        if ldisp:
+            return []
 
-    try:
-        qplot = kwargs['qplot']
-    except KeyError:
-        qplot = False
-    try:
-        ldisp = kwargs['ldisp']
-    except KeyError:
-        ldisp = False
+    qplot = kwargs.get('qplot', False)
     if not (qplot or ldisp):
         try:
             xq = kwargs['xq_dir']
         except KeyError:
-            xq =[0.e0, 0.e0, 0.e0]
-        line = "{:6.4f}  {:8.4f}  {:8.4f}".format(xq[0],xq[1],xq[2])
+            xq = [0.e0, 0.e0, 0.e0]
+        line = "{:6.4f}  {:8.4f}  {:8.4f}".format(xq[0], xq[1], xq[2])
         return [line]
-    lines=[]
-    if (qplot):
+
+    lines = []
+    if qplot:
         try:
             nqs = kwargs['nqs']
         except KeyError:
-            nqs = 1
-            raise RuntimeWarning("qplot was set to true in input but no value for nqs was provided assumint nqs = 1")
+            raise RuntimeWarning("qplot was set to true in input but no value "
+                                 "for nqs was provided assuming nqs = 1")
 
         lines.append('{:4d}'.format(nqs))
         q_points_list = kwargs['q_points_list']['q_point']
@@ -279,78 +273,79 @@ def get_qpoints_card(name, **kwargs):
 
 
 def get_climbing_images(name, **kwargs):
-    manualImages = False
+    assert isinstance(name, str)
     try:
-        if kwargs['climbingImage'] == 'manual' or kwargs['climbingImage'] == 'MANUAL':
-            manualImages = True
+        manual_images = kwargs['climbingImage'] == 'manual' or kwargs['climbingImage'] == 'MANUAL'
     except KeyError:
-        manualImages = False
-    if manualImages:
+        manual_images = False
+
+    if manual_images:
         if isinstance(kwargs['climbingImageIndex'], list):
-            line = [int(l) for l in kwargs['climbingImageIndex']]
-            fmt  = len(line) * ' %d, '
+            line = [int(x) for x in kwargs['climbingImageIndex']]
+            fmt = len(line) * ' %d, '
             line = fmt % tuple(line)
         else:
-            line =' %d '%int(kwargs['climbingImageIndex'])
+            line = ' %d ' % int(kwargs['climbingImageIndex'])
         return [line]
     return ['']
 
 
 def get_neb_images_positions_card(name, **kwargs):
     """
-    Extract atomic posisitions for each image provided in engine with an atomic_structure element
+    Extract atomic positions for each image provided in engine with an atomic_structure element
+
     :param name: Card name
     :param kwargs: List of dictionaries each containing an atomic_structure element.
     :return: List of lines
     """
-    images = kwargs.get('atomic_structure',[])
+    assert isinstance(name, str)
+    images = kwargs.get('atomic_structure', [])
     try:
         assert isinstance(images, list)
     except AssertionError:
-        images=[images]
+        images = [images]
     if len(images) < 2:
         logger.error("At least the atomic structures for first and last image should be provided")
         return []
     first_positions = images[0].get('atomic_positions',
                                     images[0].get('crystal_positions',
-                                    images[0].get('wyckoff_positions',{})))
-    his_nat = int(images[0].get('@nat',0) )
-    last_positions  = images[-1].get('atomic_positions',
-                                     images[-1].get('crystal_positions',
-                                     images[-1].get('wyckoff_positions',{})))
+                                                  images[0].get('wyckoff_positions', {})))
+    his_nat = int(images[0].get('@nat', 0))
+    last_positions = images[-1].get('atomic_positions',
+                                    images[-1].get('crystal_positions',
+                                                   images[-1].get('wyckoff_positions', {})))
     if len(kwargs['atomic_structure']) > 2:
-        interm_pos = [ats.get('atomic_positions',
-                            ats.get('crystal_positions',
-                            ats.get('wyckoff_positions',{}))) for ats in images[1:-1] ]
-
+        interm_pos = [
+            ats.get('atomic_positions', ats.get('crystal_positions', ats.get('wyckoff_positions', {})))
+            for ats in images[1:-1]
+        ]
     else:
         interm_pos = []
 
-    lines = ['%s '%'BEGIN_POSITIONS']
-    lines.append('%s '%'FIRST_IMAGE')
-    atoms = first_positions.get('atom',[])
-    my_nat = len (atoms)
+    lines = ['BEGIN_POSITIONS ', 'FIRST_IMAGE ']
+    atoms = first_positions.get('atom', [])
+    my_nat = len(atoms)
     if my_nat <= 0:
         logger.error("No atomic coordinates provided for first image")
         return ''
     if my_nat != his_nat:
-        logger.error ( "nat provided in first image differs from number of atoms in atomic_positions!!!")
+        logger.error("nat provided in first image differs from number of atoms in atomic_positions!!!")
 
     free_positions = kwargs.get('free_positions', None)
     if free_positions:
         free_positions = free_positions.get('$')
     else:
-        free_positions=[]
-    if free_positions and len(free_positions) != 3*len(atoms):
-            logger.error("ATOMIC_POSITIONS: incorrect number of position constraints!")
+        free_positions = []
+    if free_positions and len(free_positions) != 3 * len(atoms):
+        logger.error("ATOMIC_POSITIONS: incorrect number of position constraints!")
 
-    lines.append ('%s { %s }' % ('ATOMIC_POSITIONS', 'bohr') )
+    lines.append('ATOMIC_POSITIONS { bohr }')
     for k in range(len(atoms)):
         sp_name = '{:4}'.format(atoms[k]['@name'])
         coords = '{:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k]['$'])
         if k < len(free_positions):
-            free_pos = '{:4d}{:4d}{:4d}'.format(*free_positions[3*k:3*k+3])
-            if free_positions[3*k]+free_positions[3*k+1]+free_positions[3*k+2] <3:
+            free_pos = '{:4d}{:4d}{:4d}'.format(*free_positions[3 * k:3 * k + 3])
+            if sum(free_positions[3 * k + n] for n in range(3)) < 3:
                 lines.append('%s %s %s' % (sp_name, coords, free_pos))
         else:
             lines.append('%s %s' % (sp_name, coords))
@@ -360,62 +355,66 @@ def get_neb_images_positions_card(name, **kwargs):
         if len(atoms) != my_nat:
             logger.error('Found images with differing number of atoms !!!')
 
-        lines.append('%s '%'INTERMEDIATE_IMAGE')
-        lines.append('%s { %s }'% ('ATOMIC_POSITIONS','bohr') )
+        lines.append('INTERMEDIATE_IMAGE ')
+        lines.append('ATOMIC_POSITIONS { bohr }')
         for k in range(len(atoms)):
             sp_name = '{:4}'.format(atoms[k]['@name'])
             coords = '{:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k]['$'])
             if k < len(free_positions):
-                free_pos = '{:4d}{:4d}{:4d}'.format(*free_positions[3*k:3*k+3])
+                free_pos = '{:4d}{:4d}{:4d}'.format(*free_positions[3 * k:3 * k + 3])
                 if free_positions[3 * k] + free_positions[3 * k + 1] + free_positions[3 * k + 2] < 3:
                     lines.append('%s %s %s' % (sp_name, coords, free_pos))
             else:
                 lines.append('%s %s' % (sp_name, coords))
-    atoms=last_positions['atom']
+    atoms = last_positions['atom']
     if len(atoms) != my_nat:
         logger.error('Found images with differing number of atoms !!!')
-    lines.append('%s '%'LAST_IMAGE')
-    lines.append('%s { %s }'%('ATOMIC_POSITIONS', 'bohr') )
+    lines.append('LAST_IMAGE ')
+    lines.append('ATOMIC_POSITIONS { bohr }')
     for k in range(len(atoms)):
         sp_name = '{:4}'.format(atoms[k]['@name'])
         coords = '{:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k]['$'])
         if k < len(free_positions):
-            free_pos = '{:4d}{:4d}{:4d}'.format(*free_positions[3*k:3*k+3])
+            free_pos = '{:4d}{:4d}{:4d}'.format(*free_positions[3 * k:3 * k + 3])
             if free_positions[3 * k] + free_positions[3 * k + 1] + free_positions[3 * k + 2] < 3:
                 lines.append('%s %s %s' % (sp_name, coords, free_pos))
         else:
             lines.append('%s %s' % (sp_name, coords))
-    lines.append( '%s '%'END_POSITIONS')
+
+    lines.append('END_POSITIONS ')
     return lines
 
-def get_neb_cell_parameters_card (name, **kwargs):
+
+def get_neb_cell_parameters_card(name, **kwargs):
     """
-    Extract cell parameter from the firt of the atomic_structure elements provided in engine
-    :param name: Card name
+    Extract cell parameter from the first of the atomic_structure elements provided in engine
+
+    :param name: card name
     :param kwargs: list of the atomic_structure dictionaries translate for xml element engine
     :return: list of text lines for the cell parameters card
     """
-    images = kwargs.get('atomic_structure',[])
-    try:
-        assert isinstance(images,list)
-    except AssertionError:
+    assert isinstance(name, str)
+    images = kwargs.get('atomic_structure', [])
+    if not isinstance(images, list):
         images = [images]
 
     if len(images) < 1:
-        logger.error (" No atomic_strucure element found in kwargs !!!")
-        return ''
+        logger.error(" No atomic_structure element found in kwargs !!!")
+        return []
 
-    atomic_structure  = images[0]
+    atomic_structure = images[0]
     cells = atomic_structure.get('cell', {})
     if cells:
         lines = ['%s bohr' % name]
         for key in sorted(cells):
             if key not in ['a1', 'a2', 'a3']:
                 continue
-            lines.append( (3*'{:12.8f}').format(*cells[key]) )
+            lines.append((3 * '{:12.8f}').format(*cells[key]))
         return lines
     return []
 
 
-def get_neb_atomic_forces_card   (name, **kwargs):
-    print (kwargs)
+def get_neb_atomic_forces_card(name, **kwargs):
+    # TODO
+    assert isinstance(name, str)
+    assert isinstance(kwargs, dict)

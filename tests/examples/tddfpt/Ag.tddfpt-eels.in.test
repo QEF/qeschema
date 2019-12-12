@@ -6,7 +6,7 @@
 /
 &lr_control
  itermax=500
- pseudo_hermitian = .false.
+ pseudo_hermitian = .true.
  q1=0.0
  q2=0.0
  q3=0.051045

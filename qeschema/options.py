@@ -1,17 +1,19 @@
 #
-# Copyright (c), 2015-2016, Quantum Espresso Foundation and SISSA (Scuola
+# Copyright (c), 2015-2019, Quantum Espresso Foundation and SISSA (Scuola
 # Internazionale Superiore di Studi Avanzati). All rights reserved.
 # This file is distributed under the terms of the MIT License. See the
 # file 'LICENSE' in the root directory of the present distribution, or
 # http://opensource.org/licenses/MIT.
+#
 # Authors: Davide Brunato, Giovanni Borghi
 #
 """
 Conversion functions for Quantum Espresso input options.
 """
-
 import logging
-from .exceptions import ConfigError
+
+from .exceptions import XmlDocumentError
+from .utils import to_fortran
 
 logger = logging.getLogger('qeschema')
 
@@ -26,8 +28,8 @@ def get_specie_related_values(name, **kwargs):
     or matrix when
 
     :param name: parameter name
-    :param kwargs:
-    :return: string
+    :param kwargs: related input data
+    :return: a list
     """
     related_tag = kwargs['_related_tag']
     related_data = kwargs[related_tag]
@@ -36,7 +38,7 @@ def get_specie_related_values(name, **kwargs):
         species = atomic_species['species']
     except KeyError as err:
         key = str(err).strip("'")
-        if key != '_text':
+        if key != '$':
             logger.error("Missing required arguments when building "
                          "parameter '%s'! %s" % (name, key))
         return []
@@ -45,8 +47,8 @@ def get_specie_related_values(name, **kwargs):
     for value in iter(related_data if isinstance(related_data, list) else [related_data]):
         tag_specie = value['@specie']
         tag_values = value['$']
-        tag_spin   = value.get('@spin')
-        if value.get('label') == 'no Hubbard':
+        tag_spin = value.get('@spin')
+        if value.get('@label') == 'no Hubbard':
             continue
 
         specie_index = 1
@@ -55,7 +57,7 @@ def get_specie_related_values(name, **kwargs):
                 break
             specie_index += 1
         else:
-            raise ConfigError("Unknown specie '%s' in tag '%s'" % (tag_specie, name))
+            raise XmlDocumentError("Unknown specie '%s' in tag '%s'" % (tag_specie, name))
 
         if isinstance(tag_values, list):
             for k in range(len(tag_values)):
@@ -63,7 +65,7 @@ def get_specie_related_values(name, **kwargs):
                 if tag_values[k] < 0 or (name == 'Hubbard_J' and tag_values[k] == 0):
                     continue
                 if tag_spin:
-                    lines.append( ' {0}({1},{2},{3})={4}'.format(
+                    lines.append(' {0}({1},{2},{3})={4}'.format(
                         name, k + 1, tag_spin, specie_index, tag_values[k]
                     ))
                 else:
@@ -78,10 +80,6 @@ def get_specie_related_values(name, **kwargs):
 def get_starting_magnetization(name, **kwargs):
     """
     Build starting magnetization vector from species data.
-
-    :param name: parameter name
-    :param kwargs:
-    :return: string
     """
     try:
         atomic_species = kwargs['atomic_species']
@@ -107,10 +105,6 @@ def get_starting_magnetization(name, **kwargs):
 def get_system_nspin(name, **kwargs):
     """
     Get the value for 'nspin' parameter of the SYSTEM namelist.
-
-    :param name:
-    :param kwargs:
-    :return:
     """
     try:
         lsda = kwargs['lsda']
@@ -128,18 +122,13 @@ def get_system_nspin(name, **kwargs):
         return []
 
 
-def set_ibrav_to_zero(name, **kwargs):
+def set_ibrav_to_zero(name, **_kwargs):
+    assert isinstance(name, str)
     line = ' ibrav=0'
     return [line]
 
 
 def get_system_eamp(name, **kwargs):
-    """
-
-    :param name:
-    :param kwargs:
-    :return:
-    """
     try:
         electric_potential = kwargs['electric_potential']
         if electric_potential in ('Berry_Phase', 'homogenous_field'):
@@ -157,11 +146,6 @@ def get_system_eamp(name, **kwargs):
 
 
 def get_electrons_efield(name, **kwargs):
-    """
-    :param name:
-    :param kwargs:
-    :return:
-    """
     try:
         electric_potential = kwargs['electric_potential']
         if electric_potential in ('Berry_Phase', 'sawtooth_potential'):
@@ -179,11 +163,6 @@ def get_electrons_efield(name, **kwargs):
 
 
 def get_system_edir(name, **kwargs):
-    """
-    :param name:
-    :param kwargs:
-    :return:
-    """
     try:
         electric_potential = kwargs['electric_potential']
         electric_field_direction = kwargs['electric_field_direction']
@@ -206,7 +185,6 @@ def get_electric_potential_related(name, **kwargs):
                      "parameter '%s'! %s" % (name, err))
         return []
 
-    from .converters import to_fortran
     if name == 'tefield':
         return [' %s=%s' % (name, to_fortran(electric_potential == 'sawtooth_potential'))]
     elif name == 'lelfield':
@@ -217,11 +195,6 @@ def get_electric_potential_related(name, **kwargs):
 
 
 def get_control_gdir(name, **kwargs):
-    """
-    :param name:
-    :param kwargs:
-    :return:
-    """
     try:
         electric_potential = kwargs['electric_potential']
         electric_field_direction = kwargs['electric_field_direction']
@@ -237,11 +210,7 @@ def get_control_gdir(name, **kwargs):
 
 
 def get_cell_dofree(name, **kwargs):
-    """ 
-    :param name:
-    :param kwargs:
-    :return:
-    """
+    assert isinstance(name, str)
     try:
         fix_volume = kwargs['fix_volume']
     except KeyError:
@@ -254,44 +223,55 @@ def get_cell_dofree(name, **kwargs):
         isotropic = kwargs['isotropic']
     except KeyError:
         isotropic = False
-    cell_dofree = "cell_dofree = 'all'" 
-    if ((fix_volume and fix_area) or (fix_volume and isotropic) or (fix_area and isotropic)) :
+
+    cell_dofree = "cell_dofree = 'all'"
+    if (fix_volume and fix_area) or (fix_volume and isotropic) or (fix_area and isotropic):
         logger.error("only one of fix_volume fix_area and isotropic can be true")
         return [cell_dofree]
-    if fix_volume: cell_dofree = "cell_dofree = 'shape'"
-    if fix_area:   cell_dofree = "cell_dofree = '2Dshape'"
-    if isotropic:  cell_dofree = "cell_dofree = 'volume' "
+
+    if fix_volume:
+        cell_dofree = "cell_dofree = 'shape'"
+    if fix_area:
+        cell_dofree = "cell_dofree = '2Dshape'"
+    if isotropic:
+        cell_dofree = "cell_dofree = 'volume'"
     return [cell_dofree]
 
 
 def neb_set_system_nat(name, **kwargs):
     """
     Extract SYSTEM[nat] from the first element of the list of atomic_structure
+
     :param name: Variable name
     :param kwargs: list of dictionaries each containing an atomic_structure element
-    :return: list containin one string to be printed in system name list nat = nat_value
+    :return: list containing one string to be printed in system name list nat = nat_value
     """
-    images = kwargs.get('atomic_structure', [])
-    if len(images) < 1:
+    assert isinstance(name, str)
+    try:
+        images = kwargs['atomic_structure']
+    except KeyError:
         logger.error('No atomic_structure element found !!!')
-        return ''
-    image = images[0]
-    nat_value = image.get('@nat', 0)
-    if nat_value <= 0:
+        return []
+
+    try:
+        nat_value = images[0]['@nat']
+    except (KeyError, IndexError):
         logger.error("error reading nat value from atomic_structure !!!")
-        return ''
+        return []
+
     return [' nat = {0}'.format(nat_value)]
 
 
-def Ha2Ry(name, **kwargs):
+def ha2ry(name, **kwargs):
     related_tag = kwargs['_related_tag']
-    value = kwargs[related_tag]*2.e0
-    return [' {} = {:12.8f}'.format(name,value)]
+    value = kwargs[related_tag] * 2.e0
+    return [' {} = {:12.8f}'.format(name, value)]
 
-def setOneAmassLine(name,**kwargs):
-    lines=[]
+
+def set_one_amass_line(name, **kwargs):
+    lines = []
     try:
-        node  = kwargs['amass']
+        node = kwargs['amass']
         value = float(node['$'])
         index = node['@atom']
         lines.append(' {}({})={:7.3f}'.format(name, index, value))
@@ -302,25 +282,34 @@ def setOneAmassLine(name,**kwargs):
             lines.append(' {}({})={:7.3f}'.format(name, index, value))
     return lines
 
-def set_lda_plus_u_flag(name,**kwargs):
-    lines=[]
+
+def set_lda_plus_u_flag(name, **kwargs):
+    assert isinstance(name, str)
+    lines = []
     related_tag = kwargs['_related_tag']
     related_data = kwargs[related_tag]
-    for value in iter ( related_data if isinstance(related_data,list) else [related_data]):
-        if value.get('label') =="no Hubbard" or value['_text'] <= 0: continue
+
+    for value in iter(related_data if isinstance(related_data, list) else [related_data]):
+        if value.get('@label') == 'no Hubbard' or value['$'] <= 0:
+            continue
         lines.append('lda_plus_u = .t.')
         break
     return lines
 
-def set_boolean_flag(name,**kwargs):
-    lines=[]
-    related_tag=kwargs['_related_tag']
-    related_data=kwargs[related_tag]
-    if related_data in ['true','True','TRUE']:
-        lines.append(' %s = .true.'% related_tag)
+
+def set_boolean_flag(name, **kwargs):
+    assert isinstance(name, str)
+    lines = []
+    related_tag = kwargs['_related_tag']
+    related_data = kwargs[related_tag]
+    if related_data is True or isinstance(related_data, str) and \
+            related_data.strip() in ['true', 'True', 'TRUE', '1']:
+        lines.append(' %s = .true.' % related_tag)
     else:
-        lines.append(' %s = .false.'%related_tag)
+        lines.append(' %s = .false.' % related_tag)
     return lines
 
+
 def set_what_td_calculation(name, **kwargs):
+    assert isinstance(name, str)
     return [kwargs['whatTD']]
