@@ -6,6 +6,12 @@ PwDocument instances can be used to extract data from XML data files converting 
 One has just to create a PwDocument object use it to read the XML file and then use the decoders provided 
 by qeschema. 
 
+.. testsetup::
+
+    import os
+    project_dir = os.path.dirname(os.path.abspath('.'))
+    os.chdir(project_dir)
+
 .. doctest::
    
    >>> import qeschema
