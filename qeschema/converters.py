@@ -538,8 +538,12 @@ class PwInputConverter(RawInputConverter):
             input_cards=('ATOMIC_SPECIES', 'ATOMIC_POSITIONS', 'K_POINTS',
                          'CELL_PARAMETERS', 'ATOMIC_FORCES')
         )
-        if 'xml_file' in kwargs:
-            self._input['CONTROL']['input_xml_schema_file'] = u'\'{}\''.format(os.path.basename(kwargs['xml_file']))
+        try:
+            if 'xml_file' in kwargs:
+                self._input['CONTROL']['input_xml_schema_file'] = u'\'{}\''.format(os.path.basename(kwargs['xml_file']))
+        except TypeError as TE:
+            if kwargs['xml_file'] is not None:
+                raise 
 
     def clear_input(self):
         super(PwInputConverter, self).clear_input()
