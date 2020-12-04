@@ -538,7 +538,16 @@ class PwDocument(QeDocument):
     """
     def __init__(self, source=None, schema=None):
         if schema is None:
-            schema = os.path.join(self.SCHEMAS_DIR, 'qes.xsd')
+            try:
+                parse = ElementTree.parse(source)
+                root = parse.getroot()
+                key = '{http://www.w3.org/2001/XMLSchema-instance}' \
+                      'schemaLocation'
+                schema_name = root.attrib[key].split()[1].split('/')[-1]
+                schema = os.path.join(self.SCHEMAS_DIR, 'releases',  schema_name)
+            except TypeError:
+                logger.warning('loading default schema')
+                schema = os.path.join(self.SCHEMAS_DIR, 'qes.xsd')
         super(PwDocument, self).__init__(source, schema, input_builder=PwInputConverter)
 
     @requires_xml_data
