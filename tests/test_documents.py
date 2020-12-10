@@ -366,7 +366,12 @@ class TestDocuments(unittest.TestCase):
         document = TdDocument(source=xml_filename)
 
         self.assertTrue(hasattr(document.root, 'tag'))
-        self.assertEqual(document.root.tag, '{http://www.quantum-espresso.org/ns/qes/qes_lr-1.0}tddfpt')
+        self.assertEqual(document.root.tag,
+                         '{http://www.quantum-espresso.org/ns/qes/qes_lr-1.0}tddfpt')
+
+        print(document.filename)
+
+
         self.assertEqual(document.filename, xml_filename)
         self.assertEqual(document.format, 'xml')
         self.assertEqual(document.input_path, 'input')
@@ -378,7 +383,8 @@ class TestDocuments(unittest.TestCase):
 
         document.read(xml_filename)
         self.assertTrue(hasattr(document.root, 'tag'))
-        self.assertEqual(document.root.tag, '{http://www.quantum-espresso.org/ns/qes/qes_spectrum-1.0}spectrumDoc')
+        self.assertEqual(document.root.tag,
+                         '{http://www.quantum-espresso.org/ns/qes/qes_spectrum-1.0}spectrumDoc')
         self.assertEqual(document.filename, xml_filename)
         self.assertEqual(document.format, 'xml')
         self.assertEqual(document.input_path, 'spectrumIn')
