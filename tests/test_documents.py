@@ -28,7 +28,11 @@ class TestDocuments(unittest.TestCase):
     def test_document_init(self):
         schema = os.path.join(self.schemas_dir, 'qes.xsd')
 
-        document = XmlDocument(schema)
+        with self.assertRaises(XmlDocumentError) as context:
+            XmlDocument(schema)
+        self.assertEqual(str(context.exception), "source is an XSD schema")
+
+        document = XmlDocument(schema=schema)
         self.assertIsInstance(document, XmlDocument)
         self.assertIsNone(document.root)
         self.assertIsNone(document.filename)
@@ -61,7 +65,7 @@ class TestDocuments(unittest.TestCase):
 
     def test_schema_namespaces(self):
         schema = os.path.join(self.schemas_dir, 'qes.xsd')
-        document = XmlDocument(schema)
+        document = XmlDocument(schema=schema)
         self.assertEqual(document.schema.namespaces, {
             '': 'http://www.w3.org/2001/XMLSchema',
             'qes': 'http://www.quantum-espresso.org/ns/qes/qes-1.0',
@@ -82,7 +86,8 @@ class TestDocuments(unittest.TestCase):
             document.get_fortran_input()
 
     def test_read_method(self):
-        document = XmlDocument(os.path.join(self.test_dir, 'examples/dummy/schema.xsd'))
+        schema = os.path.join(self.test_dir, 'examples/dummy/schema.xsd')
+        document = XmlDocument(schema=schema)
         filename = os.path.join(self.test_dir, 'examples/dummy/instance.xml')
 
         with open(filename) as f:
@@ -136,7 +141,8 @@ class TestDocuments(unittest.TestCase):
             document.read(filename)
 
     def test_from_xml_method(self):
-        document = XmlDocument(os.path.join(self.test_dir, 'examples/dummy/schema.xsd'))
+        schema = os.path.join(self.test_dir, 'examples/dummy/schema.xsd')
+        document = XmlDocument(schema=schema)
         filename = os.path.join(self.test_dir, 'examples/dummy/instance.xml')
 
         document.from_xml(filename)
@@ -150,8 +156,8 @@ class TestDocuments(unittest.TestCase):
         self.assertListEqual(document.errors, [])
 
         root = ElementTree.parse(filename).getroot()
-        with self.assertRaises(TypeError):
-            document.from_xml(root)
+        document.from_xml(root)
+        self.assertIs(root, document.root)
 
         with self.assertRaises(XMLSchemaValidationError):
             document.from_xml("<root><node/><unknown/></root>")
@@ -162,7 +168,7 @@ class TestDocuments(unittest.TestCase):
         self.assertEqual(len(document.errors), 1)
 
     def test_from_json_method(self):
-        document = XmlDocument(os.path.join(self.test_dir, 'examples/dummy/schema.xsd'))
+        document = XmlDocument(schema=os.path.join(self.test_dir, 'examples/dummy/schema.xsd'))
         filename = os.path.join(self.test_dir, 'examples/dummy/instance.json')
 
         document.from_json(filename)
@@ -183,7 +189,7 @@ class TestDocuments(unittest.TestCase):
         self.assertGreaterEqual(len(document.errors), 1)
 
     def test_from_yaml_method(self):
-        document = XmlDocument(os.path.join(self.test_dir, 'examples/dummy/schema.xsd'))
+        document = XmlDocument(schema=os.path.join(self.test_dir, 'examples/dummy/schema.xsd'))
         filename = os.path.join(self.test_dir, 'examples/dummy/instance.yaml')
 
         document.from_yaml(filename)
@@ -204,7 +210,7 @@ class TestDocuments(unittest.TestCase):
         self.assertGreaterEqual(len(document.errors), 1)
 
     def test_from_dict_method(self):
-        document = XmlDocument(os.path.join(self.test_dir, 'examples/dummy/schema.xsd'))
+        document = XmlDocument(schema=os.path.join(self.test_dir, 'examples/dummy/schema.xsd'))
 
         document.from_dict({'root': {'node': [None, None, None]}})
         self.assertTrue(hasattr(document.root, 'tag'))
@@ -220,7 +226,8 @@ class TestDocuments(unittest.TestCase):
         self.assertGreaterEqual(len(document.errors), 1)
 
     def test_write_method(self):
-        document = XmlDocument(os.path.join(self.test_dir, 'examples/dummy/schema.xsd'))
+        schema = os.path.join(self.test_dir, 'examples/dummy/schema.xsd')
+        document = XmlDocument(schema=schema)
         filename = os.path.join(self.test_dir, 'examples/dummy/instance.xml')
 
         with self.assertRaises(RuntimeError):
@@ -238,11 +245,11 @@ class TestDocuments(unittest.TestCase):
         document.write(filename, output_format='json')
         with open(filename) as f:
             self.assertEqual(f.read().replace(' ', '').replace('\n', ''),
-                             '{"root":{"node":[null,null,null]}}')
+                             '{"root":{"node":[null,{"$":"value"},null]}}')
 
         document.write(filename, output_format='yaml')
         with open(filename) as f:
-            self.assertEqual(f.read(), 'root:\n  node:\n  - null\n  - null\n  - null\n')
+            self.assertEqual(f.read(), 'root:\n  node:\n  - null\n  - $: value\n  - null\n')
 
         with self.assertRaises(TypeError):
             with open(filename, mode='w+') as f:
@@ -256,20 +263,24 @@ class TestDocuments(unittest.TestCase):
         self.assertFalse(os.path.isfile(filename))
 
     def test_to_dict_method(self):
-        document = XmlDocument(os.path.join(self.test_dir, 'examples/dummy/schema.xsd'))
+        schema = os.path.join(self.test_dir, 'examples/dummy/schema.xsd')
+        document = XmlDocument(schema=schema)
         filename = os.path.join(self.test_dir, 'examples/dummy/instance.xml')
         document.read(filename)
 
-        self.assertEqual(document.to_dict(), {'root': {'node': [None, None, None]}})
-        self.assertEqual(document.to_dict(preserve_root=False), {'node': [None, None, None]})
+        self.assertEqual(document.to_dict(keep_unknown=True),
+                         {'root': {'node': [None, {'$': 'value'}, None]}})
+        self.assertEqual(document.to_dict(preserve_root=False),
+                         {'node': [None, {'$': 'value'}, None]})
 
     def test_to_json_method(self):
-        document = XmlDocument(os.path.join(self.test_dir, 'examples/dummy/schema.xsd'))
+        schema = os.path.join(self.test_dir, 'examples/dummy/schema.xsd')
+        document = XmlDocument(schema=schema)
         filename = os.path.join(self.test_dir, 'examples/dummy/instance.xml')
         document.read(filename)
 
         self.assertEqual(document.to_json().replace(' ', '').replace('\n', ''),
-                         '{"root":{"node":[null,null,null]}}')
+                         '{"root":{"node":[null,{"$":"value"},null]}}')
 
         filename = os.path.join(self.test_dir, 'examples/dummy/write_test_file')
         if os.path.isfile(filename):
@@ -279,14 +290,15 @@ class TestDocuments(unittest.TestCase):
         document.to_json(filename=filename)
         with open(filename) as f:
             self.assertEqual(f.read().replace(' ', '').replace('\n', ''),
-                             '{"root":{"node":[null,null,null]}}')
+                             '{"root":{"node":[null,{"$":"value"},null]}}')
 
     def test_to_yaml_method(self):
-        document = XmlDocument(os.path.join(self.test_dir, 'examples/dummy/schema.xsd'))
+        schema = os.path.join(self.test_dir, 'examples/dummy/schema.xsd')
+        document = XmlDocument(schema=schema)
         filename = os.path.join(self.test_dir, 'examples/dummy/instance.xml')
         document.read(filename)
 
-        self.assertEqual(document.to_yaml(), 'root:\n  node:\n  - null\n  - null\n  - null\n')
+        self.assertEqual(document.to_yaml(), 'root:\n  node:\n  - null\n  - $: value\n  - null\n')
 
         filename = os.path.join(self.test_dir, 'examples/dummy/write_test_file')
         if os.path.isfile(filename):
@@ -295,10 +307,11 @@ class TestDocuments(unittest.TestCase):
 
         document.to_yaml(filename=filename)
         with open(filename) as f:
-            self.assertEqual(f.read(), 'root:\n  node:\n  - null\n  - null\n  - null\n')
+            self.assertEqual(f.read(), 'root:\n  node:\n  - null\n  - $: value\n  - null\n')
 
     def test_iter_method(self):
-        document = XmlDocument(os.path.join(self.test_dir, 'examples/dummy/schema.xsd'))
+        schema = os.path.join(self.test_dir, 'examples/dummy/schema.xsd')
+        document = XmlDocument(schema=schema)
         filename = os.path.join(self.test_dir, 'examples/dummy/instance.xml')
         document.read(filename)
 
@@ -306,7 +319,8 @@ class TestDocuments(unittest.TestCase):
         self.assertEqual(list(document.iter()), [root, root[0], root[1], root[2]])
 
     def test_find_method(self):
-        document = XmlDocument(os.path.join(self.test_dir, 'examples/dummy/schema.xsd'))
+        schema = os.path.join(self.test_dir, 'examples/dummy/schema.xsd')
+        document = XmlDocument(schema=schema)
         filename = os.path.join(self.test_dir, 'examples/dummy/instance.xml')
         document.read(filename)
 
@@ -314,7 +328,8 @@ class TestDocuments(unittest.TestCase):
         self.assertEqual(document.find('/node'), document.root[0])
 
     def test_findall_method(self):
-        document = XmlDocument(os.path.join(self.test_dir, 'examples/dummy/schema.xsd'))
+        schema = os.path.join(self.test_dir, 'examples/dummy/schema.xsd')
+        document = XmlDocument(schema=schema)
         filename = os.path.join(self.test_dir, 'examples/dummy/instance.xml')
         document.read(filename)
 
@@ -368,10 +383,6 @@ class TestDocuments(unittest.TestCase):
         self.assertTrue(hasattr(document.root, 'tag'))
         self.assertEqual(document.root.tag,
                          '{http://www.quantum-espresso.org/ns/qes/qes_lr-1.0}tddfpt')
-
-        print(document.filename)
-
-
         self.assertEqual(document.filename, xml_filename)
         self.assertEqual(document.format, 'xml')
         self.assertEqual(document.input_path, 'input')

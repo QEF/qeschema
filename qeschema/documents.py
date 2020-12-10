@@ -85,7 +85,7 @@ class XmlDocument(object):
                 source = xmlschema.XMLResource(source)
 
             if source.namespace == XSD_NAMESPACE:
-                XmlDocumentError("source is an XSD schema")
+                raise XmlDocumentError("source is an XSD schema")
 
             for ns, location in source.iter_location_hints():
                 if ns == source.namespace:
@@ -102,7 +102,8 @@ class XmlDocument(object):
         elif source_schema is not None:
             self.schema = xmlschema.XMLSchema(source_schema)
         elif self.DEFAULT_SCHEMA is not None:
-            self.schema = xmlschema.XMLSchema(self.DEFAULT_SCHEMA)
+            default_schema = self.fetch_schema(self.DEFAULT_SCHEMA)
+            self.schema = xmlschema.XMLSchema(default_schema)
         else:
             raise XmlDocumentError("missing schema for XML data!")
 
