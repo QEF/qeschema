@@ -97,6 +97,9 @@ class XmlDocument(object):
 
         if isinstance(schema, xmlschema.XMLSchemaBase):
             self.schema = schema
+        elif isinstance(schema, str) and '\n' not in schema \
+                and not schema.lstrip().startswith('<'):
+            self.schema = xmlschema.XMLSchema(self.fetch_schema(schema) or schema)
         elif schema is not None:
             self.schema = xmlschema.XMLSchema(schema)
         elif source_schema is not None:

@@ -12,8 +12,8 @@ import unittest
 import xml.etree.ElementTree as ElementTree
 from xmlschema import XMLSchemaValidationError, XMLSchema
 
-from qeschema import PwDocument, PhononDocument, NebDocument, TdDocument, \
-    TdSpectrumDocument, XmlDocumentError
+from qeschema import QeDocument, PwDocument, PhononDocument, NebDocument, \
+    TdDocument, TdSpectrumDocument, XmlDocumentError
 from qeschema.documents import XmlDocument
 
 
@@ -44,24 +44,92 @@ class TestDocuments(unittest.TestCase):
         self.assertTrue(document.schema.url.endswith(schema))
         self.assertIsInstance(document.schema, XMLSchema)
 
+    def test_pw_document_init(self):
+        document = PwDocument()
         self.assertIsInstance(PwDocument(), PwDocument)
-        self.assertIsInstance(PwDocument(schema=schema), PwDocument)
+        self.assertTrue(document.schema.url.endswith("qeschema/qeschema/schemas/qes.xsd"))
 
+        schema = os.path.join(self.schemas_dir, 'qes.xsd')
+        document = PwDocument(schema=schema)
+        self.assertIsInstance(document, PwDocument)
+        self.assertTrue(document.schema.url.endswith("qeschema/qeschema/schemas/qes.xsd"))
+
+        document = PwDocument(schema='qes.xsd')
+        self.assertIsInstance(document, PwDocument)
+        self.assertTrue(document.schema.url.endswith("qeschema/qeschema/schemas/qes.xsd"))
+
+        document = PwDocument(schema='qes-20180511.xsd')
+        self.assertIsInstance(document, PwDocument)
+        self.assertTrue(document.schema.url.endswith("qeschema/schemas/releases/qes-20180511.xsd"))
+
+        source = os.path.join(self.test_dir, 'examples/pw/Al001_relax_bfgs.xml')
+        document = PwDocument(source)
+        self.assertEqual(document.filename, source)
+        self.assertTrue(document.schema.url.endswith("qeschema/schemas/releases/qes_190719.xsd"))
+
+        document = PwDocument(source, schema='qes.xsd')
+        self.assertEqual(document.filename, source)
+        self.assertTrue(document.schema.url.endswith("qeschema/schemas/qes.xsd"))
+
+        source = os.path.join(self.test_dir, 'examples/pw/Al001_rlx_damp.xml')
+        document = PwDocument(source)
+        self.assertEqual(document.filename, source)
+        self.assertTrue(document.schema.url.endswith("qeschema/schemas/qes.xsd"))
+
+        source = os.path.join(self.test_dir, 'examples/pw/CO_bgfs_relax.xml')
+        document = PwDocument(source)
+        self.assertEqual(document.filename, source)
+        self.assertTrue(document.schema.url.endswith("qeschema/schemas/qes.xsd"))
+
+    def test_phonon_document_init(self):
         schema = os.path.join(self.schemas_dir, 'ph_temp.xsd')
         self.assertIsInstance(PhononDocument(), PhononDocument)
+        self.assertTrue(PhononDocument().schema.url.endswith("qeschema/schemas/ph_temp.xsd"))
         self.assertIsInstance(PhononDocument(schema=schema), PhononDocument)
 
+    def test_neb_document_init(self):
         schema = os.path.join(self.schemas_dir, 'qes_neb.xsd')
         self.assertIsInstance(NebDocument(), NebDocument)
+        self.assertTrue(NebDocument().schema.url.endswith("qeschema/schemas/qes_neb.xsd"))
         self.assertIsInstance(NebDocument(schema=schema), NebDocument)
 
+    def test_td_document_init(self):
         schema = os.path.join(self.schemas_dir, 'tddfpt.xsd')
         self.assertIsInstance(TdDocument(), TdDocument)
+        self.assertTrue(TdDocument().schema.url.endswith("qeschema/qeschema/schemas/tddfpt.xsd"))
         self.assertIsInstance(TdDocument(schema=schema), TdDocument)
 
+    def test_td_spectrum_document_init(self):
         schema = os.path.join(self.schemas_dir, 'qes_spectrum.xsd')
         self.assertIsInstance(TdSpectrumDocument(), TdSpectrumDocument)
+        self.assertTrue(TdSpectrumDocument().schema.url.endswith("schemas/qes_spectrum.xsd"))
         self.assertIsInstance(TdSpectrumDocument(schema=schema), TdSpectrumDocument)
+
+    def test_fetch_schema(self):
+        self.assertIsNone(XmlDocument.fetch_schema('missing.xsd'))
+        self.assertIsNone(XmlDocument.fetch_schema('qes.xsd'))
+        self.assertIsNone(QeDocument.fetch_schema('missing.xsd'))
+
+        filename = QeDocument.fetch_schema('qes.xsd')
+        self.assertTrue(filename.endswith("qeschema/schemas/qes.xsd"))
+
+        filename = QeDocument.fetch_schema('unknown-path/qes.xsd')
+        self.assertTrue(filename.endswith("qeschema/schemas/qes.xsd"))
+
+        filename = QeDocument.fetch_schema('/unknown-path/qes.xsd')
+        self.assertTrue(filename.endswith("qeschema/schemas/qes.xsd"))
+
+        filename = QeDocument.fetch_schema('file:///unknown-path/qes.xsd')
+        self.assertTrue(filename.endswith("qeschema/schemas/qes.xsd"))
+
+        filename = QeDocument.fetch_schema('releases/qes.xsd')
+        self.assertTrue(filename.endswith("qeschema/schemas/qes.xsd"))
+
+        filename = QeDocument.fetch_schema('qes_190304.xsd')
+        self.assertTrue(filename.endswith("qeschema/schemas/releases/qes_190304.xsd"))
+
+        filename = QeDocument.fetch_schema('unknown/qes_190304.xsd')
+        self.assertTrue(filename.endswith("qeschema/schemas/releases/qes_190304.xsd"))
 
     def test_schema_namespaces(self):
         schema = os.path.join(self.schemas_dir, 'qes.xsd')
