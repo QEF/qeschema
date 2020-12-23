@@ -2,7 +2,7 @@
 setuptools
 tox
 coverage
-xmlschema~=1.0.15
+xmlschema>=1.3.0
 pyyaml
 Sphinx
 sphinx_rtd_theme
