@@ -11,6 +11,7 @@
 Conversion functions for Quantum Espresso cards.
 """
 import logging
+from typing import Union, List
 
 logger = logging.getLogger('qeschema')
 
@@ -35,10 +36,14 @@ def get_atomic_species_card(name, **kwargs):
 
     lines = [name]
     try:
-        lines.append(' {0} {1} {2}'.format(species['@name'], species['mass'], species['pseudo_file']))
+        lines.append(
+            ' {0} {1} {2}'.format(species['@name'], species['mass'], species['pseudo_file'])
+        )
     except TypeError:
         for specie in species:
-            lines.append(' {0} {1} {2}'.format(specie['@name'], specie['mass'], specie['pseudo_file']))
+            lines.append(
+                ' {0} {1} {2}'.format(specie['@name'], specie['mass'], specie['pseudo_file'])
+            )
     return lines
 
 
@@ -145,7 +150,8 @@ def get_k_points_card(name, **kwargs):
     :param kwargs: Dictionary with converted data from XML file
     :return: List of strings
     """
-    k_point = nk = monkhorst_pack = None
+    k_point = {}  # type: Union[dict, List[dict]]
+    nk = monkhorst_pack = None
     gamma_only = kwargs.get('gamma_only', False)
     try:
         if not gamma_only:
@@ -172,8 +178,7 @@ def get_k_points_card(name, **kwargs):
         lines.append(' {}'.format(nk))
         for point in k_point:
             lines.append(' {0} {1}'.format(
-                ' '.join([str(value) for value in point['$']]),
-                point['@weight'])
+                ' '.join([str(value) for value in point['$']]), point['@weight'])
             )
     elif k_attrib == 'automatic':
         lines.append(' %(@nk1)s %(@nk2)s %(@nk3)s %(@k1)s %(@k2)s %(@k3)s' % monkhorst_pack)
@@ -312,67 +317,47 @@ def get_neb_images_positions_card(name, **kwargs):
         assert isinstance(images, list)
     except AssertionError:
         images = [images]
+
     if len(images) < 2:
         logger.error("at least the atomic structures for first and last image should be provided")
         return []
-
-    first_positions = images[0].get('atomic_positions',
-                                    images[0].get('crystal_positions',
-                                                  images[0].get('wyckoff_positions', {})))
-    his_nat = int(images[0].get('@nat', 0))
-    last_positions = images[-1].get('atomic_positions',
-                                    images[-1].get('crystal_positions',
-                                                   images[-1].get('wyckoff_positions', {})))
-    if len(kwargs['atomic_structure']) > 2:
-        interm_pos = [
-            ats.get('atomic_positions',
-                    ats.get('crystal_positions',
-                            ats.get('wyckoff_positions', {})))
-            for ats in images[1:-1]
-        ]
-    else:
-        interm_pos = []
-
-    lines = ['BEGIN_POSITIONS ', 'FIRST_IMAGE ']
-    atoms = first_positions.get('atom', [])
-    my_nat = len(atoms)
-    if my_nat <= 0:
-        logger.error("no atomic coordinates provided for first image")
-        return ''
-    if my_nat != his_nat:
-        logger.error("nat provided in first image differs from number "
-                     "of atoms in atomic_positions!!!")
 
     free_positions = kwargs.get('free_positions', None)
     if free_positions:
         free_positions = free_positions.get('$')
     else:
         free_positions = []
-    if free_positions and len(free_positions) != 3 * len(atoms):
-        logger.error("ATOMIC_POSITIONS: incorrect number of position constraints!")
 
-    lines.append('ATOMIC_POSITIONS { bohr }')
-    for k in range(len(atoms)):
-        sp_name = '{:4}'.format(atoms[k]['@name'])
-        coords = '{:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k]['$'])
-        if k < len(free_positions):
-            try:
-                free_pos = '{:4d}{:4d}{:4d}'.format(*free_positions[3 * k:3 * k + 3])
-            except IndexError:
-                pass
-            else:
-                if sum(free_positions[3 * k + n] for n in range(3)) < 3:
-                    lines.append('%s %s %s' % (sp_name, coords, free_pos))
+    first_nat = 0
+    lines = ['BEGIN_POSITIONS ', 'FIRST_IMAGE ']
+
+    for pos, item in enumerate(images):
+        positions = item.get('atomic_positions',
+                             item.get('crystal_positions',
+                                      item.get('wyckoff_positions', {})))
+        atoms = positions.get('atom', [])
+
+        if pos == 0:
+            first_nat = len(atoms)
+            if first_nat <= 0:
+                logger.error("no atomic coordinates provided for first image")
+                return ''
+            if first_nat != int(item.get('@nat', 0)):
+                logger.error("nat provided in first image differs from number "
+                             "of atoms in atomic_positions!!!")
+            if free_positions and len(free_positions) != 3 * first_nat:
+                logger.error("ATOMIC_POSITIONS: incorrect number of position constraints!")
         else:
-            lines.append('%s %s' % (sp_name, coords))
+            if len(atoms) != first_nat:
+                logger.error('found images with differing number of atoms !!!')
 
-    for inter in interm_pos:
-        atoms = inter['atom']
-        if len(atoms) != my_nat:
-            logger.error('found images with differing number of atoms !!!')
+            if pos < len(images) - 1:
+                lines.append('INTERMEDIATE_IMAGE ')
+            else:
+                lines.append('LAST_IMAGE ')
 
-        lines.append('INTERMEDIATE_IMAGE ')
         lines.append('ATOMIC_POSITIONS { bohr }')
+
         for k in range(len(atoms)):
             sp_name = '{:4}'.format(atoms[k]['@name'])
             coords = '{:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k]['$'])
@@ -382,31 +367,10 @@ def get_neb_images_positions_card(name, **kwargs):
                 except IndexError:
                     pass
                 else:
-                    if free_positions[3 * k] + free_positions[3 * k + 1] \
-                            + free_positions[3 * k + 2] < 3:
+                    if sum(free_positions[3 * k + n] for n in range(3)) < 3:
                         lines.append('%s %s %s' % (sp_name, coords, free_pos))
             else:
                 lines.append('%s %s' % (sp_name, coords))
-
-    atoms = last_positions['atom']
-    if len(atoms) != my_nat:
-        logger.error('found images with differing number of atoms !!!')
-    lines.append('LAST_IMAGE ')
-    lines.append('ATOMIC_POSITIONS { bohr }')
-    for k in range(len(atoms)):
-        sp_name = '{:4}'.format(atoms[k]['@name'])
-        coords = '{:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k]['$'])
-        if k < len(free_positions):
-            try:
-                free_pos = '{:4d}{:4d}{:4d}'.format(*free_positions[3 * k:3 * k + 3])
-            except IndexError:
-                pass
-            else:
-                if free_positions[3 * k] + free_positions[3 * k + 1] + \
-                        free_positions[3 * k + 2] < 3:
-                    lines.append('%s %s %s' % (sp_name, coords, free_pos))
-        else:
-            lines.append('%s %s' % (sp_name, coords))
 
     lines.append('END_POSITIONS ')
     return lines

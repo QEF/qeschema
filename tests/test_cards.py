@@ -311,7 +311,7 @@ class TestCardsFunctions(unittest.TestCase):
 
         result = get_neb_images_positions_card('ATOMIC_POSITIONS', **kwargs)
         self.assertEqual(len(result), 12)
-        self.assertListEqual(result,[
+        self.assertListEqual(result, [
             'BEGIN_POSITIONS ',
             'FIRST_IMAGE ',
             'ATOMIC_POSITIONS { bohr }',
@@ -326,12 +326,12 @@ class TestCardsFunctions(unittest.TestCase):
             'END_POSITIONS '
         ])
 
-        kwargs['free_positions'] ={
+        kwargs['free_positions'] = {
             '@rank': 2, '@dims': [3, 3], '$': [1, 1, 1, 1, 1, 1, 1, 1, 1]
         }
         result = get_neb_images_positions_card('ATOMIC_POSITIONS', **kwargs)
         self.assertEqual(len(result), 6)
-        self.assertListEqual(result,[
+        self.assertListEqual(result, [
             'BEGIN_POSITIONS ',
             'FIRST_IMAGE ',
             'ATOMIC_POSITIONS { bohr }',
@@ -344,7 +344,7 @@ class TestCardsFunctions(unittest.TestCase):
         kwargs['atomic_structure'].append(kwargs['atomic_structure'][-1])
         result = get_neb_images_positions_card('ATOMIC_POSITIONS', **kwargs)
         self.assertEqual(len(result), 17)
-        self.assertListEqual(result,[
+        self.assertListEqual(result, [
             'BEGIN_POSITIONS ',
             'FIRST_IMAGE ',
             'ATOMIC_POSITIONS { bohr }',
@@ -370,7 +370,7 @@ class TestCardsFunctions(unittest.TestCase):
         self.assertEqual(context.output[0],
                          'ERROR:qeschema:found images with differing number of atoms !!!')
         self.assertEqual(len(result), 15)
-        self.assertListEqual(result,[
+        self.assertListEqual(result, [
             'BEGIN_POSITIONS ',
             'FIRST_IMAGE ',
             'ATOMIC_POSITIONS { bohr }',
@@ -426,7 +426,7 @@ class TestCardsFunctions(unittest.TestCase):
             'ERROR:qeschema:found images with differing number of atoms !!!',
         ])
         self.assertEqual(len(result), 11)
-        self.assertListEqual(result,[
+        self.assertListEqual(result, [
             'BEGIN_POSITIONS ',
             'FIRST_IMAGE ',
             'ATOMIC_POSITIONS { bohr }',
@@ -450,7 +450,7 @@ class TestCardsFunctions(unittest.TestCase):
             'ERROR:qeschema:found images with differing number of atoms !!!'
         ])
         self.assertEqual(len(result), 9)
-        self.assertListEqual(result,[
+        self.assertListEqual(result, [
             'BEGIN_POSITIONS ',
             'FIRST_IMAGE ',
             'ATOMIC_POSITIONS { bohr }',
@@ -480,7 +480,8 @@ class TestCardsFunctions(unittest.TestCase):
                         'atom': [{'@name': 'H', '@index': 1, '$': [-0.38055834, 0.0, 0.0]},
                                  {'@name': 'H', '@index': 2, '$': [0.0, 0.0, 0.0]},
                                  {'@name': 'H', '@index': 3, '$': [0.1298139, 0.0, 0.0]}]},
-                    'cell': {'a1': [12.0, 0.0, 0.0],
+                    'cell': {'a0': [12.0, 0.0, 0.0],  # Ignored, only for testing
+                             'a1': [12.0, 0.0, 0.0],
                              'a2': [0.0, 12.0, 0.0],
                              'a3': [0.0, 0.0, 12.0]}},
                 {
@@ -515,6 +516,10 @@ class TestCardsFunctions(unittest.TestCase):
         self.assertListEqual(result, [])
         self.assertEqual(context.output, ['ERROR:qeschema: No atomic_structure '
                                           'element found in kwargs !!!'])
+
+        kwargs['atomic_structure'][0]['cell'].clear()
+        result = get_neb_cell_parameters_card('CELL_PARAMETERS', **kwargs)
+        self.assertListEqual(result, [])
 
     def test_get_neb_atomic_forces_card(self):
         self.assertIsNone(get_neb_atomic_forces_card('atomic_forces'))
