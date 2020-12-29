@@ -10,6 +10,7 @@
 import unittest
 import logging
 
+from qeschema import XmlDocumentError
 from qeschema.options import get_specie_related_values, get_starting_magnetization, \
     get_system_nspin, set_ibrav_to_zero, get_system_eamp, get_electrons_efield, \
     get_system_edir, get_electric_potential_related, get_control_gdir, \
@@ -44,6 +45,11 @@ class TestConversionFunctions(unittest.TestCase):
         result = get_specie_related_values('Hubbard_U', **kwargs)
         self.assertListEqual(result, [' Hubbard_U(2)=0.3160442', ' Hubbard_U(3)=0.3160442'])
 
+        kwargs['atomic_species']['species'][1]['@name'] = 'unknown'
+        with self.assertRaises(XmlDocumentError) as ctx:
+            get_specie_related_values('Hubbard_U', **kwargs)
+        self.assertEqual(str(ctx.exception), "Unknown specie 'Fe1' in tag 'Hubbard_U'")
+
         del kwargs['atomic_species']['species'][1]['@name']
         with self.assertRaises(KeyError):
             get_specie_related_values('Hubbard_U', **kwargs)
@@ -53,8 +59,8 @@ class TestConversionFunctions(unittest.TestCase):
             result = get_specie_related_values('Hubbard_U', **kwargs)
 
         self.assertListEqual(result, [])
-        self.assertEqual(context.output, ["ERROR:qeschema:Missing required arguments when "
-                                          "building parameter 'Hubbard_U'! atomic_species"])
+        self.assertEqual(context.output, ["ERROR:qeschema:Missing required argument "
+                                          "'atomic_species' when building parameter 'Hubbard_U'"])
 
     def test_get_starting_magnetization(self):
         kwargs = {

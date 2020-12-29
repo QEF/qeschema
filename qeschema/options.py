@@ -37,10 +37,8 @@ def get_specie_related_values(name, **kwargs):
         atomic_species = kwargs['atomic_species']
         species = atomic_species['species']
     except KeyError as err:
-        key = str(err).strip("'")
-        if key != '$':
-            logger.error("Missing required arguments when building "
-                         "parameter '%s'! %s" % (name, key))
+        logger.error("Missing required argument %s when building "
+                     "parameter %r", str(err), name)
         return []
 
     lines = []
@@ -57,7 +55,7 @@ def get_specie_related_values(name, **kwargs):
                 break
             specie_index += 1
         else:
-            raise XmlDocumentError("Unknown specie '%s' in tag '%s'" % (tag_specie, name))
+            raise XmlDocumentError("Unknown specie {!r} in tag {!r}".format(tag_specie, name))
 
         if isinstance(tag_values, list):
             for k in range(len(tag_values)):

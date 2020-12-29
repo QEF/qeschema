@@ -163,7 +163,7 @@ class XmlDocument(object):
         else:
             try:
                 self.from_xml(filename, validation)
-            except ElementTree.ParseError:
+            except (ElementTree.ParseError, SyntaxError):
                 try:
                     self.from_json(filename, validation, **kwargs)
                 except json.JSONDecodeError:

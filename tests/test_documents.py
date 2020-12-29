@@ -414,7 +414,8 @@ class TestDocuments(unittest.TestCase):
 
         document.read(xml_filename)
         self.assertTrue(hasattr(document.root, 'tag'))
-        self.assertEqual(document.root.tag, '{http://www.quantum-espresso.org/ns/qes/qes-1.0}espresso')
+        self.assertEqual(document.root.tag,
+                         '{http://www.quantum-espresso.org/ns/qes/qes-1.0}espresso')
         self.assertEqual(document.filename, xml_filename)
         self.assertEqual(document.format, 'xml')
         self.assertEqual(document.input_path, 'input')
@@ -426,7 +427,8 @@ class TestDocuments(unittest.TestCase):
 
         document.read(xml_filename)
         self.assertTrue(hasattr(document.root, 'tag'))
-        self.assertEqual(document.root.tag, '{http://www.quantum-espresso.org/ns/qes/qes_ph_1.0}espressoph')
+        self.assertEqual(document.root.tag,
+                         '{http://www.quantum-espresso.org/ns/qes/qes_ph_1.0}espressoph')
         self.assertEqual(document.filename, xml_filename)
         self.assertEqual(document.format, 'xml')
         self.assertEqual(document.input_path, 'inputPH')
