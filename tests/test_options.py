@@ -62,6 +62,26 @@ class TestConversionFunctions(unittest.TestCase):
         self.assertEqual(context.output, ["ERROR:qeschema:Missing required argument "
                                           "'atomic_species' when building parameter 'Hubbard_U'"])
 
+        kwargs = {
+            'atomic_species': {
+                '@ntyp': 3,
+                'species': [
+                    {'@name': 'O1', 'mass': 1.0, 'pseudo_file': 'O.pz-rrkjus.UPF',
+                     'starting_magnetization': 0.0},
+                    {'@name': 'Fe1', 'mass': 1.0, 'pseudo_file': 'Fe.pz-nd-rrkjus.UPF',
+                     'starting_magnetization': 0.5},
+                    {'@name': 'Fe2', 'mass': 1.0, 'pseudo_file': 'Fe.pz-nd-rrkjus.UPF',
+                     'starting_magnetization': -0.5}]
+            },
+            'Hubbard_J': [{'@specie': 'O1', '@label': 'no Hubbard', '$': [1.0, 0.0, 0.0]},
+                          {'@specie': 'Fe1', '@label': '3d', '$': [0.0, 1.0, 0.0]},
+                          {'@specie': 'Fe2', '@label': '3d', '$': [0.0, 0.0, 1.0]}],
+            '_related_tag': 'Hubbard_J'
+        }
+
+        result = get_specie_related_values('Hubbard_J', **kwargs)
+        self.assertListEqual(result, [' Hubbard_J(2,2)=1.0', ' Hubbard_J(3,3)=1.0'])
+
     def test_get_starting_magnetization(self):
         kwargs = {
             'atomic_species': {

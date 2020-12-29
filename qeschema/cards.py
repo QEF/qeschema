@@ -80,13 +80,8 @@ def get_atomic_positions_cell_card(name, **kwargs):
     if free_positions:
         free_positions = free_positions.get('$', [])
 
-    if free_positions:
-        # Cover the case when free positions are provided for only one atom
-        if not isinstance(free_positions, (list, tuple)):
-            free_positions = [free_positions]
-
-        if len(free_positions) != 3 * len(atoms):
-            logger.error("ATOMIC_POSITIONS: incorrect number of position constraints!")
+    if free_positions and len(free_positions) != 3 * len(atoms):
+        logger.error("ATOMIC_POSITIONS: incorrect number of position constraints!")
 
     # Add atomic positions
     lines = ['%s %s' % (name, 'crystal_sg' if is_wyckoff else 'bohr')]
@@ -94,12 +89,19 @@ def get_atomic_positions_cell_card(name, **kwargs):
         try:
             line = '{:4}'.format(atoms[k].get('@name'))
             line += ' {:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k].get('$'))
-        except TypeError:
+        except (ValueError, TypeError):
+            logger.error("ATOMIC_POSITIONS: incorrect datatype in positions!")
             continue
 
-        if free_positions and \
-                free_positions[3 * k] + free_positions[3 * k + 1] + free_positions[3 * k + 2] != 3:
-            line += ' {:4d}{:4d}{:4d}'.format(*map(int, free_positions[3 * k:3 * k + 3]))
+        if free_positions:
+            try:
+                if free_positions[3 * k] + \
+                        free_positions[3 * k + 1] + \
+                        free_positions[3 * k + 2] != 3:
+                    line += ' {:4d}{:4d}{:4d}'.format(*map(int, free_positions[3 * k:3 * k + 3]))
+            except IndexError:
+                pass
+
         lines.append(line)
 
     return lines
@@ -203,8 +205,13 @@ def get_atomic_forces_card(name, **kwargs):
     lines = [name]
     f = external_atomic_forces
     for at in atoms:
-        lines.append('{:<3s}  {:14.8f} {:14.8f} {:14.8f}'.format(at["@name"], f[0], f[1], f[2]))
-        f = f[3:]
+        try:
+            line = '{:<3s}  {:14.8f} {:14.8f} {:14.8f}'.format(at["@name"], f[0], f[1], f[2])
+        except IndexError:
+            pass
+        else:
+            lines.append(line)
+            f = f[3:]
     return lines
 
 
@@ -248,7 +255,7 @@ def get_qpoints_card(name, **kwargs):
             return []
 
     qplot = kwargs.get('qplot', False)
-    if not (qplot or ldisp):
+    if not qplot and not ldisp:
         try:
             xq = kwargs['xq_dir']
         except KeyError:
@@ -257,18 +264,18 @@ def get_qpoints_card(name, **kwargs):
         return [line]
 
     lines = []
-    if qplot:
-        try:
-            nqs = kwargs['nqs']
-        except KeyError:
-            raise RuntimeWarning("qplot was set to true in input but no value "
-                                 "for nqs was provided assuming nqs = 1")
+    try:
+        nqs = kwargs['nqs']
+    except KeyError:
+        nqs = 1
+        logger.warning("qplot was set to true in input but no value "
+                       "for nqs was provided: assuming nqs=1")
 
-        lines.append('{:4d}'.format(nqs))
-        q_points_list = kwargs['q_points_list']['q_point']
-        for q_point in q_points_list:
-            vector = ' '.join([str(coord) for coord in q_point['$']])
-            lines.append(' %s %s' % (vector, q_point['@weight']))
+    lines.append('{:4d}'.format(nqs))
+    q_points_list = kwargs['q_points_list']['q_point']
+    for q_point in q_points_list:
+        vector = ' '.join([str(coord) for coord in q_point['$']])
+        lines.append(' %s %s' % (vector, q_point['@weight']))
     return lines
 
 
@@ -279,15 +286,16 @@ def get_climbing_images(name, **kwargs):
     except KeyError:
         manual_images = False
 
-    if manual_images:
-        if isinstance(kwargs['climbingImageIndex'], list):
-            line = [int(x) for x in kwargs['climbingImageIndex']]
-            fmt = len(line) * ' %d, '
-            line = fmt % tuple(line)
-        else:
-            line = ' %d ' % int(kwargs['climbingImageIndex'])
-        return [line]
-    return ['']
+    if not manual_images:
+        return ['']
+
+    if isinstance(kwargs['climbingImageIndex'], list):
+        line = [int(x) for x in kwargs['climbingImageIndex']]
+        fmt = len(line) * ' %d, '
+        line = fmt % tuple(line)
+    else:
+        line = ' %d ' % int(kwargs['climbingImageIndex'])
+    return [line]
 
 
 def get_neb_images_positions_card(name, **kwargs):
@@ -305,8 +313,9 @@ def get_neb_images_positions_card(name, **kwargs):
     except AssertionError:
         images = [images]
     if len(images) < 2:
-        logger.error("At least the atomic structures for first and last image should be provided")
+        logger.error("at least the atomic structures for first and last image should be provided")
         return []
+
     first_positions = images[0].get('atomic_positions',
                                     images[0].get('crystal_positions',
                                                   images[0].get('wyckoff_positions', {})))
@@ -316,7 +325,9 @@ def get_neb_images_positions_card(name, **kwargs):
                                                    images[-1].get('wyckoff_positions', {})))
     if len(kwargs['atomic_structure']) > 2:
         interm_pos = [
-            ats.get('atomic_positions', ats.get('crystal_positions', ats.get('wyckoff_positions', {})))
+            ats.get('atomic_positions',
+                    ats.get('crystal_positions',
+                            ats.get('wyckoff_positions', {})))
             for ats in images[1:-1]
         ]
     else:
@@ -326,10 +337,11 @@ def get_neb_images_positions_card(name, **kwargs):
     atoms = first_positions.get('atom', [])
     my_nat = len(atoms)
     if my_nat <= 0:
-        logger.error("No atomic coordinates provided for first image")
+        logger.error("no atomic coordinates provided for first image")
         return ''
     if my_nat != his_nat:
-        logger.error("nat provided in first image differs from number of atoms in atomic_positions!!!")
+        logger.error("nat provided in first image differs from number "
+                     "of atoms in atomic_positions!!!")
 
     free_positions = kwargs.get('free_positions', None)
     if free_positions:
@@ -344,16 +356,20 @@ def get_neb_images_positions_card(name, **kwargs):
         sp_name = '{:4}'.format(atoms[k]['@name'])
         coords = '{:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k]['$'])
         if k < len(free_positions):
-            free_pos = '{:4d}{:4d}{:4d}'.format(*free_positions[3 * k:3 * k + 3])
-            if sum(free_positions[3 * k + n] for n in range(3)) < 3:
-                lines.append('%s %s %s' % (sp_name, coords, free_pos))
+            try:
+                free_pos = '{:4d}{:4d}{:4d}'.format(*free_positions[3 * k:3 * k + 3])
+            except IndexError:
+                pass
+            else:
+                if sum(free_positions[3 * k + n] for n in range(3)) < 3:
+                    lines.append('%s %s %s' % (sp_name, coords, free_pos))
         else:
             lines.append('%s %s' % (sp_name, coords))
 
     for inter in interm_pos:
         atoms = inter['atom']
         if len(atoms) != my_nat:
-            logger.error('Found images with differing number of atoms !!!')
+            logger.error('found images with differing number of atoms !!!')
 
         lines.append('INTERMEDIATE_IMAGE ')
         lines.append('ATOMIC_POSITIONS { bohr }')
@@ -361,23 +377,34 @@ def get_neb_images_positions_card(name, **kwargs):
             sp_name = '{:4}'.format(atoms[k]['@name'])
             coords = '{:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k]['$'])
             if k < len(free_positions):
-                free_pos = '{:4d}{:4d}{:4d}'.format(*free_positions[3 * k:3 * k + 3])
-                if free_positions[3 * k] + free_positions[3 * k + 1] + free_positions[3 * k + 2] < 3:
-                    lines.append('%s %s %s' % (sp_name, coords, free_pos))
+                try:
+                    free_pos = '{:4d}{:4d}{:4d}'.format(*free_positions[3 * k:3 * k + 3])
+                except IndexError:
+                    pass
+                else:
+                    if free_positions[3 * k] + free_positions[3 * k + 1] \
+                            + free_positions[3 * k + 2] < 3:
+                        lines.append('%s %s %s' % (sp_name, coords, free_pos))
             else:
                 lines.append('%s %s' % (sp_name, coords))
+
     atoms = last_positions['atom']
     if len(atoms) != my_nat:
-        logger.error('Found images with differing number of atoms !!!')
+        logger.error('found images with differing number of atoms !!!')
     lines.append('LAST_IMAGE ')
     lines.append('ATOMIC_POSITIONS { bohr }')
     for k in range(len(atoms)):
         sp_name = '{:4}'.format(atoms[k]['@name'])
         coords = '{:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k]['$'])
         if k < len(free_positions):
-            free_pos = '{:4d}{:4d}{:4d}'.format(*free_positions[3 * k:3 * k + 3])
-            if free_positions[3 * k] + free_positions[3 * k + 1] + free_positions[3 * k + 2] < 3:
-                lines.append('%s %s %s' % (sp_name, coords, free_pos))
+            try:
+                free_pos = '{:4d}{:4d}{:4d}'.format(*free_positions[3 * k:3 * k + 3])
+            except IndexError:
+                pass
+            else:
+                if free_positions[3 * k] + free_positions[3 * k + 1] + \
+                        free_positions[3 * k + 2] < 3:
+                    lines.append('%s %s %s' % (sp_name, coords, free_pos))
         else:
             lines.append('%s %s' % (sp_name, coords))
 
