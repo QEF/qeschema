@@ -84,7 +84,7 @@ class TestDocuments(unittest.TestCase):
     def test_phonon_document_init(self):
         schema = os.path.join(self.schemas_dir, 'ph_temp.xsd')
         self.assertIsInstance(PhononDocument(), PhononDocument)
-        self.assertTrue(PhononDocument().schema.url.endswith("qeschema/schemas/ph_temp.xsd"))
+        self.assertTrue(PhononDocument().schema.url.endswith("qeschema/schemas/ph_xmlschema.xsd"))
         self.assertIsInstance(PhononDocument(schema=schema), PhononDocument)
 
     def test_neb_document_init(self):
@@ -423,9 +423,8 @@ class TestDocuments(unittest.TestCase):
 
     def test_phonon_document(self):
         xml_filename = os.path.join(self.test_dir, 'examples/ph/al.elph.xml')
-        document = PhononDocument()
+        document = PhononDocument(xml_filename)
 
-        document.read(xml_filename)
         self.assertTrue(hasattr(document.root, 'tag'))
         self.assertEqual(document.root.tag,
                          '{http://www.quantum-espresso.org/ns/qes/qes_ph_1.0}espressoph')

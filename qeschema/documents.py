@@ -629,7 +629,7 @@ class PhononDocument(QeDocument):
     """
     Class to manage Phonon XML documents.
     """
-    DEFAULT_SCHEMA = 'ph_temp.xsd'
+    DEFAULT_SCHEMA = 'ph_xmlschema.xsd'
     DEFAULT_INPUT_BUILDER = PhononInputConverter
 
     @property
