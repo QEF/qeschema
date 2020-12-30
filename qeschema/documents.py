@@ -170,7 +170,9 @@ class XmlDocument(object):
                     try:
                         self.from_yaml(filename, validation, **kwargs)
                     except yaml.YAMLError:
-                        raise ValueError("input file is not in neither of XML, JSON or YAML formats")
+                        raise ValueError(
+                            "input file is not in neither of XML, JSON or YAML formats"
+                        )
 
     def from_xml(self, source, validation='strict', **kwargs):
         """
@@ -437,7 +439,8 @@ class QeDocument(XmlDocument, metaclass=ABCMeta):
 
         if input_builder is None:
             self.input_builder = self.DEFAULT_INPUT_BUILDER
-        elif not issubclass(self.input_builder, RawInputConverter):
+        elif not isinstance(input_builder, type) or \
+                not issubclass(input_builder, RawInputConverter):
             msg = "3rd argument must be a {!r} subclass"
             raise XmlDocumentError(msg.format(RawInputConverter))
         else:
@@ -539,13 +542,15 @@ class PwDocument(QeDocument):
         :return: the list of atomic symbols and a nested list containing the coordinates
         """
         path = './/output//atomic_positions'
-        atomic_positions = self.schema.find(path).decode(self.find(path))
-        atoms = atomic_positions.get('atom')
-        if not isinstance(atoms, list):
-            atoms = [atoms]
-        symbols = [a['@name'] for a in atoms]
-        positions = [a['$'] for a in atoms]
-        return symbols, positions
+        elem = self.find(path)
+        if elem is not None:
+            atomic_positions = self.schema.find(path).decode(elem)
+            atoms = atomic_positions.get('atom')
+            if not isinstance(atoms, list):
+                atoms = [atoms]
+            symbols = [a['@name'] for a in atoms]
+            positions = [a['$'] for a in atoms]
+            return symbols, positions
 
     @requires_xml_data
     def get_cell_parameters(self):
@@ -555,8 +560,10 @@ class PwDocument(QeDocument):
         :return: a nested list containing the cell vectors in Bohr atomic units
         """
         path = './/output//cell'
-        cell = self.schema.find(path).decode(self.find(path))
-        return [cell['a1'], cell['a2'], cell['a3']]
+        elem = self.find(path)
+        if elem is not None:
+            cell = self.schema.find(path).decode(elem)
+            return [cell['a1'], cell['a2'], cell['a3']]
 
     @requires_xml_data
     def get_stress(self):
@@ -566,10 +573,14 @@ class PwDocument(QeDocument):
         :return: nested list containing the stress tensor in C order
         """
         path = './/output//stress'
-        if self.find(path) is None:
-            return None
-        stress = self.schema.find(path).decode(self.find(path))['$']
-        return [stress[::3], stress[1::3], stress[2::3]]
+        elem = self.find(path)
+        if elem is not None:
+            stress = self.schema.find(path).decode(elem)
+            try:
+                stress = stress['$']
+            except TypeError:
+                pass
+            return [stress[::3], stress[1::3], stress[2::3]]
 
     @requires_xml_data
     def get_forces(self):
@@ -580,19 +591,19 @@ class PwDocument(QeDocument):
         in atomic units
         """
         path = './/output/forces'
-        if self.find(path) is None:
-            return None
-        forces = self.schema.find(path).decode(self.find(path))
-        path = './/output//atomic_positions'
-        atomic_positions = self.schema.find(path).decode(self.find(path))
-        atoms = atomic_positions.get('atom', [])
-        if not isinstance(atoms, list):
-            atoms = [atoms]
-        symbols = [a['@name'] for a in atoms]
-        i0 = range(3 * len(atoms))[::3]
-        i1 = range(3 * len(atoms) + 1)[3::3]
-        forces = [forces['$'][i:j] for i, j in zip(i0, i1)]
-        return symbols, forces
+        elem = self.find(path)
+        if elem is not None:
+            forces = self.schema.find(path).decode(elem)
+            path = './/output//atomic_positions'
+            atomic_positions = self.schema.find(path).decode(self.find(path))
+            atoms = atomic_positions.get('atom', [])
+            if not isinstance(atoms, list):
+                atoms = [atoms]
+            symbols = [a['@name'] for a in atoms]
+            i0 = range(3 * len(atoms))[::3]
+            i1 = range(3 * len(atoms) + 1)[3::3]
+            forces = [forces['$'][i:j] for i, j in zip(i0, i1)]
+            return symbols, forces
 
     @requires_xml_data
     def get_k_points(self):
