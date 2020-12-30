@@ -1,5 +1,5 @@
 #
-# Copyright (c), 2015-2019, Quantum Espresso Foundation and SISSA (Scuola
+# Copyright (c), 2015-2020, Quantum Espresso Foundation and SISSA (Scuola
 # Internazionale Superiore di Studi Avanzati). All rights reserved.
 # This file is distributed under the terms of the MIT License. See the
 # file 'LICENSE' in the root directory of the present distribution, or
@@ -37,10 +37,8 @@ def get_specie_related_values(name, **kwargs):
         atomic_species = kwargs['atomic_species']
         species = atomic_species['species']
     except KeyError as err:
-        key = str(err).strip("'")
-        if key != '$':
-            logger.error("Missing required arguments when building "
-                         "parameter '%s'! %s" % (name, key))
+        logger.error("Missing required argument %s when building "
+                     "parameter %r", str(err), name)
         return []
 
     lines = []
@@ -57,7 +55,7 @@ def get_specie_related_values(name, **kwargs):
                 break
             specie_index += 1
         else:
-            raise XmlDocumentError("Unknown specie '%s' in tag '%s'" % (tag_specie, name))
+            raise XmlDocumentError("Unknown specie {!r} in tag {!r}".format(tag_specie, name))
 
         if isinstance(tag_values, list):
             for k in range(len(tag_values)):
@@ -290,10 +288,9 @@ def set_lda_plus_u_flag(name, **kwargs):
     related_data = kwargs[related_tag]
 
     for value in iter(related_data if isinstance(related_data, list) else [related_data]):
-        if value.get('@label') == 'no Hubbard' or value['$'] <= 0:
-            continue
-        lines.append('lda_plus_u = .t.')
-        break
+        if value.get('@label') != 'no Hubbard' and value['$'] > 0:
+            lines.append('lda_plus_u = .t.')
+            break
     return lines
 
 

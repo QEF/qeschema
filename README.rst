@@ -11,7 +11,7 @@ opEn-Source Package for Research in Electronic Structure, Simulation and Optimiz
 Requirements
 ------------
 
-* Python_ 3.5+
+* Python_ 3.6+
 * xmlschema_ (Python library for processing XML Schema based documents)
 
 .. _Python: http://www.python.org/
@@ -21,7 +21,7 @@ Requirements
 Installation
 ------------
 
-You can install the library with *pip* in a Python 3.5+ environment::
+You can install the library with *pip* in a Python 3.6+ environment::
 
     pip install qeschema
 

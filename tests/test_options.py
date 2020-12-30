@@ -10,6 +10,7 @@
 import unittest
 import logging
 
+from qeschema import XmlDocumentError
 from qeschema.options import get_specie_related_values, get_starting_magnetization, \
     get_system_nspin, set_ibrav_to_zero, get_system_eamp, get_electrons_efield, \
     get_system_edir, get_electric_potential_related, get_control_gdir, \
@@ -44,6 +45,11 @@ class TestConversionFunctions(unittest.TestCase):
         result = get_specie_related_values('Hubbard_U', **kwargs)
         self.assertListEqual(result, [' Hubbard_U(2)=0.3160442', ' Hubbard_U(3)=0.3160442'])
 
+        kwargs['atomic_species']['species'][1]['@name'] = 'unknown'
+        with self.assertRaises(XmlDocumentError) as ctx:
+            get_specie_related_values('Hubbard_U', **kwargs)
+        self.assertEqual(str(ctx.exception), "Unknown specie 'Fe1' in tag 'Hubbard_U'")
+
         del kwargs['atomic_species']['species'][1]['@name']
         with self.assertRaises(KeyError):
             get_specie_related_values('Hubbard_U', **kwargs)
@@ -53,8 +59,28 @@ class TestConversionFunctions(unittest.TestCase):
             result = get_specie_related_values('Hubbard_U', **kwargs)
 
         self.assertListEqual(result, [])
-        self.assertEqual(context.output, ["ERROR:qeschema:Missing required arguments when "
-                                          "building parameter 'Hubbard_U'! atomic_species"])
+        self.assertEqual(context.output, ["ERROR:qeschema:Missing required argument "
+                                          "'atomic_species' when building parameter 'Hubbard_U'"])
+
+        kwargs = {
+            'atomic_species': {
+                '@ntyp': 3,
+                'species': [
+                    {'@name': 'O1', 'mass': 1.0, 'pseudo_file': 'O.pz-rrkjus.UPF',
+                     'starting_magnetization': 0.0},
+                    {'@name': 'Fe1', 'mass': 1.0, 'pseudo_file': 'Fe.pz-nd-rrkjus.UPF',
+                     'starting_magnetization': 0.5},
+                    {'@name': 'Fe2', 'mass': 1.0, 'pseudo_file': 'Fe.pz-nd-rrkjus.UPF',
+                     'starting_magnetization': -0.5}]
+            },
+            'Hubbard_J': [{'@specie': 'O1', '@label': 'no Hubbard', '$': [1.0, 0.0, 0.0]},
+                          {'@specie': 'Fe1', '@label': '3d', '$': [0.0, 1.0, 0.0]},
+                          {'@specie': 'Fe2', '@label': '3d', '$': [0.0, 0.0, 1.0]}],
+            '_related_tag': 'Hubbard_J'
+        }
+
+        result = get_specie_related_values('Hubbard_J', **kwargs)
+        self.assertListEqual(result, [' Hubbard_J(2,2)=1.0', ' Hubbard_J(3,3)=1.0'])
 
     def test_get_starting_magnetization(self):
         kwargs = {

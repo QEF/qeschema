@@ -1,5 +1,5 @@
 root:
   node:
   - null
-  - null
+  - $: value
   - null

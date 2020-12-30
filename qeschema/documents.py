@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
 #
-# Copyright (c), 2015-2019, Quantum Espresso Foundation and SISSA (Scuola
+# Copyright (c), 2015-2020, Quantum Espresso Foundation and SISSA (Scuola
 # Internazionale Superiore di Studi Avanzati). All rights reserved.
 # This file is distributed under the terms of the MIT License. See the
 # file 'LICENSE' in the root directory of the present distribution, or
@@ -30,6 +29,8 @@ from .utils import etree_iter_path
 
 logger = logging.getLogger('qeschema')
 
+SCHEMAS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'schemas')
+
 
 def requires_xml_data(method):
     """A decorator for XML document methods that require XML data to be loaded."""
@@ -39,6 +40,10 @@ def requires_xml_data(method):
             raise XmlDocumentError("No XML data loaded!")
         return method(self, *args, **kwargs)
     return check_xml_data
+
+
+def removeprefix(s, prefix):
+    return s[len(prefix):] if s.startswith(prefix) else s
 
 
 class XmlDocument(object):
@@ -63,6 +68,7 @@ class XmlDocument(object):
     :ivar schema: the :class:`XMLSchema` instance associated with the document.
     """
     SEARCH_PATHS = ('.',)
+    DEFAULT_SCHEMA = None
 
     def __init__(self, source=None, schema=None):
         self.root = None
@@ -71,42 +77,37 @@ class XmlDocument(object):
         self.errors = []
         self._namespaces = {}
 
-        if source is None and schema is None:
-            raise XmlDocumentError("missing both initialization arguments!")
-        elif source is not None:
-            resource = xmlschema.XMLResource(source)
-            if resource.namespace == XSD_NAMESPACE:
-                alt_schema = source
-                source = None
-            else:
-                for ns, location in resource.iter_location_hints():
-                    if ns != resource.namespace:
-                        continue
-                    location = self.fetch_schema(location)
-                    if location is not None:
-                        alt_schema = location
-                        break
-                else:
-                    alt_schema = None
+        if source is None:
+            source_schema = None
+        else:
+            if not isinstance(source, xmlschema.XMLResource):
+                source = xmlschema.XMLResource(source)
 
-            if schema is None:
-                if alt_schema is None:
-                    raise XmlDocumentError("missing schema for XML data!")
-                schema = alt_schema
-            elif alt_schema is None or not isinstance(schema, str):
-                pass
-            elif '\n' not in schema and not schema.strip().startswith('<') \
-                    and os.path.basename(schema) != os.path.basename(alt_schema):
-                schema = alt_schema
+            if source.namespace == XSD_NAMESPACE:
+                raise XmlDocumentError("source is an XSD schema")
+
+            for ns, location in source.iter_location_hints():
+                if ns == source.namespace:
+                    source_schema = self.fetch_schema(location)
+                    if source_schema is not None:
+                        break
+            else:
+                source_schema = None
 
         if isinstance(schema, xmlschema.XMLSchemaBase):
             self.schema = schema
-        elif not isinstance(schema, str) or '\n' in schema or \
-                schema.strip().startswith('<'):
+        elif isinstance(schema, str) and '\n' not in schema \
+                and not schema.lstrip().startswith('<'):
+            self.schema = xmlschema.XMLSchema(self.fetch_schema(schema) or schema)
+        elif schema is not None:
             self.schema = xmlschema.XMLSchema(schema)
+        elif source_schema is not None:
+            self.schema = xmlschema.XMLSchema(source_schema)
+        elif self.DEFAULT_SCHEMA is not None:
+            default_schema = self.fetch_schema(self.DEFAULT_SCHEMA)
+            self.schema = xmlschema.XMLSchema(default_schema)
         else:
-            schema = self.fetch_schema(schema) or schema
-            self.schema = xmlschema.XMLSchema(schema)
+            raise XmlDocumentError("missing schema for XML data!")
 
         if source is not None:
             self.from_xml(source, validation='lax')
@@ -161,14 +162,16 @@ class XmlDocument(object):
         else:
             try:
                 self.from_xml(filename, validation)
-            except ElementTree.ParseError:
+            except (ElementTree.ParseError, SyntaxError):
                 try:
                     self.from_json(filename, validation, **kwargs)
                 except json.JSONDecodeError:
                     try:
                         self.from_yaml(filename, validation, **kwargs)
                     except yaml.YAMLError:
-                        raise ValueError("input file is not in neither of XML, JSON or YAML formats")
+                        raise ValueError(
+                            "input file is not in neither of XML, JSON or YAML formats"
+                        )
 
     def from_xml(self, source, validation='strict', **kwargs):
         """
@@ -181,27 +184,8 @@ class XmlDocument(object):
         :return: a couple with the root element of the XML ElementTree a list \
         containing the detected errors.
         """
-        if not isinstance(source, str):
-            raise TypeError("the source argument must be a string!")
-        elif '\n' not in source and not source.strip().startswith('<'):
-            root = ElementTree.parse(source).getroot()
-            filename = source.strip()
-        else:
-            root = ElementTree.XML(source)
-            filename = None
-
-        resource = xmlschema.XMLResource(source, **kwargs)
-        schema_names = [
-            os.path.basename(location) for ns, location in resource.iter_location_hints()
-            if ns == resource.namespace
-        ]
-        if not schema_names or self.schema.url is None or \
-                any(self.schema.url.endswith(x) for x in schema_names):
-            pass
-        elif '\n' in source:
-            logger.warning("XML data seems built for schema {!r}".format(schema_names[0]))
-        else:
-            logger.warning("XML data {!r} seems built for schema {!r}".format(source, schema_names[0]))
+        if not isinstance(source, xmlschema.XMLResource):
+            source = xmlschema.XMLResource(source, **kwargs)
 
         errors = []
         if validation == 'strict':
@@ -209,11 +193,16 @@ class XmlDocument(object):
         elif validation == 'lax':
             errors.extend(e for e in self.schema.iter_errors(source))
 
-        self.root = root
+        self.root = source.root
         self.errors = errors
-        self.filename = filename
-        self.format = 'xml' if filename else None
-        self._namespaces = resource.get_namespaces()
+        self._namespaces = source.get_namespaces()
+
+        if source.url is None:
+            self.filename = None
+            self.format = None
+        else:
+            self.filename = removeprefix(source.url, 'file://')
+            self.format = 'xml'
 
     def from_json(self, source, validation='strict', **kwargs):
         """
@@ -441,15 +430,20 @@ class QeDocument(XmlDocument, metaclass=ABCMeta):
     """
     Abstract base class for schema-based XML documents of Quantum ESPRESSO applications.
     """
-    SCHEMAS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'schemas')
     SEARCH_PATHS = (SCHEMAS_DIR, os.path.join(SCHEMAS_DIR, 'releases'), '.')
+    DEFAULT_INPUT_BUILDER = None
 
     def __init__(self, source=None, schema=None, input_builder=None):
         super(QeDocument, self).__init__(source, schema)
 
-        if not issubclass(input_builder, RawInputConverter):
-            raise XmlDocumentError("2nd argument must be a {!r} subclass".format(RawInputConverter))
-        self.input_builder = input_builder
+        if input_builder is None:
+            self.input_builder = self.DEFAULT_INPUT_BUILDER
+        elif not isinstance(input_builder, type) or \
+                not issubclass(input_builder, RawInputConverter):
+            msg = "3rd argument must be a {!r} subclass"
+            raise XmlDocumentError(msg.format(RawInputConverter))
+        else:
+            self.input_builder = input_builder
 
         self.default_namespace = self.schema.target_namespace
         qe_prefixes = ['qes', 'neb', 'qes_ph', 'qes_lr', 'qes_spectrum']
@@ -536,10 +530,8 @@ class PwDocument(QeDocument):
     """
     Class to manage PW XML documents.
     """
-    def __init__(self, source=None, schema=None):
-        if schema is None:
-            schema = os.path.join(self.SCHEMAS_DIR, 'qes.xsd')
-        super(PwDocument, self).__init__(source, schema, input_builder=PwInputConverter)
+    DEFAULT_SCHEMA = 'qes.xsd'
+    DEFAULT_INPUT_BUILDER = PwInputConverter
 
     @requires_xml_data
     def get_atomic_positions(self):
@@ -549,13 +541,15 @@ class PwDocument(QeDocument):
         :return: the list of atomic symbols and a nested list containing the coordinates
         """
         path = './/output//atomic_positions'
-        atomic_positions = self.schema.find(path).decode(self.find(path))
-        atoms = atomic_positions.get('atom')
-        if not isinstance(atoms, list):
-            atoms = [atoms]
-        symbols = [a['@name'] for a in atoms]
-        positions = [a['$'] for a in atoms]
-        return symbols, positions
+        elem = self.find(path)
+        if elem is not None:
+            atomic_positions = self.schema.find(path).decode(elem)
+            atoms = atomic_positions.get('atom')
+            if not isinstance(atoms, list):
+                atoms = [atoms]
+            symbols = [a['@name'] for a in atoms]
+            positions = [a['$'] for a in atoms]
+            return symbols, positions
 
     @requires_xml_data
     def get_cell_parameters(self):
@@ -565,8 +559,10 @@ class PwDocument(QeDocument):
         :return: a nested list containing the cell vectors in Bohr atomic units
         """
         path = './/output//cell'
-        cell = self.schema.find(path).decode(self.find(path))
-        return [cell['a1'], cell['a2'], cell['a3']]
+        elem = self.find(path)
+        if elem is not None:
+            cell = self.schema.find(path).decode(elem)
+            return [cell['a1'], cell['a2'], cell['a3']]
 
     @requires_xml_data
     def get_stress(self):
@@ -576,10 +572,14 @@ class PwDocument(QeDocument):
         :return: nested list containing the stress tensor in C order
         """
         path = './/output//stress'
-        if self.find(path) is None:
-            return None
-        stress = self.schema.find(path).decode(self.find(path))['$']
-        return [stress[::3], stress[1::3], stress[2::3]]
+        elem = self.find(path)
+        if elem is not None:
+            stress = self.schema.find(path).decode(elem)
+            try:
+                stress = stress['$']
+            except TypeError:
+                pass
+            return [stress[::3], stress[1::3], stress[2::3]]
 
     @requires_xml_data
     def get_forces(self):
@@ -590,19 +590,19 @@ class PwDocument(QeDocument):
         in atomic units
         """
         path = './/output/forces'
-        if self.find(path) is None:
-            return None
-        forces = self.schema.find(path).decode(self.find(path))
-        path = './/output//atomic_positions'
-        atomic_positions = self.schema.find(path).decode(self.find(path))
-        atoms = atomic_positions.get('atom', [])
-        if not isinstance(atoms, list):
-            atoms = [atoms]
-        symbols = [a['@name'] for a in atoms]
-        i0 = range(3 * len(atoms))[::3]
-        i1 = range(3 * len(atoms) + 1)[3::3]
-        forces = [forces['$'][i:j] for i, j in zip(i0, i1)]
-        return symbols, forces
+        elem = self.find(path)
+        if elem is not None:
+            forces = self.schema.find(path).decode(elem)
+            path = './/output//atomic_positions'
+            atomic_positions = self.schema.find(path).decode(self.find(path))
+            atoms = atomic_positions.get('atom', [])
+            if not isinstance(atoms, list):
+                atoms = [atoms]
+            symbols = [a['@name'] for a in atoms]
+            i0 = range(3 * len(atoms))[::3]
+            i1 = range(3 * len(atoms) + 1)[3::3]
+            forces = [forces['$'][i:j] for i, j in zip(i0, i1)]
+            return symbols, forces
 
     @requires_xml_data
     def get_k_points(self):
@@ -639,10 +639,8 @@ class PhononDocument(QeDocument):
     """
     Class to manage Phonon XML documents.
     """
-    def __init__(self, source=None, schema=None):
-        if schema is None:
-            schema = os.path.join(self.SCHEMAS_DIR, 'ph_temp.xsd')
-        super(PhononDocument, self).__init__(source, schema, input_builder=PhononInputConverter)
+    DEFAULT_SCHEMA = 'ph_xmlschema.xsd'
+    DEFAULT_INPUT_BUILDER = PhononInputConverter
 
     @property
     def input_path(self):
@@ -666,20 +664,16 @@ class NebDocument(QeDocument):
     """
     Class to manage NEB XML documents.
     """
-    def __init__(self, source=None, schema=None):
-        if schema is None:
-            schema = os.path.join(self.SCHEMAS_DIR, 'qes_neb.xsd')
-        super(NebDocument, self).__init__(source, schema, input_builder=NebInputConverter)
+    DEFAULT_SCHEMA = 'qes_neb.xsd'
+    DEFAULT_INPUT_BUILDER = NebInputConverter
 
 
 class TdDocument(QeDocument):
     """
     Class to manage TDDFPT XML documents.
     """
-    def __init__(self, source=None, schema=None):
-        if schema is None:
-            schema = os.path.join(self.SCHEMAS_DIR, 'tddfpt.xsd')
-        super(TdDocument, self).__init__(source, schema, input_builder=TdInputConverter)
+    DEFAULT_SCHEMA = 'tddfpt.xsd'
+    DEFAULT_INPUT_BUILDER = TdInputConverter
 
     @property
     def input_path(self):
@@ -690,10 +684,8 @@ class TdSpectrumDocument(QeDocument):
     """
     Class to manage turbo-spectrum XML inputs
     """
-    def __init__(self, source=None, schema=None):
-        if schema is None:
-            schema = os.path.join(self.SCHEMAS_DIR, 'qes_spectrum.xsd')
-        super(TdSpectrumDocument, self).__init__(source, schema, input_builder=TdSpectrumInputConverter)
+    DEFAULT_SCHEMA = 'qes_spectrum.xsd'
+    DEFAULT_INPUT_BUILDER = TdSpectrumInputConverter
 
     @property
     def input_path(self):

@@ -18,11 +18,11 @@
 # -- Project information -----------------------------------------------------
 
 project = 'qeschema'
-copyright = '2015-2019, Quantum Espresso Foundation and SISSA'
+copyright = '2015-2020, Quantum Espresso Foundation and SISSA'
 author = 'Davide Brunato, Pietro Delugas'
 
 # The full version, including alpha/beta/rc tags
-release = 'v1.0'
+release = 'v1.1'
 
 
 # -- General configuration ---------------------------------------------------
