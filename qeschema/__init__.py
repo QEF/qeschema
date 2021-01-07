@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
 #
-# Copyright (c), 2015-2020, Quantum Espresso Foundation and SISSA (Scuola
+# Copyright (c), 2015-2021, Quantum Espresso Foundation and SISSA (Scuola
 # Internazionale Superiore di Studi Avanzati). All rights reserved.
 # This file is distributed under the terms of the MIT License. See the
 # file 'LICENSE' in the root directory of the present distribution, or
@@ -15,7 +14,7 @@ from .converters import RawInputConverter, PwInputConverter, PhononInputConverte
 from .exceptions import QESchemaError, XmlDocumentError
 from .utils import set_logger
 
-__version__ = '1.1.0'
+__version__ = '1.2.0'
 
 __all__ = [
     'XmlDocument', 'QeDocument', 'PwDocument', 'PhononDocument', 'NebDocument',
