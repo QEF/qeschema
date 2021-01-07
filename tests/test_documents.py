@@ -9,6 +9,7 @@
 #
 import os
 import unittest
+import platform
 import xml.etree.ElementTree as ElementTree
 from xmlschema import XMLSchemaValidationError, XMLSchema, XMLResource
 
@@ -52,12 +53,18 @@ class TestDocuments(unittest.TestCase):
         self.assertIsNone(document.root)
         self.assertIsNone(document.filename)
         self.assertIsNone(document.format)
-        self.assertTrue(document.schema.url.endswith(schema))
         self.assertIsInstance(document.schema, XMLSchema)
+        if platform.system() == 'Linux':
+            self.assertTrue(document.schema.url.endswith(schema))
+        else:
+            self.assertTrue(document.schema.url.endswith('qeschema/schemas/qes.xsd'))
 
         document = XmlDocument(schema=XMLSchema(schema))
-        self.assertTrue(document.schema.url.endswith(schema))
         self.assertIsInstance(document.schema, XMLSchema)
+        if platform.system() == 'Linux':
+            self.assertTrue(document.schema.url.endswith(schema))
+        else:
+            self.assertTrue(document.schema.url.endswith('qeschema/schemas/qes.xsd'))
 
     def test_qe_document_init(self):
         with self.assertRaises(XmlDocumentError) as context:
@@ -81,20 +88,29 @@ class TestDocuments(unittest.TestCase):
     def test_pw_document_init(self):
         document = PwDocument()
         self.assertIsInstance(PwDocument(), PwDocument)
-        self.assertTrue(document.schema.url.endswith("qeschema/qeschema/schemas/qes.xsd"))
+        self.assertTrue(document.schema.url.endswith("qeschema/schemas/qes.xsd"))
 
         source = os.path.join(self.test_dir, 'examples/pw/Al001_relax_bfgs.xml')
         document = PwDocument(source)
-        self.assertEqual(document.filename, source)
+        if platform.system() == 'Linux':
+            self.assertEqual(document.filename, source)
+        else:
+            self.assertTrue(document.filename.endswith('Al001_relax_bfgs.xml'))
         self.assertTrue(document.schema.url.endswith("qeschema/schemas/releases/qes_190719.xsd"))
 
         document = PwDocument(source, schema='qes.xsd')
-        self.assertEqual(document.filename, source)
+        if platform.system() == 'Linux':
+            self.assertEqual(document.filename, source)
+        else:
+            self.assertTrue(document.filename.endswith('Al001_relax_bfgs.xml'))
         self.assertTrue(document.schema.url.endswith("qeschema/schemas/qes.xsd"))
 
         source = os.path.join(self.test_dir, 'examples/pw/Al001_rlx_damp.xml')
         document = PwDocument(source)
-        self.assertEqual(document.filename, source)
+        if platform.system() == 'Linux':
+            self.assertEqual(document.filename, source)
+        else:
+            self.assertTrue(document.filename.endswith('Al001_rlx_damp.xml'))
         self.assertTrue(document.schema.url.endswith("qeschema/schemas/qes.xsd"))
 
     def test_phonon_document_init(self):
@@ -112,7 +128,7 @@ class TestDocuments(unittest.TestCase):
     def test_td_document_init(self):
         schema = os.path.join(self.schemas_dir, 'tddfpt.xsd')
         self.assertIsInstance(TdDocument(), TdDocument)
-        self.assertTrue(TdDocument().schema.url.endswith("qeschema/qeschema/schemas/tddfpt.xsd"))
+        self.assertTrue(TdDocument().schema.url.endswith("qeschema/schemas/tddfpt.xsd"))
         self.assertIsInstance(TdDocument(schema=schema), TdDocument)
 
     def test_td_spectrum_document_init(self):
@@ -124,18 +140,21 @@ class TestDocuments(unittest.TestCase):
     def test_init_from_xml_resource(self):
         xml_file = os.path.join(self.test_dir, 'examples/pw/CO_bgfs_relax.xml')
         document = PwDocument(source=XMLResource(xml_file))
-        self.assertEqual(document.filename, xml_file)
+        if platform.system() == 'Linux':
+            self.assertEqual(document.filename, xml_file)
+        else:
+            self.assertTrue(document.filename.endswith('CO_bgfs_relax.xml'))
         self.assertTrue(document.schema.url.endswith("qeschema/schemas/qes.xsd"))
 
     def test_init_with_schema_only(self):
         schema = os.path.join(self.schemas_dir, 'qes.xsd')
         document = PwDocument(schema=schema)
         self.assertIsInstance(document, PwDocument)
-        self.assertTrue(document.schema.url.endswith("qeschema/qeschema/schemas/qes.xsd"))
+        self.assertTrue(document.schema.url.endswith("qeschema/schemas/qes.xsd"))
 
         document = PwDocument(schema='qes.xsd')
         self.assertIsInstance(document, PwDocument)
-        self.assertTrue(document.schema.url.endswith("qeschema/qeschema/schemas/qes.xsd"))
+        self.assertTrue(document.schema.url.endswith("qeschema/schemas/qes.xsd"))
 
         document = PwDocument(schema='qes-20180511.xsd')
         self.assertIsInstance(document, PwDocument)
@@ -153,25 +172,29 @@ class TestDocuments(unittest.TestCase):
         self.assertIsNone(QeDocument.fetch_schema('missing.xsd'))
 
         filename = QeDocument.fetch_schema('qes.xsd')
-        self.assertTrue(filename.endswith("qeschema/schemas/qes.xsd"))
+        self.assertTrue(filename.replace('\\', '/').endswith("qeschema/schemas/qes.xsd"))
 
         filename = QeDocument.fetch_schema('unknown-path/qes.xsd')
-        self.assertTrue(filename.endswith("qeschema/schemas/qes.xsd"))
+        self.assertTrue(filename.replace('\\', '/').endswith("qeschema/schemas/qes.xsd"))
 
         filename = QeDocument.fetch_schema('/unknown-path/qes.xsd')
-        self.assertTrue(filename.endswith("qeschema/schemas/qes.xsd"))
+        self.assertTrue(filename.replace('\\', '/').endswith("qeschema/schemas/qes.xsd"))
 
         filename = QeDocument.fetch_schema('file:///unknown-path/qes.xsd')
-        self.assertTrue(filename.endswith("qeschema/schemas/qes.xsd"))
+        self.assertTrue(filename.replace('\\', '/').endswith("qeschema/schemas/qes.xsd"))
 
         filename = QeDocument.fetch_schema('releases/qes.xsd')
-        self.assertTrue(filename.endswith("qeschema/schemas/qes.xsd"))
+        self.assertTrue(filename.replace('\\', '/').endswith("qeschema/schemas/qes.xsd"))
 
         filename = QeDocument.fetch_schema('qes_190304.xsd')
-        self.assertTrue(filename.endswith("qeschema/schemas/releases/qes_190304.xsd"))
+        self.assertTrue(
+            filename.replace('\\', '/').endswith("qeschema/schemas/releases/qes_190304.xsd")
+        )
 
         filename = QeDocument.fetch_schema('unknown/qes_190304.xsd')
-        self.assertTrue(filename.endswith("qeschema/schemas/releases/qes_190304.xsd"))
+        self.assertTrue(
+            filename.replace('\\', '/').endswith("qeschema/schemas/releases/qes_190304.xsd")
+        )
 
     def test_schema_namespaces(self):
         schema = os.path.join(self.schemas_dir, 'qes.xsd')
@@ -209,42 +232,60 @@ class TestDocuments(unittest.TestCase):
 
         document.read(filename)
         self.assertTrue(hasattr(document.root, 'tag'))
-        self.assertEqual(document.filename, filename)
         self.assertEqual(document.format, 'xml')
+        if platform.system() == 'Linux':
+            self.assertEqual(document.filename, filename)
+        else:
+            self.assertTrue(document.filename.endswith('instance.xml'))
 
         filename = os.path.join(self.test_dir, 'examples/dummy/instance_xml')
         document.read(filename)
         self.assertTrue(hasattr(document.root, 'tag'))
-        self.assertEqual(document.filename, filename)
         self.assertEqual(document.format, 'xml')
+        if platform.system() == 'Linux':
+            self.assertEqual(document.filename, filename)
+        else:
+            self.assertTrue(document.filename.endswith('instance_xml'))
 
         filename = os.path.join(self.test_dir, 'examples/dummy/instance.json')
         document.read(filename)
         self.assertTrue(hasattr(document.root, 'tag'))
         self.assertEqual(document.root.tag, 'root')
-        self.assertEqual(document.filename, filename)
         self.assertEqual(document.format, 'json')
+        if platform.system() == 'Linux':
+            self.assertEqual(document.filename, filename)
+        else:
+            self.assertTrue(document.filename.endswith('instance.json'))
 
         filename = os.path.join(self.test_dir, 'examples/dummy/instance_json')
         document.read(filename)
         self.assertTrue(hasattr(document.root, 'tag'))
         self.assertEqual(document.root.tag, 'root')
-        self.assertEqual(document.filename, filename)
         self.assertEqual(document.format, 'json')
+        if platform.system() == 'Linux':
+            self.assertEqual(document.filename, filename)
+        else:
+            self.assertTrue(document.filename.endswith('instance_json'))
 
         filename = os.path.join(self.test_dir, 'examples/dummy/instance.yaml')
         document.read(filename)
         self.assertTrue(hasattr(document.root, 'tag'))
         self.assertEqual(document.root.tag, 'root')
-        self.assertEqual(document.filename, filename)
         self.assertEqual(document.format, 'yaml')
+        if platform.system() == 'Linux':
+            self.assertEqual(document.filename, filename)
+        else:
+            self.assertTrue(document.filename.endswith('instance.yaml'))
 
         filename = os.path.join(self.test_dir, 'examples/dummy/instance_yaml')
         document.read(filename)
         self.assertTrue(hasattr(document.root, 'tag'))
         self.assertEqual(document.root.tag, 'root')
-        self.assertEqual(document.filename, filename)
         self.assertEqual(document.format, 'yaml')
+        if platform.system() == 'Linux':
+            self.assertEqual(document.filename, filename)
+        else:
+            self.assertTrue(document.filename.endswith('instance_yaml'))
 
         filename = os.path.join(self.test_dir, 'examples/dummy/instance.csv')
         with self.assertRaises(ValueError):
@@ -364,8 +405,11 @@ class TestDocuments(unittest.TestCase):
 
         document.write(self.output_file)
         self.assertIsInstance(ElementTree.parse(filename), ElementTree.ElementTree)
-        self.assertEqual(document.filename, self.output_file)
         self.assertEqual(document.format, 'xml')
+        if platform.system() == 'Linux':
+            self.assertEqual(document.filename, self.output_file)
+        else:
+            self.assertTrue(document.filename.endswith('write_test_file'))
 
     def test_write_other_formats(self):
         schema = os.path.join(self.test_dir, 'examples/dummy/schema.xsd')
@@ -492,7 +536,12 @@ class TestDocuments(unittest.TestCase):
         self.assertTrue(hasattr(document.root, 'tag'))
         self.assertEqual(document.root.tag,
                          '{http://www.quantum-espresso.org/ns/qes/qes-1.0}espresso')
-        self.assertEqual(document.filename, xml_filename)
+
+        if platform.system() == 'Linux':
+            self.assertEqual(document.filename, xml_filename)
+        else:
+            self.assertTrue(document.filename.endswith('Al001_relax_bfgs.xml'))
+
         self.assertEqual(document.format, 'xml')
         self.assertEqual(document.input_path, 'input')
         self.assertEqual(document.output_path, 'output')
@@ -504,7 +553,12 @@ class TestDocuments(unittest.TestCase):
         self.assertTrue(hasattr(document.root, 'tag'))
         self.assertEqual(document.root.tag,
                          '{http://www.quantum-espresso.org/ns/qes/qes_ph_1.0}espressoph')
-        self.assertEqual(document.filename, xml_filename)
+
+        if platform.system() == 'Linux':
+            self.assertEqual(document.filename, xml_filename)
+        else:
+            self.assertTrue(document.filename.endswith('al.elph.xml'))
+
         self.assertEqual(document.format, 'xml')
         self.assertEqual(document.input_path, 'inputPH')
         self.assertEqual(document.output_path, 'outputPH')
@@ -516,7 +570,12 @@ class TestDocuments(unittest.TestCase):
         document.read(xml_filename)
         self.assertTrue(hasattr(document.root, 'tag'))
         self.assertEqual(document.root.tag, '{http://www.quantum-espresso.org/ns/neb}nebRun')
-        self.assertEqual(document.filename, xml_filename)
+
+        if platform.system() == 'Linux':
+            self.assertEqual(document.filename, xml_filename)
+        else:
+            self.assertTrue(document.filename.endswith('Al001+H_bc3.xml'))
+
         self.assertEqual(document.format, 'xml')
         self.assertEqual(document.input_path, 'input')
         self.assertEqual(document.output_path, 'output')
@@ -528,7 +587,12 @@ class TestDocuments(unittest.TestCase):
         self.assertTrue(hasattr(document.root, 'tag'))
         self.assertEqual(document.root.tag,
                          '{http://www.quantum-espresso.org/ns/qes/qes_lr-1.0}tddfpt')
-        self.assertEqual(document.filename, xml_filename)
+
+        if platform.system() == 'Linux':
+            self.assertEqual(document.filename, xml_filename)
+        else:
+            self.assertTrue(document.filename.endswith('Ag.tddfpt-eels.xml'))
+
         self.assertEqual(document.format, 'xml')
         self.assertEqual(document.input_path, 'input')
         self.assertEqual(document.output_path, 'output')
@@ -541,7 +605,12 @@ class TestDocuments(unittest.TestCase):
         self.assertTrue(hasattr(document.root, 'tag'))
         self.assertEqual(document.root.tag,
                          '{http://www.quantum-espresso.org/ns/qes/qes_spectrum-1.0}spectrumDoc')
-        self.assertEqual(document.filename, xml_filename)
+
+        if platform.system() == 'Linux':
+            self.assertEqual(document.filename, xml_filename)
+        else:
+            self.assertTrue(document.filename.endswith('CH4.tddfpt_pp.xml'))
+
         self.assertEqual(document.format, 'xml')
         self.assertEqual(document.input_path, 'spectrumIn')
         self.assertEqual(document.output_path, 'output')

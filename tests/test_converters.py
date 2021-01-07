@@ -13,6 +13,7 @@ Test classes for Quantum Espresso input converters.
 import unittest
 import os
 import glob
+import platform
 import xml.etree.ElementTree as ElementTree
 
 import qeschema
@@ -66,22 +67,42 @@ class ConverterTestCase(unittest.TestCase):
     def test_xml2qeinput_script(self):
         xml_filename = os.path.join(self.test_dir, 'examples/pw/Al001_relax_bfgs.xml')
         in_filename = xml_filename[:-4] + '.in'
-        conversion_script = os.path.join(self.pkg_folder, 'scripts/xml2qeinput.py')
+        py_filename = os.path.join(self.pkg_folder, 'scripts/xml2qeinput.py')
         if os.path.isfile(in_filename):
-            os.system('rm -f %s' % in_filename)
-        command = 'python %s -in %s 1> /dev/null 2> /dev/null' % (conversion_script, xml_filename)
-        os.system(command)
-        self.assertTrue(os.path.isfile(in_filename), 'Test output file %r missing!' % in_filename)
+            os.remove(in_filename)
+
+        if platform.system() == 'Windows':
+            os.system("python %s -in %s" % (py_filename, xml_filename))
+            self.assertTrue('Al001_relax_bfgs.in' in os.listdir(os.path.dirname(xml_filename)))
+        else:
+            if platform.system() == 'Linux':
+                command = 'python %s -in %s 1> /dev/null 2> /dev/null'
+            else:
+                command = 'python3 %s -in %s 1> /dev/null 2> /dev/null'
+
+            os.system(command % (py_filename, xml_filename))
+            self.assertTrue(os.path.isfile(in_filename),
+                            'Test output file %r missing!' % in_filename)
 
     def test_yaml2qeinput_script(self):
         xml_filename = os.path.join(self.test_dir, 'examples/pw/Al001_relax_bfgs.yml')
         in_filename = xml_filename[:-4] + '.in'
-        conversion_script = os.path.join(self.pkg_folder, 'scripts/yaml2qeinput.py')
+        py_filename = os.path.join(self.pkg_folder, 'scripts/yaml2qeinput.py')
         if os.path.isfile(in_filename):
-            os.system('rm -f %s' % in_filename)
-        command = 'python %s -in %s 1> /dev/null 2> /dev/null' % (conversion_script, xml_filename)
-        os.system(command)
-        self.assertTrue(os.path.isfile(in_filename), 'Test output file %r missing!' % in_filename)
+            os.remove(in_filename)
+
+        if platform.system() == 'Windows':
+            os.system("python %s -in %s" % (py_filename, xml_filename))
+            self.assertTrue('Al001_relax_bfgs.in' in os.listdir(os.path.dirname(xml_filename)))
+        else:
+            if platform.system() == 'Linux':
+                command = 'python %s -in %s 1> /dev/null 2> /dev/null'
+            else:
+                command = 'python3 %s -in %s 1> /dev/null 2> /dev/null'
+
+            os.system(command % (py_filename, xml_filename))
+            self.assertTrue(os.path.isfile(in_filename),
+                            'Test output file %r missing!' % in_filename)
 
 
 ##
