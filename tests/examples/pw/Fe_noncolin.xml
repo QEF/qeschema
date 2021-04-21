@@ -53,7 +53,7 @@
         </spin_phi>
       </species>
     </atomic_species>
-    <atomic_structure nat="1" alat="5.217000000000000E+000">
+    <atomic_structure nat="1" alat="5.217000000000000E+000"  bravais_index="3">
       <atomic_positions>
         <atom name="Fe">
        0.0000000E+00       0.0000000E+00       0.0000000E+00

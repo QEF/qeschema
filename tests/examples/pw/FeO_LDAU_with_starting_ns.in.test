@@ -25,7 +25,7 @@
  Hubbard_U(3)=0.3160442
  ibrav=0
  input_dft='PZ'
- lda_plus_u  = .true.
+ lda_plus_u = .true.
  lda_plus_u_kind=0
  lspinorb=.false.
  nat=4

@@ -273,7 +273,6 @@ Created by Mauro Palumbo
             <element type="qes_ph:q_monkhorst_packType" name="monkhorst_pack"
                minOccurs="0" maxOccurs="1"/>
             <!-- monkhorst_pack grid, ex. 3 3 3 -->
-            <element type="positiveInteger" name="nq"/>
             <!-- Alternatively, a list of nqs q-points... (optionally with weight as attribute) -->
             <element type="nonNegativeInteger" name="nqs" default="1" minOccurs="0" />
             <element type="qes_ph:q_points_listType" name="q_points_list" minOccurs="0" />

@@ -325,9 +325,9 @@ class PwInputConverter(RawInputConverter):
         'atomic_structure': {
             '@nat': 'SYSTEM[nat]',
             '$': [
-                ('SYSTEM[ibrav]', options.set_ibrav_to_zero, None),
+                ('SYSTEM[ibrav]', options.get_ibrav, None),
                 ("ATOMIC_POSITIONS", cards.get_atomic_positions_cell_card, None),
-                ("CELL_PARAMETERS", cards.get_cell_parameters_card, None)
+                ("CELL_PARAMETERS", cards.get_cell_parameters_card,  None)
             ],
             'atomic_positions': ('ATOMIC_FORCES', cards.get_atomic_forces_card, None),
         },
