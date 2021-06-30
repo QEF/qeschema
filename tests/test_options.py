@@ -279,8 +279,8 @@ class TestConversionFunctions(unittest.TestCase):
                           {'@specie': 'Fe2', '$': 0.3160442}],
         }
 
-        result = set_lda_plus_u_flag('lda_plus', **kwargs)
-        self.assertListEqual(result, ['lda_plus_u = .t.'])
+        result = set_lda_plus_u_flag('lda_plus_u', **kwargs)
+        self.assertListEqual(result, [' lda_plus_u = .true.'])
 
         result = set_lda_plus_u_flag('lda_plus', _related_tag='Hubbard_U', Hubbard_U=[])
         self.assertListEqual(result, [])
