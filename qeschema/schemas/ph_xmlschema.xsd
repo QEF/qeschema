@@ -96,7 +96,7 @@ Created by Mauro Palumbo
             <element type="qes_ph:control_jobType" name="control_job" minOccurs="0" />
             <element type="qes_ph:control_dielType" name="control_diel" minOccurs="0"/>
             <element type="qes_ph:control_qplotType" name="control_qplot"
-                     minOccurs="0" />  
+                     minOccurs="0" /> 
             <element type="qes_ph:miscellaneaType" name="miscellanea" minOccurs="0" />
             <!-- Irreproducible representation --> 
             <element type="qes_ph:irr_reprType" name="irr_repr" minOccurs="0" />
@@ -107,6 +107,7 @@ Created by Mauro Palumbo
             <element type="qes_ph:lraman_optionsType" name="lraman_options"
                      minOccurs="0" />
             <!-- q-points mesh or list -->
+            <element name="xq" type="qes_ph:k_pointType" minOccurs="0"/>   
             <element type="qes_ph:q_pointsType" name="q_points" minOccurs="0" />
         </sequence>
     </complexType> 
@@ -173,7 +174,7 @@ Created by Mauro Palumbo
     <complexType name="miscellaneaType">
         <sequence>             
             <!-- if amass is not present, should be taked from pw in the code -->                    
-            <element type="qes_ph:amassType" name="amass" minOccurs="0" />
+            <element type="qes_ph:amassType" name="amass" minOccurs="0" maxOccurs="unbounded"/>
             <element type="double" name="start_magnetization" minOccurs="0" />  
             <element type="nonNegativeInteger" name="verbosity" default="0" 
                  minOccurs="0" />
@@ -181,6 +182,7 @@ Created by Mauro Palumbo
             <element type="boolean" name="low_directory_check" default="false" 
                  minOccurs="0" />
             <element type="boolean" name="nogg" default="false" minOccurs="0" />   
+            <element type="qes_ph:monkhorst_packType" name="nscf_MPgrid" minOccurs="0"/> 
         </sequence>
     </complexType>
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -217,7 +219,9 @@ Created by Mauro Palumbo
     <complexType name="electron_phonon_optionsType">
         <sequence>
             <element type="qes_ph:electron_phononType" name="electron_phonon"
-                 minOccurs="0" />    
+                 minOccurs="0" />
+        <element type="double" name="sigma" default="0.02" minOccurs="0"/> 
+        <element type="integer" name="nsigma" default="10" minOccurs="0"/>     
         <element type="qes_ph:dvscf_starType" name="dvscf_star" minOccurs="0" />
         <element type="qes_ph:drho_starType" name="drho_star" minOccurs="0" />
         </sequence>
@@ -270,8 +274,7 @@ Created by Mauro Palumbo
     <complexType name="q_pointsType">
         <sequence>
             <!-- monkhorst_pack -->
-            <element type="qes_ph:q_monkhorst_packType" name="monkhorst_pack"
-               minOccurs="0" maxOccurs="1"/>
+            <element type="qes_ph:q_monkhorst_packType" name="grid" minOccurs="0" maxOccurs="1"/>
             <!-- monkhorst_pack grid, ex. 3 3 3 -->
             <!-- Alternatively, a list of nqs q-points... (optionally with weight as attribute) -->
             <element type="nonNegativeInteger" name="nqs" default="1" minOccurs="0" />

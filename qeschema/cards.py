@@ -263,7 +263,7 @@ def get_qpoints_card(name, **kwargs):
     qplot = kwargs.get('qplot', False)
     if not qplot and not ldisp:
         try:
-            xq = kwargs['xq_dir']
+            xq = kwargs['xq']
         except KeyError:
             xq = [0.e0, 0.e0, 0.e0]
         line = "{:6.4f}  {:8.4f}  {:8.4f}".format(xq[0], xq[1], xq[2])

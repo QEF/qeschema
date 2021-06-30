@@ -555,7 +555,9 @@ class PhononInputConverter(RawInputConverter):
     Convert to/from Fortran input for Phonon.
     """
     PHONON_TEMPLATE_MAP = {
-        'xq': ('qPointsSpecs', cards.get_qpoints_card, None),
+        'xq': {
+         '$': ('qPointsSpecs', cards.get_qpoints_card, None),
+        },
         'scf_ph': {
             'tr2_ph': "INPUTPH[tr2_ph]",
             'niter_ph': "INPUTPH[niter_ph]",
@@ -643,9 +645,9 @@ class PhononInputConverter(RawInputConverter):
         },
         'q_points': {
             'grid': {
-                'nq1': "INPUTPH[nq1]",
-                'nq2': "INPUTPH[nq2]",
-                'nq3': "INPUTPH[nq3]"
+                '@nq1': "INPUTPH[nq1]",
+                '@nq2': "INPUTPH[nq2]",
+                '@nq3': "INPUTPH[nq3]"
             },
             'q_points_list': ('qPointsSpecs', cards.get_qpoints_card, None),
             'nqs': ('qPointsSpecs', cards.get_qpoints_card, None)
