@@ -234,8 +234,6 @@ def get_cell_parameters_card(name, **kwargs):
         logger.error("Missing required arguments when building CELL_PARAMETERS card!")
         return []
     # Add cell parameters card
-    if atomic_structure.get('@bravais_index'):
-      return []
     cells = atomic_structure.get('cell', {})
     if cells:
         lines = ['%s bohr' % name]

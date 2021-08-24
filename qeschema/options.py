@@ -14,7 +14,6 @@ import logging
 
 from .exceptions import XmlDocumentError
 from .utils import to_fortran
-from .lattice_utils import abc_from_cell, signed_ibrav
 
 logger = logging.getLogger('qeschema')
 
@@ -125,24 +124,6 @@ def set_ibrav_to_zero(name, **_kwargs):
     assert isinstance(name, str)
     line = ' ibrav=0'
     return [line]
-
-def get_ibrav(name, **kwargs):
-  assert isinstance((name), str)
-  try:
-    atomic_structure =  kwargs['atomic_structure']
-    cell = atomic_structure['cell']
-  except KeyError:
-    logger.error("Missing required arguments when  computing ibrav value")
-    return []
-  ibrav_ = atomic_structure.get('@bravais_index')
-  alternative_axes_=atomic_structure.get('@alternative_axes')
-  if ibrav_ is None:
-    return set_ibrav_to_zero(name, **kwargs) 
-  A,B,C,COSAB,COSAC,COSBC = abc_from_cell(cell)
-  return [
-    f" ibrav = {signed_ibrav(ibrav_,alternative_axes_)}",
-    f" A = {A:9.6f}, \n B = {B:9.6f}, \n C = {C:9.6f}, \n COSAB = {COSAB:8.6}, \n COSBC = {COSBC:8.6}, \n COSAC = {COSAC:8.6},"
-  ]
 
 
 
