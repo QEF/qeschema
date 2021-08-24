@@ -1,6 +1,6 @@
 <qes_ph:espressoph xmlns:qes_ph="http://www.quantum-espresso.org/ns/qes/qes_ph_1.0"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes_ph_1.0 ph-20180511.xsd">
+	xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes_ph_1.0 ph-20210706.xsd">
     <inputPH>
         <scf_ph>
             <tr2_ph>1.0e-14</tr2_ph>
