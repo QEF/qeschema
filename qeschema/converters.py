@@ -327,7 +327,7 @@ class PwInputConverter(RawInputConverter):
             '$': [
                 ('SYSTEM[ibrav]', options.set_ibrav_to_zero, None),
                 ("ATOMIC_POSITIONS", cards.get_atomic_positions_cell_card, None),
-                ("CELL_PARAMETERS", cards.get_cell_parameters_card, None)
+                ("CELL_PARAMETERS", cards.get_cell_parameters_card,  None)
             ],
             'atomic_positions': ('ATOMIC_FORCES', cards.get_atomic_forces_card, None),
         },
@@ -349,7 +349,8 @@ class PwInputConverter(RawInputConverter):
             'dftU': {
                 'lda_plus_u_kind': 'SYSTEM[lda_plus_u_kind]',
                 'Hubbard_U': {
-                    '$': ('SYSTEM[Hubbard_U]', options.get_specie_related_values, None),
+                    '$': [('SYSTEM[Hubbard_U]', options.get_specie_related_values, None),
+                          ('SYSTEM[lda_plus_u]',options.set_lda_plus_u_flag,None)]
                 },
                 'Hubbard_J0': {
                     '$': ('SYSTEM[Hubbard_J0]', options.get_specie_related_values, None),
@@ -554,7 +555,9 @@ class PhononInputConverter(RawInputConverter):
     Convert to/from Fortran input for Phonon.
     """
     PHONON_TEMPLATE_MAP = {
-        'xq': ('qPointsSpecs', cards.get_qpoints_card, None),
+        'xq': {
+         '$': ('qPointsSpecs', cards.get_qpoints_card, None),
+        },
         'scf_ph': {
             'tr2_ph': "INPUTPH[tr2_ph]",
             'niter_ph': "INPUTPH[niter_ph]",
@@ -642,9 +645,9 @@ class PhononInputConverter(RawInputConverter):
         },
         'q_points': {
             'grid': {
-                'nq1': "INPUTPH[nq1]",
-                'nq2': "INPUTPH[nq2]",
-                'nq3': "INPUTPH[nq3]"
+                '@nq1': "INPUTPH[nq1]",
+                '@nq2': "INPUTPH[nq2]",
+                '@nq3': "INPUTPH[nq3]"
             },
             'q_points_list': ('qPointsSpecs', cards.get_qpoints_card, None),
             'nqs': ('qPointsSpecs', cards.get_qpoints_card, None)

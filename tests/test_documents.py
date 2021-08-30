@@ -419,11 +419,11 @@ class TestDocuments(unittest.TestCase):
         document.write(self.output_file, output_format='json')
         with open(self.output_file) as f:
             self.assertEqual(f.read().replace(' ', '').replace('\n', ''),
-                             '{"root":{"node":[null,{"$":"value"},null]}}')
+                             '{"root":{"node":[{"@a":10},"value",null]}}')
 
         document.write(self.output_file, output_format='yaml')
         with open(self.output_file) as f:
-            self.assertEqual(f.read(), 'root:\n  node:\n  - null\n  - $: value\n  - null\n')
+            self.assertEqual(f.read(), "root:\n  node:\n  - '@a': 10\n  - value\n  - null\n")
 
         with self.assertRaises(TypeError):
             with open(self.output_file, mode='w+') as f:
@@ -439,9 +439,9 @@ class TestDocuments(unittest.TestCase):
         document.read(filename)
 
         self.assertEqual(document.to_dict(keep_unknown=True),
-                         {'root': {'node': [None, {'$': 'value'}, None]}})
+                         {'root': {'node': [{"@a":10}, "value", None]}})
         self.assertEqual(document.to_dict(preserve_root=False),
-                         {'node': [None, {'$': 'value'}, None]})
+                         {'node': [{"@a":10}, "value", None]})
 
     def test_to_json_method(self):
         schema = os.path.join(self.test_dir, 'examples/dummy/schema.xsd')
@@ -450,13 +450,13 @@ class TestDocuments(unittest.TestCase):
 
         document.read(filename)
         self.assertEqual(document.to_json().replace(' ', '').replace('\n', ''),
-                         '{"root":{"node":[null,{"$":"value"},null]}}')
+                         '{"root":{"node":[{"@a":10},"value",null]}}')
         self.assertFalse(os.path.isfile(self.output_file))
 
         document.to_json(filename=self.output_file)
         with open(self.output_file) as f:
             self.assertEqual(f.read().replace(' ', '').replace('\n', ''),
-                             '{"root":{"node":[null,{"$":"value"},null]}}')
+                             '{"root":{"node":[{"@a":10},"value",null]}}')
 
         if os.path.isfile(self.output_file):
             os.unlink(self.output_file)
@@ -470,19 +470,19 @@ class TestDocuments(unittest.TestCase):
         document.to_json(filename=self.output_file)
         with open(self.output_file) as f:
             self.assertEqual(f.read().replace(' ', '').replace('\n', ''),
-                             '{"root":{"node":[null,{"$":"value"},null]}}')
+                             '{"root":{"node":[{"@a":10},"value",null]}}')
 
     def test_to_yaml_method(self):
         schema = os.path.join(self.test_dir, 'examples/dummy/schema.xsd')
         filename = os.path.join(self.test_dir, 'examples/dummy/instance.xml')
         document = XmlDocument(filename, schema)
 
-        self.assertEqual(document.to_yaml(), 'root:\n  node:\n  - null\n  - $: value\n  - null\n')
+        self.assertEqual(document.to_yaml(), "root:\n  node:\n  - '@a': 10\n  - value\n  - null\n")
         self.assertFalse(os.path.isfile(self.output_file))
 
         document.to_yaml(filename=self.output_file)
         with open(self.output_file) as f:
-            self.assertEqual(f.read(), 'root:\n  node:\n  - null\n  - $: value\n  - null\n')
+            self.assertEqual(f.read(), "root:\n  node:\n  - '@a': 10\n  - value\n  - null\n")
 
         if os.path.isfile(self.output_file):
             os.unlink(self.output_file)
@@ -495,7 +495,7 @@ class TestDocuments(unittest.TestCase):
 
         document.to_yaml(filename=self.output_file)
         with open(self.output_file) as f:
-            self.assertEqual(f.read(), 'root:\n  node:\n  - null\n  - $: value\n  - null\n')
+            self.assertEqual(f.read(), "root:\n  node:\n  - '@a': 10\n  - value\n  - null\n")
 
     def test_iter_method(self):
         schema = os.path.join(self.test_dir, 'examples/dummy/schema.xsd')
@@ -564,7 +564,7 @@ class TestDocuments(unittest.TestCase):
         self.assertEqual(document.output_path, 'outputPH')
 
     def test_neb_document(self):
-        xml_filename = os.path.join(self.test_dir, 'examples/neb/Al001+H_bc3.xml')
+        xml_filename = os.path.join(self.test_dir, 'examples/neb/Al001_plus_H_bc3.xml')
         document = NebDocument()
 
         document.read(xml_filename)
@@ -574,7 +574,7 @@ class TestDocuments(unittest.TestCase):
         if platform.system() == 'Linux':
             self.assertEqual(document.filename, xml_filename)
         else:
-            self.assertTrue(document.filename.endswith('Al001+H_bc3.xml'))
+            self.assertTrue(document.filename.endswith('Al001_plus_H_bc3.xml'))
 
         self.assertEqual(document.format, 'xml')
         self.assertEqual(document.input_path, 'input')

@@ -126,6 +126,7 @@ def set_ibrav_to_zero(name, **_kwargs):
     return [line]
 
 
+
 def get_system_eamp(name, **kwargs):
     try:
         electric_potential = kwargs['electric_potential']
@@ -289,7 +290,7 @@ def set_lda_plus_u_flag(name, **kwargs):
 
     for value in iter(related_data if isinstance(related_data, list) else [related_data]):
         if value.get('@label') != 'no Hubbard' and value['$'] > 0:
-            lines.append('lda_plus_u = .t.')
+            lines.append(f" {name} = .true.")
             break
     return lines
 
