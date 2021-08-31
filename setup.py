@@ -16,7 +16,7 @@ with open("README.rst") as readme:
 setup(
     name='qeschema',
     version='1.2.0',
-    install_requires=['xmlschema>=1.3.0', 'pyyaml', 'numpy', 'h5py'],
+    install_requires=['xmlschema>=1.3.0', 'pyyaml', 'numpy'],
     packages=['qeschema'],
     package_data={'qeschema': ['schemas/*.xsd']},
     scripts = ['scripts/xml2qeinput.py', 'scripts/yaml2qeinput.py'],
