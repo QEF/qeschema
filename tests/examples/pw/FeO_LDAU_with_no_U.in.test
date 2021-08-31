@@ -72,6 +72,8 @@
  press_conv_thr=0.5
  wmass=3645.777
 /
+&FCP
+/
 ATOMIC_SPECIES
  O1 1.0 O.pz-rrkjus.UPF
  Fe1 1.0 Fe.pz-nd-rrkjus.UPF

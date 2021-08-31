@@ -64,6 +64,8 @@
  press_conv_thr=0.5
  wmass=177802.7
 /
+&FCP
+/
 ATOMIC_SPECIES
  Pt 0.0 Pt.rel-pz-n-rrkjus.UPF
 ATOMIC_POSITIONS bohr

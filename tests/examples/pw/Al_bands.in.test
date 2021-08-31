@@ -61,6 +61,8 @@
  press_conv_thr=0.5
  wmass=24590.77
 /
+&FCP
+/
 ATOMIC_SPECIES
  Al 26.98 Al.pz-vbc.UPF
 ATOMIC_POSITIONS bohr

@@ -487,8 +487,8 @@ class PwInputConverter(RawInputConverter):
                 'w': "SYSTEM[esm_w]",
                 'efield': "SYSTEM[esm_efield]"
             },
-            'fcp_opt': "CONTROL[lfcpopt]",
-            'fcp_mu': "SYSTEM[fcp_mu]"
+            'fcp_opt': "CONTROL[lfcp]",
+            'fcp_mu': "FCP[fcp_mu]"
         },
         'ekin_functional': {
             'ecfixed': "SYSTEM[ecfixed]",
@@ -537,7 +537,7 @@ class PwInputConverter(RawInputConverter):
     def __init__(self, **kwargs):
         super(PwInputConverter, self).__init__(
             *conversion_maps_builder(self.PW_TEMPLATE_MAP),
-            input_namelists=('CONTROL', 'SYSTEM', 'ELECTRONS', 'IONS', 'CELL'),
+            input_namelists=('CONTROL', 'SYSTEM', 'ELECTRONS', 'IONS', 'CELL', 'FCP'),
             input_cards=('ATOMIC_SPECIES', 'ATOMIC_POSITIONS', 'K_POINTS',
                          'CELL_PARAMETERS', 'ATOMIC_FORCES')
         )
@@ -685,7 +685,7 @@ class NebInputConverter(RawInputConverter):
             ],
             'useMassesFlag': "PATH[use_masses]",
             'useFreezingFlag': "PATH[use_freezing]",
-            'constantBiasFlag': "PATH[lfcpopt]",
+            'constantBiasFlag': "PATH[lfcp]",
             'targetFermiEnergy': "PATH[fcp_mu]",
             'totChargeFirst': "PATH[fcp_tot_charge_first]",
             'totChargeLast': "PATH[fcp_tot_charge_last]",

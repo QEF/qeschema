@@ -67,6 +67,8 @@
  press_conv_thr=0.5
  wmass=50901.43
 /
+&FCP
+/
 ATOMIC_SPECIES
  Fe 55.847 Fe.pz-nd-rrkjus.UPF
 ATOMIC_POSITIONS bohr
