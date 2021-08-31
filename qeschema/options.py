@@ -156,8 +156,8 @@ def get_ibrav(name, **kwargs):
     f" B = {abc[1]:9.6f}", 
     f" C = {abc[2]:9.6f}", 
     f" COSAB = {abc[5]:9.6f}",
-    f"COSBC = {abc[3]:9.6f}",
-    f"COSAC = {abc[4]:9.6f}"
+    f" COSBC = {abc[3]:9.6f}",
+    f" COSAC = {abc[4]:9.6f}"
   ]
 
 
