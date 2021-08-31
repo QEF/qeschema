@@ -69,8 +69,6 @@
  press_conv_thr=0.5
  wmass=276227.0
 /
-&FCP
-/
 ATOMIC_SPECIES
  Pb 207.2 Pb.pz-d-van.UPF
  Ti 47.867 Ti.pz-sp-van_ak.UPF

@@ -70,8 +70,6 @@
  press_conv_thr=0.5
  wmass=1822.888
 /
-&FCP
-/
 ATOMIC_SPECIES
  O 1.0 O.pz-rrkjus.UPF
  C 1.0 C.pz-rrkjus.UPF

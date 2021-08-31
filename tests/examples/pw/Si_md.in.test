@@ -69,8 +69,6 @@
  press_conv_thr=0.5
  wmass=204790.6
 /
-&FCP
-/
 ATOMIC_SPECIES
  Si 28.086 Si.pz-vbc.UPF
 ATOMIC_POSITIONS bohr

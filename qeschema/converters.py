@@ -21,6 +21,8 @@ from . import cards, options
 
 logger = logging.getLogger('qeschema')
 
+FCP_NAMELIST = 'FCP'
+
 
 def conversion_maps_builder(template_map):
     """
@@ -240,6 +242,11 @@ class RawInputConverter(Container):
         _input = self._input
         lines = []
         for namelist in self.input_namelists:
+
+            if namelist == FCP_NAMELIST and not len(_input[namelist]):
+                # Skip empty &FCP/ section
+                continue
+
             lines.append('&%s' % namelist)
             for name, value in sorted(_input[namelist].items(), key=lambda x: x[0].lower()):
                 logger.debug("Add input for parameter %s[%r] with value %r", namelist, name, value)
@@ -537,7 +544,8 @@ class PwInputConverter(RawInputConverter):
     def __init__(self, **kwargs):
         super(PwInputConverter, self).__init__(
             *conversion_maps_builder(self.PW_TEMPLATE_MAP),
-            input_namelists=('CONTROL', 'SYSTEM', 'ELECTRONS', 'IONS', 'CELL', 'FCP'),
+            input_namelists=('CONTROL', 'SYSTEM', 'ELECTRONS', 'IONS', 'CELL',
+                             FCP_NAMELIST),
             input_cards=('ATOMIC_SPECIES', 'ATOMIC_POSITIONS', 'K_POINTS',
                          'CELL_PARAMETERS', 'ATOMIC_FORCES')
         )
