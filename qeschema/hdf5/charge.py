@@ -6,7 +6,12 @@
 # http://opensource.org/licenses/MIT.
 #
 import numpy as np
-import h5py
+
+try:
+    import h5py
+except ImportError:
+    h5py = None
+    H5PY_ERR = 'h5py module is missing'
 
 
 def read_charge_file_hdf5(filename):
@@ -17,6 +22,10 @@ def read_charge_file_hdf5(filename):
     :return: a dictionary describing the content of file \
     keys=[nr, ngm_g, gamma_only, rhog_, MillerIndexes]
     """
+
+    if not h5py:
+        raise ImportError(H5PY_ERR)
+
     with h5py.File(filename, "r") as h5f:
         MI = h5f.get('MillerIndices')[:]
         nr1 = 2 * max(abs(MI[:, 0])) + 1

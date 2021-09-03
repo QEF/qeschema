@@ -9,8 +9,13 @@
 A collection of functions for reading different files and quantities.
 """
 import numpy as np
-import h5py
 from xml.etree import ElementTree
+
+try:
+    import h5py
+except ImportError:
+    h5py = None
+    H5PY_ERR = 'h5py module is missing'
 
 
 # TODO update to the new format
@@ -21,6 +26,10 @@ def get_wf_attributes(filename):
     :param filename: the path to the wfc file
     :return: a dictionary with all attributes included reciprocal vectors
     """
+
+    if not h5py:
+        raise ImportError(H5PY_ERR)
+
     with h5py.File(filename, "r") as f:
         res = dict(f.attrs)
         mi_attrs = f.get('MillerIndices').attrs
@@ -40,6 +49,10 @@ def get_wavefunctions(filename, start_band=None, stop_band=None):
     :param stop_band:  last band to read, default last band in the file
     :return: a numpy array with shape [nbnd,npw]
     """
+
+    if not h5py:
+        raise ImportError(H5PY_ERR)
+
     with h5py.File(filename, "r") as f:
         igwx = f.attrs.get('igwx')
         if start_band is None:
@@ -61,6 +74,10 @@ def get_wfc_miller_indices(filename):
     :param filename: path to the wfc file
     :return: a np.array of integers with shape [igwx,3]
     """
+
+    if not h5py:
+        raise ImportError(H5PY_ERR)
+
     with h5py.File(filename, "r") as f:
         res = f.get("MillerIndices")[:, :]
     return res
