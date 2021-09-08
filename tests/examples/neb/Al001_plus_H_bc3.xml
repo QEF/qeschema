@@ -16,6 +16,7 @@
             <elasticConstMin>0.1</elasticConstMin>
             <useMassesFlag>false</useMassesFlag>
             <useFreezingFlag>false</useFreezingFlag>
+            <constantBiasFlag>true</constantBiasFlag>
         </path>
         <engine>
             <control_variables>
