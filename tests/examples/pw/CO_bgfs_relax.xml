@@ -101,6 +101,7 @@
       <ecutrho>
        0.1440000E+03
       </ecutrho>
+      <spline_ps>true</spline_ps>
     </basis>
     <electron_control>
       <diagonalization>davidson</diagonalization>

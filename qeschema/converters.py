@@ -420,7 +420,8 @@ class PwInputConverter(RawInputConverter):
                 'nr1': "SYSTEM[nr1b]",
                 'nr2': "SYSTEM[nr2b]",
                 'nr3': "SYSTEM[nr3b]",
-            }
+            },
+            'spline_ps': "SYSTEM[spline_ps]"
         },
         'electron_control': {
             'diagonalization': "ELECTRONS[diagonalization]",
