@@ -21,7 +21,7 @@ try:
 except ImportError:
     yaml = None
 
-from .namespaces import *
+from .namespaces import XSD_NAMESPACE
 from .converters import RawInputConverter, PwInputConverter, PhononInputConverter, \
     NebInputConverter, TdInputConverter, TdSpectrumInputConverter
 from .exceptions import XmlDocumentError
