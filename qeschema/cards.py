@@ -63,14 +63,18 @@ def get_atomic_positions_cell_card(name, **kwargs):
 
     # Find atoms
     atomic_positions = atomic_structure.get('atomic_positions', {})
+    crystal_positions = atomic_structure.get('crystal_positions', {})
     wyckoff_positions = atomic_structure.get('wyckoff_positions', {})
     try:
-        is_wyckoff = False
+        units = 'bohr'
         if atomic_positions:
             atoms = atomic_positions['atom']
+        elif crystal_positions:
+            atoms = crystal_positions['atom']
+            units = 'crystal'
         elif wyckoff_positions:
             atoms = wyckoff_positions['atom']
-            is_wyckoff = True
+            units = 'crystal_sg'
         else:
             atoms = []
     except KeyError:
@@ -89,7 +93,7 @@ def get_atomic_positions_cell_card(name, **kwargs):
         logger.error("ATOMIC_POSITIONS: incorrect number of position constraints!")
 
     # Add atomic positions
-    lines = ['%s %s' % (name, 'crystal_sg' if is_wyckoff else 'bohr')]
+    lines = ['%s %s' % (name, units)]
     for k in range(len(atoms)):
         try:
             line = '{:4}'.format(atoms[k].get('@name'))
