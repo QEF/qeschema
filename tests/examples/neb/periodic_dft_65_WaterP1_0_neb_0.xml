@@ -1,0 +1,191 @@
+<neb:nebRun xmlns:neb="http://www.quantum-espresso.org/ns/neb"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes-1.0 ../qespresso/scheme/qes_neb.xsd">
+<input>
+<path>
+<stringMethod>neb</stringMethod>
+<restart_mode>from_scratch</restart_mode>
+<pathNstep>50</pathNstep>
+<numOfImages>4</numOfImages>
+<optimizationScheme>broyden</optimizationScheme>
+<climbingImage>no-CI</climbingImage>
+<endImagesOptimizationFlag>false</endImagesOptimizationFlag>
+<minimumImageFlag>true</minimumImageFlag>
+<optimizationStepLength>1.</optimizationStepLength>
+<pathThreshold>1.00000e+01</pathThreshold>
+<elasticConstMax>0.1</elasticConstMax>
+<elasticConstMin>0.1</elasticConstMin>
+<useMassesFlag>false</useMassesFlag>
+<useFreezingFlag>false</useFreezingFlag>
+</path>
+<engine>
+<control_variables>
+<title>periodic_dft_65_WaterP1_0_neb_0</title>
+<calculation>scf</calculation>
+<restart_mode>from_scratch</restart_mode>
+<prefix>periodic_dft_65_WaterP1_0_neb_0</prefix>
+<pseudo_dir>./</pseudo_dir>
+<outdir>./</outdir>
+<stress>false</stress>
+<forces>false</forces>
+<wf_collect>false</wf_collect>
+<disk_io>low</disk_io>
+<max_seconds>10000000</max_seconds>
+<nstep>50</nstep>
+<etot_conv_thr>1.00000e-05</etot_conv_thr>
+<forc_conv_thr>1.00000e-03</forc_conv_thr>
+<press_conv_thr>5.00000e-01</press_conv_thr>
+<verbosity>low</verbosity>
+<print_every>100000</print_every>
+</control_variables>
+<atomic_species ntyp="1">
+<species name="H">
+<mass>1.007940</mass>
+<pseudo_file>h_pbe_v0.4.nc.UPF</pseudo_file>
+<starting_magnetization>0.000000</starting_magnetization>
+</species>
+</atomic_species>
+<atomic_structure nat="3" alat="1.0">
+<crystal_positions>
+<atom name="H" index="1">
+0.619442 0.000000 0.000000
+</atom>
+<atom name="H" index="2">
+0.000000 0.000000 0.000000
+</atom>
+<atom name="H" index="3">
+0.129814 0.000000 0.000000
+</atom>
+</crystal_positions>
+<cell>
+<a1>12.000007 0.000000 0.000000</a1>
+<a2>0.000000 12.000007 0.000000</a2>
+<a3>0.000000 0.000000 12.000007</a3>
+</cell>
+</atomic_structure>
+<atomic_structure nat="3" alat="1.0">
+<crystal_positions>
+<atom name="H" index="1">
+0.456233 0.000000 0.000000
+</atom>
+<atom name="H" index="2">
+0.000000 0.000000 0.000000
+</atom>
+<atom name="H" index="3">
+0.293023 0.000000 0.000000
+</atom>
+</crystal_positions>
+<cell>
+<a1>12.000007 0.000000 0.000000</a1>
+<a2>0.000000 12.000007 0.000000</a2>
+<a3>0.000000 0.000000 12.000007</a3>
+</cell>
+</atomic_structure>
+<atomic_structure nat="3" alat="1.0">
+<crystal_positions>
+<atom name="H" index="1">
+0.293023 0.000000 0.000000
+</atom>
+<atom name="H" index="2">
+0.000000 0.000000 0.000000
+</atom>
+<atom name="H" index="3">
+0.456233 0.000000 0.000000
+</atom>
+</crystal_positions>
+<cell>
+<a1>12.000007 0.000000 0.000000</a1>
+<a2>0.000000 12.000007 0.000000</a2>
+<a3>0.000000 0.000000 12.000007</a3>
+</cell>
+</atomic_structure>
+<atomic_structure nat="3" alat="1.0">
+<crystal_positions>
+<atom name="H" index="1">
+0.129814 0.000000 0.000000
+</atom>
+<atom name="H" index="2">
+0.000000 0.000000 0.000000
+</atom>
+<atom name="H" index="3">
+0.619442 0.000000 0.000000
+</atom>
+</crystal_positions>
+<cell>
+<a1>12.000007 0.000000 0.000000</a1>
+<a2>0.000000 12.000007 0.000000</a2>
+<a3>0.000000 0.000000 12.000007</a3>
+</cell>
+</atomic_structure>
+<dft>
+<functional>PZ</functional>
+</dft>
+<spin>
+<lsda>false</lsda>
+<noncolin>false</noncolin>
+<spinorbit>false</spinorbit>
+</spin>
+<bands>
+<nbnd>12</nbnd>
+<smearing degauss="0.010000">gaussian</smearing>
+<tot_charge>0.000000</tot_charge>
+<tot_magnetization>-1.000000</tot_magnetization>
+<occupations>smearing</occupations>
+</bands>
+<basis>
+<gamma_only>false</gamma_only>
+<ecutwfc>40.000000</ecutwfc>
+<ecutrho>200.000000</ecutrho>
+<spline_ps>false</spline_ps>
+</basis>
+<electron_control>
+<diagonalization>davidson</diagonalization>
+<mixing_mode>plain</mixing_mode>
+<mixing_beta>0.700000</mixing_beta>
+<conv_thr>1.00000e-06</conv_thr>
+<mixing_ndim>8</mixing_ndim>
+<max_nstep>100</max_nstep>
+<real_space_q>false</real_space_q>
+<tq_smoothing>false</tq_smoothing>
+<tbeta_smoothing>false</tbeta_smoothing>
+<diago_thr_init>0.000000</diago_thr_init>
+<diago_full_acc>false</diago_full_acc>
+<diago_cg_maxiter>20</diago_cg_maxiter>
+</electron_control>
+<k_points_IBZ>
+<monkhorst_pack nk1="1" nk2="1" nk3="1" k1="0" k2="0" k3="0">K-point mesh</monkhorst_pack>
+</k_points_IBZ>
+<ion_control>
+<ion_dynamics>bfgs</ion_dynamics>
+<md>
+<pot_extrapolation>atomic</pot_extrapolation>
+<wfc_extrapolation>none</wfc_extrapolation>
+<ion_temperature>rescale-v</ion_temperature>
+<timestep>4.13414e+01</timestep>
+<tempw>3.00000e+02</tempw>
+<tolp>100.</tolp>
+<deltaT>1.00000e+00</deltaT>
+<nraise>1</nraise>
+</md>
+</ion_control>
+<cell_control>
+<cell_dynamics>bfgs</cell_dynamics>
+<pressure>0.000000</pressure>
+<cell_factor>2.000000</cell_factor>
+</cell_control>
+<symmetry_flags>
+<nosym>false</nosym>
+<nosym_evc>false</nosym_evc>
+<noinv>false</noinv>
+<no_t_rev>false</no_t_rev>
+<force_symmorphic>false</force_symmorphic>
+<use_all_frac>false</use_all_frac>
+</symmetry_flags>
+<free_positions rank="2" dims="3 3" order="F">
+0 1 0
+1 1 1
+1 0 1
+</free_positions>
+</engine>
+</input>
+</neb:nebRun>
