@@ -47,6 +47,23 @@ def get_atomic_species_card(name, **kwargs):
     return lines
 
 
+def get_positions_units(item):
+    """
+    Read different type of positions and return them together with units.
+
+    :param item: Data item
+    :return: Atomic positions dict and unit, empty dict and None if not found
+    """
+
+    ptypes = ('atomic_positions', 'crystal_positions', 'wyckoff_positions')
+    units = ('bohr', 'crystal', 'crystal_sg')
+    for ptype, unit in zip(ptypes, units):
+        if ptype in item:
+            return item[ptype], unit
+
+    return {}, None
+
+
 def get_atomic_positions_cell_card(name, **kwargs):
     """
     Convert XML data to ATOMIC_POSITIONS card
@@ -335,9 +352,7 @@ def get_neb_images_positions_card(name, **kwargs):
     lines = ['BEGIN_POSITIONS ', 'FIRST_IMAGE ']
 
     for pos, item in enumerate(images):
-        positions = item.get('atomic_positions',
-                             item.get('crystal_positions',
-                                      item.get('wyckoff_positions', {})))
+        positions, units = get_positions_units(item)
         atoms = positions.get('atom', [])
 
         if pos == 0:
@@ -348,30 +363,33 @@ def get_neb_images_positions_card(name, **kwargs):
             if first_nat != int(item.get('@nat', 0)):
                 logger.error("nat provided in first image differs from number "
                              "of atoms in atomic_positions!!!")
+                return ''
             if free_positions and len(free_positions) != 3 * first_nat:
                 logger.error("ATOMIC_POSITIONS: incorrect number of position constraints!")
+                return ''
         else:
             if len(atoms) != first_nat:
                 logger.error('found images with differing number of atoms !!!')
+                return ''
 
             if pos < len(images) - 1:
                 lines.append('INTERMEDIATE_IMAGE ')
             else:
                 lines.append('LAST_IMAGE ')
 
-        lines.append('ATOMIC_POSITIONS { bohr }')
+        lines.append('ATOMIC_POSITIONS { %s }' % units)
 
-        for k in range(len(atoms)):
-            sp_name = '{:4}'.format(atoms[k]['@name'])
-            coords = '{:12.8f}  {:12.8f}  {:12.8f}'.format(*atoms[k]['$'])
-            if k < len(free_positions):
-                try:
-                    free_pos = '{:4d}{:4d}{:4d}'.format(*free_positions[3 * k:3 * k + 3])
-                except IndexError:
-                    pass
-                else:
-                    if sum(free_positions[3 * k + n] for n in range(3)) < 3:
-                        lines.append('%s %s %s' % (sp_name, coords, free_pos))
+        # reshape to 3x3
+        free_positions_sq = [free_positions[i:i + 3]
+                             for i in range(0, len(free_positions), 3)]
+
+        for k, atom in enumerate(atoms):
+            sp_name = '{:4}'.format(atom['@name'])
+            coords = '{:12.8f}  {:12.8f}  {:12.8f}'.format(*atom['$'])
+
+            if free_positions_sq and sum(free_positions_sq[k]) < 3:
+                free_pos = '{:4d}{:4d}{:4d}'.format(*free_positions_sq[k])
+                lines.append('%s %s %s' % (sp_name, coords, free_pos))
             else:
                 lines.append('%s %s' % (sp_name, coords))
 

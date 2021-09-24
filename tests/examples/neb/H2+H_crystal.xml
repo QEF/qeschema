@@ -164,6 +164,11 @@
                 <force_symmorphic>false</force_symmorphic>
                 <use_all_frac>false</use_all_frac>
             </symmetry_flags>
+            <free_positions rank="2" dims="3 3" order="F">
+                0 1 0
+                1 1 1
+                1 0 1
+            </free_positions>
         </engine>
     </input>
 </neb:nebRun>
