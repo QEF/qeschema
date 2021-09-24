@@ -71,10 +71,13 @@ class TestCardsFunctions(unittest.TestCase):
         self.assertEqual(context.output, ['ERROR:qeschema:Missing required arguments '
                                           'when building ATOMIC_POSITIONS card!'])
 
-        result = get_atomic_positions_cell_card(
-            'ATOMIC_POSITIONS', atomic_structure={'atomic_positions': {}}
-        )
-        self.assertListEqual(result, ['ATOMIC_POSITIONS bohr'])
+        with self.assertLogs(logger, level='ERROR') as context:
+            result = get_atomic_positions_cell_card(
+                'ATOMIC_POSITIONS', atomic_structure={'atomic_positions': {}}
+            )
+        self.assertListEqual(result, [])
+        self.assertEqual(context.output, ['ERROR:qeschema:Cannot find any atoms '
+                                          'for building ATOMIC_POSITIONS!'])
 
         with self.assertLogs(logger, level='ERROR') as context:
             result = get_atomic_positions_cell_card(

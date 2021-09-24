@@ -79,27 +79,15 @@ def get_atomic_positions_cell_card(name, **kwargs):
         return []
 
     # Find atoms
-    atomic_positions = atomic_structure.get('atomic_positions', {})
-    crystal_positions = atomic_structure.get('crystal_positions', {})
-    wyckoff_positions = atomic_structure.get('wyckoff_positions', {})
+    positions, units = get_positions_units(atomic_structure)
     try:
-        units = 'bohr'
-        if atomic_positions:
-            atoms = atomic_positions['atom']
-        elif crystal_positions:
-            atoms = crystal_positions['atom']
-            units = 'crystal'
-        elif wyckoff_positions:
-            atoms = wyckoff_positions['atom']
-            units = 'crystal_sg'
-        else:
-            atoms = []
+        atoms = positions['atom']
     except KeyError:
         logger.error("Cannot find any atoms for building ATOMIC_POSITIONS!")
         return []
-    else:
-        if not isinstance(atoms, list):
-            atoms = [atoms]
+
+    if not isinstance(atoms, list):
+        atoms = [atoms]
 
     # Check atoms with position constraints
     free_positions = kwargs.get('free_positions')
