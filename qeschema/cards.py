@@ -292,6 +292,12 @@ def get_qpoints_card(name, **kwargs):
     return lines
 
 
+def get_nat_todo_card(name, **kwargs):
+    assert kwargs['nat_todo']['@natom'] == len(kwargs['nat_todo']['atom'])
+
+    return [' '.join(map(str, kwargs['nat_todo']['atom']))]
+
+
 def get_climbing_images(name, **kwargs):
     assert isinstance(name, str)
     try:
