@@ -300,9 +300,9 @@ Created by Mauro Palumbo
     <!-- nat_todo -->
     <complexType name="nat_todoType">
         <sequence>
-            <element type="positiveInteger" name="atom" minOccurs="1" maxOccurs="unbounded"/>
+            <element type="positiveInteger" name="atom" minOccurs="0" maxOccurs="unbounded"/>
         </sequence>
-        <attribute type="positiveInteger" name="natom"/>
+        <attribute type="nonNegativeInteger" name="natom"/>
     </complexType>
     <!-- end nat_todo -->
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->  

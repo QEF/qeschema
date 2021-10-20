@@ -293,9 +293,16 @@ def get_qpoints_card(name, **kwargs):
 
 
 def get_nat_todo_card(name, **kwargs):
-    assert kwargs['nat_todo']['@natom'] == len(kwargs['nat_todo']['atom'])
 
-    return [' '.join(map(str, kwargs['nat_todo']['atom']))]
+    natom = kwargs['nat_todo']['@natom']
+    if natom == 0:
+        assert 'atom' not in kwargs['nat_todo']
+        return []
+
+    atoms = kwargs['nat_todo']['atom']
+
+    assert natom == len(atoms)
+    return [' '.join(map(str, atoms))]
 
 
 def get_climbing_images(name, **kwargs):
