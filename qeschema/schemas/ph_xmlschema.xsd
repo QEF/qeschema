@@ -296,7 +296,6 @@ Created by Mauro Palumbo
             </extension>
         </simpleContent>
     </complexType>
-
     <!-- nat_todo -->
     <complexType name="nat_todoType">
         <sequence>
