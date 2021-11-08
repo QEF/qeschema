@@ -6,6 +6,7 @@ BEGIN_PATH_INPUT
  first_last_opt=.false.
  k_max=0.3
  k_min=0.2
+ minimum_image=.false.
  nstep_path=20
  num_of_images=7
  opt_scheme='broyden'

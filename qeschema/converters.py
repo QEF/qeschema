@@ -689,6 +689,7 @@ class NebInputConverter(RawInputConverter):
             'elasticConstMin': "PATH[k_min]",
             'pathThreshold': "PATH[path_thr]",
             'endImagesOptimizationFlag': "PATH[first_last_opt]",
+            'minimumImageFlag': "PATH[minimum_image]",
             'temperature': "PATH[temp_req]",
             'climbingImage': [
                 "PATH[CI_scheme]",
