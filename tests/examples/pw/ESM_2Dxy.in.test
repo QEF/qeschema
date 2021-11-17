@@ -1,0 +1,116 @@
+&CONTROL
+ calculation='relax'
+ disk_io='low'
+ dt=41.3414
+ etot_conv_thr=1e-05
+ forc_conv_thr=0.001
+ input_xml_schema_file='ESM_2Dxy.xml'
+ iprint=100000
+ max_seconds=10000000
+ nstep=2
+ outdir='./'
+ prefix='ESM_2Dxy'
+ pseudo_dir='./'
+ restart_mode='from_scratch'
+ title='ESM_2Dxy'
+ tprnfor=.false.
+ tstress=.false.
+ verbosity='low'
+ wf_collect=.false.
+/
+&SYSTEM
+ assume_isolated='esm'
+ degauss=0.01
+ ecutrho=200.0
+ ecutwfc=40.0
+ esm_bc='bc3'
+ esm_efield=0.0
+ esm_nfit=4
+ esm_w=0.0
+ force_symmorphic=.false.
+ ibrav=0
+ input_dft='PBE'
+ lspinorb=.false.
+ nat=25
+ nbnd=42
+ no_t_rev=.false.
+ noinv=.false.
+ noncolin=.false.
+ nosym=.true.
+ nosym_evc=.false.
+ nspin=1
+ ntyp=2
+ occupations='smearing'
+ smearing='gaussian'
+ spline_ps=.false.
+ starting_magnetization(1)=0.0
+ starting_magnetization(2)=0.0
+ tot_charge=-0.01
+ tot_magnetization=-1.0
+ use_all_frac=.false.
+/
+&ELECTRONS
+ conv_thr=1e-06
+ diago_cg_maxiter=20
+ diago_full_acc=.false.
+ diago_thr_init=0.0
+ diagonalization='davidson'
+ electron_maxstep=10
+ mixing_beta=0.7
+ mixing_mode='plain'
+ mixing_ndim=8
+ tbeta_smoothing=.false.
+ tq_smoothing=.false.
+ tqr=.false.
+/
+&IONS
+ delta_t=1.0
+ ion_dynamics='damp'
+ ion_temperature='rescale-v'
+ nraise=1
+ pot_extrapolation='atomic'
+ tempw=300.0
+ tolp=100.0
+ wfc_extrapolation='none'
+/
+&CELL
+cell_dofree = '2Dxy'
+ cell_dynamics='damp-pr'
+ cell_factor=2.0
+ press=0.0
+ press_conv_thr=0.5
+/
+ATOMIC_SPECIES
+ C 12.0107 c_pbe_v0.4.nc.UPF
+ H 1.00794 h_pbe_v0.4.nc.UPF
+ATOMIC_POSITIONS crystal
+C     -0.29463100    0.19161700   -0.12509200
+C     -0.14272000    0.19161700   -0.12509200
+C     -0.06676400    0.00000000   -0.12509200
+C     -0.14272000   -0.19161700   -0.12509200
+C     -0.29463100   -0.19161700   -0.12509200
+C     -0.37058700    0.00000000   -0.12509200
+C      0.09718900    0.00000000   -0.12509200
+C      0.15184000    0.00000000    0.01633000
+C      0.17715900    0.19161700    0.08184700
+C      0.22779600    0.19161700    0.21288100
+C      0.25311400    0.00000000    0.27839800
+C      0.22779600   -0.19161700    0.21288100
+C      0.17715900   -0.19161700    0.08184700
+H     -0.35376700    0.34080000   -0.12509200
+H     -0.08358500    0.34080000   -0.12509200
+H     -0.08358500   -0.34080000   -0.12509200
+H     -0.35376600   -0.34080000   -0.12509200
+H     -0.48885800    0.00000000   -0.12509200
+H      0.13690200   -0.14168500   -0.17647500
+H      0.13690200    0.14168500   -0.17647500
+H      0.15744700    0.34080000    0.03083800
+H      0.24750800    0.34080000    0.26388900
+H      0.29253800    0.00000000    0.38041500
+H      0.24750800   -0.34080000    0.26388900
+H      0.15744700   -0.34080000    0.03083800
+K_POINTS gamma
+CELL_PARAMETERS bohr
+ 17.28899500   0.00000000   0.00000000 
+  0.00000000  11.87016300   0.00000000 
+  0.00000000   0.00000000  18.89726100 

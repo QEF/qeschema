@@ -210,31 +210,21 @@ def get_control_gdir(name, **kwargs):
 
 def get_cell_dofree(name, **kwargs):
     assert isinstance(name, str)
-    try:
-        fix_volume = kwargs['fix_volume']
-    except KeyError:
-        fix_volume = False
-    try:
-        fix_area = kwargs['fix_area']
-    except KeyError:
-        fix_area = False
-    try:
-        isotropic = kwargs['isotropic']
-    except KeyError:
-        isotropic = False
+    cell_dofree_str = "cell_dofree = '%s'"
+    cell_dofree_all = 'all'
 
-    cell_dofree = "cell_dofree = 'all'"
-    if (fix_volume and fix_area) or (fix_volume and isotropic) or (fix_area and isotropic):
-        logger.error("only one of fix_volume fix_area and isotropic can be true")
-        return [cell_dofree]
+    map_data = {
+        'fix_volume': 'shape',
+        'fix_area': '2Dshape',
+        'fix_xy': '2Dxy',
+        'isotropic': 'volume'
+    }
 
-    if fix_volume:
-        cell_dofree = "cell_dofree = 'shape'"
-    if fix_area:
-        cell_dofree = "cell_dofree = '2Dshape'"
-    if isotropic:
-        cell_dofree = "cell_dofree = 'volume'"
-    return [cell_dofree]
+    for key, val in map_data.items():
+        if kwargs.get(key):
+            return [cell_dofree_str % val]
+
+    return [cell_dofree_str % cell_dofree_all]
 
 
 def neb_set_system_nat(name, **kwargs):
