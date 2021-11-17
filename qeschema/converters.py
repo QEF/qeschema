@@ -22,6 +22,8 @@ from . import cards, options
 logger = logging.getLogger('qeschema')
 
 FCP_NAMELIST = 'FCP'
+PH_NAT_TODO_CARD = 'ph_nat_todo_card'
+OPTIONAL_CARDS = {PH_NAT_TODO_CARD}
 
 
 def conversion_maps_builder(template_map):
@@ -274,14 +276,18 @@ class RawInputConverter(Container):
             logger.debug("Add card: %s" % card)
             card_args = _input[card]
             logger.debug("Card arguments: {0}".format(card_args))
-            if '_get_qe_input' not in card_args or \
-                    not callable(card_args['_get_qe_input']):
+
+            if (card not in OPTIONAL_CARDS and ('_get_qe_input' not in card_args
+                    or not callable(card_args['_get_qe_input']))):
                 logger.error("Missing conversion function for card '%s'" % card)
+
             _get_qe_input = card_args.get('_get_qe_input', None)
+
             if callable(_get_qe_input):
                 lines.extend(_get_qe_input(card, **card_args))
-            else:
+            elif card not in OPTIONAL_CARDS:
                 logger.error('Card conversion function not found!')
+
         return '\n'.join(lines)
 
     def clear_input(self):
@@ -628,7 +634,11 @@ class PhononInputConverter(RawInputConverter):
             'last_q': "INPUTPH[last_q]",
             'start_irr': "INPUTPH[start_irr]",
             'last_irr': "INPUTPH[last_irr]",
-            'nat_todo': "INPUTPH[nat_todo]",
+            'nat_todo':
+            {
+                '@natom': 'INPUTPH[nat_todo]',
+                '$': [(PH_NAT_TODO_CARD, cards.get_nat_todo_card, None)]
+            },
             'modenum': "INPUTPH[modenum]",
             'only_init': "INPUTPH[only_init]",
             'ldiag': "INPUTPH[ldiag]",
@@ -670,7 +680,7 @@ class PhononInputConverter(RawInputConverter):
         super(PhononInputConverter, self).__init__(
             *conversion_maps_builder(self.PHONON_TEMPLATE_MAP),
             input_namelists=('INPUTPH',),
-            input_cards=('qPointsSpecs',)
+            input_cards=('qPointsSpecs', PH_NAT_TODO_CARD)
         )
 
 

@@ -1,0 +1,16 @@
+&INPUTPH
+ epsil=.true.
+ fildyn='nat_todo.dyn'
+ ldisp=.true.
+ lraman=.false.
+ nat_todo=3
+ nq1=2
+ nq2=2
+ nq3=2
+ prefix='nat_todo'
+ tr2_ph=1e-14
+ trans=.true.
+ zeu=.false.
+ zue=.false.
+/
+1 3 5
