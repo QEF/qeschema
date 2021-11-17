@@ -287,6 +287,9 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
     <enumeration value="VDW-DF2-C09"/>
     <enumeration value="VDW-DF2-B86R"/>
     <enumeration value="RVV10"/>
+    <enumeration value="BEEF"/>
+    <enumeration value="SCAN"/>
+    <enumeration value="R2SCAN"/>
     </restriction>
   </simpleType>
 
