@@ -523,6 +523,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
     <enumeration value="davidson"/>
     <enumeration value="cg"/>
     <enumeration value="ppcg"/>
+    <enumeration value="paro"/>
     </restriction>
   </simpleType>
   <complexType name="k_points_IBZType">
