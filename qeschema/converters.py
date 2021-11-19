@@ -392,6 +392,8 @@ class PwInputConverter(RawInputConverter):
                 'london_rcut': 'SYSTEM[london_rcut]',
                 'xdm_a1': 'SYSTEM[xdm_a1]',
                 'xdm_a2': 'SYSTEM[xdm_a2]',
+                'dftd3_version': 'SYSTEM[dftd3_version]',
+                'dftd3_threebody': 'SYSTEM[dftd3_threebody]',
                 'london_c6': {
                     '$': ('SYSTEM[london_c6]', options.get_specie_related_values, None),
                 }

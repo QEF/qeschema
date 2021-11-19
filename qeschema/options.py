@@ -212,6 +212,7 @@ def get_cell_dofree(name, **kwargs):
     assert isinstance(name, str)
     cell_dofree_str = "cell_dofree = '%s'"
     cell_dofree_all = 'all'
+    ret = [cell_dofree_str % cell_dofree_all]
 
     map_data = {
         'fix_volume': 'shape',
@@ -220,11 +221,15 @@ def get_cell_dofree(name, **kwargs):
         'isotropic': 'volume'
     }
 
+    if len(set(kwargs).intersection(map_data)) > 1:
+        logger.error("only one of %s can be true" % ', '.join(map_data))
+        return ret
+
     for key, val in map_data.items():
         if kwargs.get(key):
             return [cell_dofree_str % val]
 
-    return [cell_dofree_str % cell_dofree_all]
+    return ret
 
 
 def neb_set_system_nat(name, **kwargs):

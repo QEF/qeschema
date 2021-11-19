@@ -237,8 +237,9 @@ class TestConversionFunctions(unittest.TestCase):
             result = get_cell_dofree('cell_dofree', fix_volume=True, fix_area=True)
 
         self.assertListEqual(result, ["cell_dofree = 'all'"])
-        self.assertEqual(context.output, ['ERROR:qeschema:only one of fix_volume '
-                                          'fix_area and isotropic can be true'])
+        err = ('ERROR:qeschema:only one of fix_volume, fix_area, fix_xy, '
+               'isotropic can be true')
+        self.assertEqual(context.output, [err])
 
     def test_neb_set_system_nat(self):
         with self.assertLogs(logger, level='ERROR') as context:
