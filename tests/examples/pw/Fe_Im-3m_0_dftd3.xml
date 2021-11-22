@@ -1,0 +1,125 @@
+<qes:espresso xmlns:qes="http://www.quantum-espresso.org/ns/qes/qes-1.0"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes-1.0 ../qespresso/scheme/qes.xsd">
+<input>
+<control_variables>
+<title>Fe_Im-3m_0_dftd3</title>
+<calculation>relax</calculation>
+<restart_mode>from_scratch</restart_mode>
+<prefix>Fe_Im-3m_0_dftd3</prefix>
+<pseudo_dir>./</pseudo_dir>
+<outdir>./</outdir>
+<stress>false</stress>
+<forces>false</forces>
+<wf_collect>false</wf_collect>
+<disk_io>low</disk_io>
+<max_seconds>10000000</max_seconds>
+<nstep>50</nstep>
+<etot_conv_thr>1.00000e-05</etot_conv_thr>
+<forc_conv_thr>1.00000e-03</forc_conv_thr>
+<press_conv_thr>5.00000e-01</press_conv_thr>
+<verbosity>low</verbosity>
+<print_every>100000</print_every>
+</control_variables>
+<atomic_species ntyp="2">
+<species name="Fe">
+<mass>55.845000</mass>
+<pseudo_file>fe_pbe_v1.5.uspp.F.UPF</pseudo_file>
+<starting_magnetization>0.400000</starting_magnetization>
+</species>
+<species name="Fe1">
+<mass>55.845000</mass>
+<pseudo_file>fe_pbe_v1.5.uspp.F.UPF</pseudo_file>
+<starting_magnetization>0.600000</starting_magnetization>
+</species>
+</atomic_species>
+<atomic_structure nat="2" alat="1.0">
+<crystal_positions>
+<atom name="Fe" index="1">
+0.000000 0.000000 0.000000
+</atom>
+<atom name="Fe1" index="2">
+0.500000 0.500000 0.500000
+</atom>
+</crystal_positions>
+<cell>
+<a1>5.406506 0.000000 0.000000</a1>
+<a2>0.000000 5.406506 0.000000</a2>
+<a3>0.000000 0.000000 5.406506</a3>
+</cell>
+</atomic_structure>
+<dft>
+<functional>PBE</functional>
+<vdW>
+<vdw_corr>DFT-D3</vdw_corr>
+<dftd3_version>4</dftd3_version>
+<dftd3_threebody>true</dftd3_threebody>
+</vdW>
+</dft>
+<spin>
+<lsda>true</lsda>
+<noncolin>false</noncolin>
+<spinorbit>false</spinorbit>
+</spin>
+<bands>
+<nbnd>26</nbnd>
+<smearing degauss="0.010000">gaussian</smearing>
+<tot_charge>0.000000</tot_charge>
+<tot_magnetization>-1.000000</tot_magnetization>
+<occupations>smearing</occupations>
+</bands>
+<basis>
+<gamma_only>false</gamma_only>
+<ecutwfc>20.000000</ecutwfc>
+<ecutrho>100.000000</ecutrho>
+<spline_ps>false</spline_ps>
+</basis>
+<electron_control>
+<diagonalization>davidson</diagonalization>
+<mixing_mode>plain</mixing_mode>
+<mixing_beta>0.700000</mixing_beta>
+<conv_thr>1.00000e-06</conv_thr>
+<mixing_ndim>8</mixing_ndim>
+<max_nstep>100</max_nstep>
+<real_space_q>false</real_space_q>
+<tq_smoothing>false</tq_smoothing>
+<tbeta_smoothing>false</tbeta_smoothing>
+<diago_thr_init>0.000000</diago_thr_init>
+<diago_full_acc>false</diago_full_acc>
+<diago_cg_maxiter>20</diago_cg_maxiter>
+</electron_control>
+<k_points_IBZ>
+<monkhorst_pack nk1="2" nk2="2" nk3="2" k1="1" k2="1" k3="1">K-point mesh</monkhorst_pack>
+</k_points_IBZ>
+<ion_control>
+<ion_dynamics>bfgs</ion_dynamics>
+<md>
+<pot_extrapolation>atomic</pot_extrapolation>
+<wfc_extrapolation>none</wfc_extrapolation>
+<ion_temperature>rescale-v</ion_temperature>
+<timestep>4.13414e+01</timestep>
+<tempw>3.00000e+02</tempw>
+<tolp>100.</tolp>
+<deltaT>1.00000e+00</deltaT>
+<nraise>1</nraise>
+</md>
+</ion_control>
+<cell_control>
+<cell_dynamics>bfgs</cell_dynamics>
+<pressure>0.000000</pressure>
+<cell_factor>2.000000</cell_factor>
+</cell_control>
+<symmetry_flags>
+<nosym>false</nosym>
+<nosym_evc>false</nosym_evc>
+<noinv>false</noinv>
+<no_t_rev>false</no_t_rev>
+<force_symmorphic>false</force_symmorphic>
+<use_all_frac>false</use_all_frac>
+</symmetry_flags>
+<free_positions rank="2" dims="3 2" order="F">
+1 1 1
+1 1 1
+</free_positions>
+</input>
+</qes:espresso>
