@@ -20,5 +20,5 @@ __all__ = [
     'XmlDocument', 'QeDocument', 'PwDocument', 'PhononDocument', 'NebDocument',
     'TdDocument', 'TdSpectrumDocument', 'RawInputConverter', 'PwInputConverter',
     'PhononInputConverter', 'TdInputConverter', 'TdSpectrumInputConverter',
-    'QESchemaError', 'XmlDocumentError', 'set_logger'
+    'NebInputConverter', 'QESchemaError', 'XmlDocumentError', 'set_logger'
 ]

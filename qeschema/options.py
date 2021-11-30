@@ -126,7 +126,6 @@ def set_ibrav_to_zero(name, **_kwargs):
     return [line]
 
 
-
 def get_system_eamp(name, **kwargs):
     try:
         electric_potential = kwargs['electric_potential']

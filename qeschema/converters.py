@@ -277,8 +277,9 @@ class RawInputConverter(Container):
             card_args = _input[card]
             logger.debug("Card arguments: {0}".format(card_args))
 
-            if (card not in OPTIONAL_CARDS and ('_get_qe_input' not in card_args
-                    or not callable(card_args['_get_qe_input']))):
+            if card not in OPTIONAL_CARDS and \
+                    ('_get_qe_input' not in card_args or
+                     not callable(card_args['_get_qe_input'])):
                 logger.error("Missing conversion function for card '%s'" % card)
 
             _get_qe_input = card_args.get('_get_qe_input', None)
@@ -365,7 +366,7 @@ class PwInputConverter(RawInputConverter):
                 'lda_plus_u_kind': 'SYSTEM[lda_plus_u_kind]',
                 'Hubbard_U': {
                     '$': [('SYSTEM[Hubbard_U]', options.get_specie_related_values, None),
-                          ('SYSTEM[lda_plus_u]',options.set_lda_plus_u_flag,None)]
+                          ('SYSTEM[lda_plus_u]', options.set_lda_plus_u_flag, None)]
                 },
                 'Hubbard_J0': {
                     '$': ('SYSTEM[Hubbard_J0]', options.get_specie_related_values, None),
