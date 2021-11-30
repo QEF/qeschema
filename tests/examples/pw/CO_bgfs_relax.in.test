@@ -32,6 +32,7 @@
  nspin=1
  ntyp=2
  occupations='fixed'
+ spline_ps=.true.
  starting_magnetization(1)=0.0
  starting_magnetization(2)=0.0
  tot_charge=0.0

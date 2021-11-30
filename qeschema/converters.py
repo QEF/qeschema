@@ -21,6 +21,10 @@ from . import cards, options
 
 logger = logging.getLogger('qeschema')
 
+FCP_NAMELIST = 'FCP'
+PH_NAT_TODO_CARD = 'ph_nat_todo_card'
+OPTIONAL_CARDS = {PH_NAT_TODO_CARD}
+
 
 def conversion_maps_builder(template_map):
     """
@@ -79,7 +83,8 @@ def conversion_maps_builder(template_map):
             if isinstance(item, tuple) or isinstance(item, list):
                 try:
                     variant_map[path_key] = _check_variant(*item)
-                    logger.debug("Added single-variant mapping: '{}'={}".format(path_key, variant_map[path_key]))
+                    logger.debug("Added single-variant mapping: %r=%r",
+                                 path_key, variant_map[path_key])
                 except TypeError:
                     variants = []
                     for variant in item:
@@ -90,7 +95,8 @@ def conversion_maps_builder(template_map):
                         else:
                             raise TypeError("Expect a tuple, list or string! {0}".format(variant))
                     variant_map[path_key] = tuple(variants)
-                    logger.debug("Added multi-variant mapping: '{}'={}".format(path_key, variant_map[path_key]))
+                    logger.debug("Added multi-variant mapping: %r=%r",
+                                 path_key, variant_map[path_key])
 
     invariant_map = BiunivocalMap()
     variant_map = dict()
@@ -116,7 +122,7 @@ class RawInputConverter(Container):
     """
     A Fortran's namelist builder.
     """
-    target_pattern = re.compile(r'(\w+)(?:\[((?:\w+)(?:%\w+)*)\]|)')
+    target_pattern = re.compile(r'(\w+)(?:\[((?:\w+)(?:%\w+)*)]|)')
     """RE pattern to extract Fortran input's namelist/card and name of a parameter"""
 
     def __init__(self, invariant_map, variant_map, input_namelists=None, input_cards=None):
@@ -191,7 +197,7 @@ class RawInputConverter(Container):
         else:
             namelist = name = None
         if name is None:
-            raise ValueError("Wrong value for invariant parameter '{0}'! '{1}'".format(path, target))
+            raise ValueError("Wrong value {!r} for invariant parameter {!r}".format(target, path))
 
         self._input[namelist][name] = to_fortran(value)
         logger.debug("Set {0}[{1}]={2}".format(namelist, name, self._input[namelist][name]))
@@ -238,16 +244,21 @@ class RawInputConverter(Container):
         _input = self._input
         lines = []
         for namelist in self.input_namelists:
+
+            if namelist == FCP_NAMELIST and not len(_input[namelist]):
+                # Skip empty &FCP/ section
+                continue
+
             lines.append('&%s' % namelist)
             for name, value in sorted(_input[namelist].items(), key=lambda x: x[0].lower()):
-                logger.debug("Add input for parameter {}[{}] with value {}".format(namelist, name, value))
+                logger.debug("Add input for parameter %s[%r] with value %r", namelist, name, value)
                 if isinstance(value, dict):
                     # Variant conversion: apply to_fortran_input function with saved arguments
                     try:
                         to_fortran_input = value['_get_qe_input']
                     except KeyError:
                         logger.debug(
-                            'No conversion function for parameter %s[%s], skip ... ' % (namelist, name)
+                            'No conversion function for parameter %s[%r], skip ... ', namelist, name
                         )
                         continue
 
@@ -255,7 +266,7 @@ class RawInputConverter(Container):
                         lines.extend(to_fortran_input(name, **value))
                     else:
                         logger.error(
-                            'Parameter %s[%s] conversion function is not callable!' % (namelist, name)
+                            'Parameter %s[%r] conversion function is not callable!', namelist, name
                         )
                 else:
                     # Simple invariant conversion
@@ -265,14 +276,19 @@ class RawInputConverter(Container):
             logger.debug("Add card: %s" % card)
             card_args = _input[card]
             logger.debug("Card arguments: {0}".format(card_args))
-            if '_get_qe_input' not in card_args or \
-                    not callable(card_args['_get_qe_input']):
+
+            if card not in OPTIONAL_CARDS and \
+                    ('_get_qe_input' not in card_args or
+                     not callable(card_args['_get_qe_input'])):
                 logger.error("Missing conversion function for card '%s'" % card)
+
             _get_qe_input = card_args.get('_get_qe_input', None)
+
             if callable(_get_qe_input):
                 lines.extend(_get_qe_input(card, **card_args))
-            else:
+            elif card not in OPTIONAL_CARDS:
                 logger.error('Card conversion function not found!')
+
         return '\n'.join(lines)
 
     def clear_input(self):
@@ -325,9 +341,11 @@ class PwInputConverter(RawInputConverter):
             '$': [
                 ('SYSTEM[ibrav]', options.set_ibrav_to_zero, None),
                 ("ATOMIC_POSITIONS", cards.get_atomic_positions_cell_card, None),
-                ("CELL_PARAMETERS", cards.get_cell_parameters_card, None)
+                ("CELL_PARAMETERS", cards.get_cell_parameters_card,  None)
             ],
             'atomic_positions': ('ATOMIC_FORCES', cards.get_atomic_forces_card, None),
+            'crystal_positions': ('ATOMIC_FORCES', cards.get_atomic_forces_card, None),
+            'wyckoff_positions': ('ATOMIC_FORCES', cards.get_atomic_forces_card, None)
         },
         'dft': {
             'functional': "SYSTEM[input_dft]",
@@ -347,7 +365,8 @@ class PwInputConverter(RawInputConverter):
             'dftU': {
                 'lda_plus_u_kind': 'SYSTEM[lda_plus_u_kind]',
                 'Hubbard_U': {
-                    '$': ('SYSTEM[Hubbard_U]', options.get_specie_related_values, None),
+                    '$': [('SYSTEM[Hubbard_U]', options.get_specie_related_values, None),
+                          ('SYSTEM[lda_plus_u]', options.set_lda_plus_u_flag, None)]
                 },
                 'Hubbard_J0': {
                     '$': ('SYSTEM[Hubbard_J0]', options.get_specie_related_values, None),
@@ -362,7 +381,7 @@ class PwInputConverter(RawInputConverter):
                     '$': ('SYSTEM[Hubbard_J]', options.get_specie_related_values, None),
                 },
                 'starting_ns': {
-                    '$': ('SYSTEM[starting_ns_eigenvalue]', options.get_specie_related_values, None),
+                    '$': ('SYSTEM[starting_ns_eigenvalue]', options.get_specie_related_values, None)
                 },
                 'U_projection_type': 'SYSTEM[U_projection_type]',
             },
@@ -374,6 +393,8 @@ class PwInputConverter(RawInputConverter):
                 'london_rcut': 'SYSTEM[london_rcut]',
                 'xdm_a1': 'SYSTEM[xdm_a1]',
                 'xdm_a2': 'SYSTEM[xdm_a2]',
+                'dftd3_version': 'SYSTEM[dftd3_version]',
+                'dftd3_threebody': 'SYSTEM[dftd3_threebody]',
                 'london_c6': {
                     '$': ('SYSTEM[london_c6]', options.get_specie_related_values, None),
                 }
@@ -417,7 +438,8 @@ class PwInputConverter(RawInputConverter):
                 'nr1': "SYSTEM[nr1b]",
                 'nr2': "SYSTEM[nr2b]",
                 'nr3': "SYSTEM[nr3b]",
-            }
+            },
+            'spline_ps': "SYSTEM[spline_ps]"
         },
         'electron_control': {
             'diagonalization': "ELECTRONS[diagonalization]",
@@ -466,6 +488,7 @@ class PwInputConverter(RawInputConverter):
             'free_cell': ("CELL_PARAMETERS", cards.get_cell_parameters_card, None),
             'fix_volume': ("CELL[cell_dofree]", options.get_cell_dofree, None),
             'fix_area': ("CELL[cell_dofree]", options.get_cell_dofree, None),
+            'fix_xy': ("CELL[cell_dofree]", options.get_cell_dofree, None),
             'isotropic': ("CELL[cell_dofree]", options.get_cell_dofree, None),
         },
         'symmetry_flags': {
@@ -484,8 +507,8 @@ class PwInputConverter(RawInputConverter):
                 'w': "SYSTEM[esm_w]",
                 'efield': "SYSTEM[esm_efield]"
             },
-            'fcp_opt': "CONTROL[lfcpopt]",
-            'fcp_mu': "SYSTEM[fcp_mu]"
+            'fcp_opt': "CONTROL[lfcp]",
+            'fcp_mu': "FCP[fcp_mu]"
         },
         'ekin_functional': {
             'ecfixed': "SYSTEM[ecfixed]",
@@ -496,7 +519,8 @@ class PwInputConverter(RawInputConverter):
             '$': ('ATOMIC_FORCES', cards.get_atomic_forces_card, None)
         },
         'free_positions': {
-            '$': [("ATOMIC_POSITIONS", cards.get_atomic_positions_cell_card, None), ("CELL_PARAMETERS",)]},
+            '$': [("ATOMIC_POSITIONS", cards.get_atomic_positions_cell_card, None),
+                  ("CELL_PARAMETERS",)]},
         'electric_field': {
             'electric_potential': [
                 ("CONTROL[tefield]", options.get_electric_potential_related),
@@ -533,12 +557,15 @@ class PwInputConverter(RawInputConverter):
     def __init__(self, **kwargs):
         super(PwInputConverter, self).__init__(
             *conversion_maps_builder(self.PW_TEMPLATE_MAP),
-            input_namelists=('CONTROL', 'SYSTEM', 'ELECTRONS', 'IONS', 'CELL'),
+            input_namelists=('CONTROL', 'SYSTEM', 'ELECTRONS', 'IONS', 'CELL',
+                             FCP_NAMELIST),
             input_cards=('ATOMIC_SPECIES', 'ATOMIC_POSITIONS', 'K_POINTS',
                          'CELL_PARAMETERS', 'ATOMIC_FORCES')
         )
         if 'xml_file' in kwargs:
-            self._input['CONTROL']['input_xml_schema_file'] = u'\'{}\''.format(os.path.basename(kwargs['xml_file']))
+            self._input['CONTROL']['input_xml_schema_file'] = "{!r}".format(
+                os.path.basename(kwargs['xml_file'])
+            )
 
     def clear_input(self):
         super(PwInputConverter, self).clear_input()
@@ -549,7 +576,9 @@ class PhononInputConverter(RawInputConverter):
     Convert to/from Fortran input for Phonon.
     """
     PHONON_TEMPLATE_MAP = {
-        'xq': ('qPointsSpecs', cards.get_qpoints_card, None),
+        'xq': {
+         '$': ('qPointsSpecs', cards.get_qpoints_card, None),
+        },
         'scf_ph': {
             'tr2_ph': "INPUTPH[tr2_ph]",
             'niter_ph': "INPUTPH[niter_ph]",
@@ -608,7 +637,11 @@ class PhononInputConverter(RawInputConverter):
             'last_q': "INPUTPH[last_q]",
             'start_irr': "INPUTPH[start_irr]",
             'last_irr': "INPUTPH[last_irr]",
-            'nat_todo': "INPUTPH[nat_todo]",
+            'nat_todo':
+            {
+                '@natom': 'INPUTPH[nat_todo]',
+                '$': [(PH_NAT_TODO_CARD, cards.get_nat_todo_card, None)]
+            },
             'modenum': "INPUTPH[modenum]",
             'only_init': "INPUTPH[only_init]",
             'ldiag': "INPUTPH[ldiag]",
@@ -637,9 +670,9 @@ class PhononInputConverter(RawInputConverter):
         },
         'q_points': {
             'grid': {
-                'nq1': "INPUTPH[nq1]",
-                'nq2': "INPUTPH[nq2]",
-                'nq3': "INPUTPH[nq3]"
+                '@nq1': "INPUTPH[nq1]",
+                '@nq2': "INPUTPH[nq2]",
+                '@nq3': "INPUTPH[nq3]"
             },
             'q_points_list': ('qPointsSpecs', cards.get_qpoints_card, None),
             'nqs': ('qPointsSpecs', cards.get_qpoints_card, None)
@@ -650,7 +683,7 @@ class PhononInputConverter(RawInputConverter):
         super(PhononInputConverter, self).__init__(
             *conversion_maps_builder(self.PHONON_TEMPLATE_MAP),
             input_namelists=('INPUTPH',),
-            input_cards=('qPointsSpecs',)
+            input_cards=('qPointsSpecs', PH_NAT_TODO_CARD)
         )
 
 
@@ -670,6 +703,7 @@ class NebInputConverter(RawInputConverter):
             'elasticConstMin': "PATH[k_min]",
             'pathThreshold': "PATH[path_thr]",
             'endImagesOptimizationFlag': "PATH[first_last_opt]",
+            'minimumImageFlag': "PATH[minimum_image]",
             'temperature': "PATH[temp_req]",
             'climbingImage': [
                 "PATH[CI_scheme]",
@@ -677,7 +711,7 @@ class NebInputConverter(RawInputConverter):
             ],
             'useMassesFlag': "PATH[use_masses]",
             'useFreezingFlag': "PATH[use_freezing]",
-            'constantBiasFlag': "PATH[lfcpopt]",
+            'constantBiasFlag': "PATH[lfcp]",
             'targetFermiEnergy': "PATH[fcp_mu]",
             'totChargeFirst': "PATH[fcp_tot_charge_first]",
             'totChargeLast': "PATH[fcp_tot_charge_last]",
@@ -711,8 +745,9 @@ class NebInputConverter(RawInputConverter):
 
     def get_qe_input(self):
         """
-        Overrides method in RawInputConverter because few lines in between the namelists are requested for
-        the NEB input.
+        Overrides method in RawInputConverter because few lines
+        in between the namelists are requested for the NEB input.
+
         :return: a string containing the text input for NEB calculations
         """
         qe_input = super(NebInputConverter, self).get_qe_input().split('\n')

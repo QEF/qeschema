@@ -6,6 +6,8 @@ BEGIN_PATH_INPUT
  first_last_opt=.false.
  k_max=0.1
  k_min=0.1
+ lfcp=.true.
+ minimum_image=.false.
  nstep_path=50
  opt_scheme='broyden'
  path_thr=0.05

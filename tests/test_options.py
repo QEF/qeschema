@@ -237,8 +237,9 @@ class TestConversionFunctions(unittest.TestCase):
             result = get_cell_dofree('cell_dofree', fix_volume=True, fix_area=True)
 
         self.assertListEqual(result, ["cell_dofree = 'all'"])
-        self.assertEqual(context.output, ['ERROR:qeschema:only one of fix_volume '
-                                          'fix_area and isotropic can be true'])
+        err = ('ERROR:qeschema:only one of fix_volume, fix_area, fix_xy, '
+               'isotropic can be true')
+        self.assertEqual(context.output, [err])
 
     def test_neb_set_system_nat(self):
         with self.assertLogs(logger, level='ERROR') as context:
@@ -279,8 +280,8 @@ class TestConversionFunctions(unittest.TestCase):
                           {'@specie': 'Fe2', '$': 0.3160442}],
         }
 
-        result = set_lda_plus_u_flag('lda_plus', **kwargs)
-        self.assertListEqual(result, ['lda_plus_u = .t.'])
+        result = set_lda_plus_u_flag('lda_plus_u', **kwargs)
+        self.assertListEqual(result, [' lda_plus_u = .true.'])
 
         result = set_lda_plus_u_flag('lda_plus', _related_tag='Hubbard_U', Hubbard_U=[])
         self.assertListEqual(result, [])

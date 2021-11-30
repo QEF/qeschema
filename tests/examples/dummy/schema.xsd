@@ -3,7 +3,15 @@
     <xs:element name="root">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="node" maxOccurs="unbounded" />
+		<xs:element name="node" maxOccurs="unbounded">
+                  <xs:complexType>
+                    <xs:simpleContent>
+                      <xs:extension base="xs:string"> 
+                         <xs:attribute name="a" type="xs:integer"/>
+                      </xs:extension> 
+                    </xs:simpleContent> 
+                  </xs:complexType> 
+		</xs:element>
             </xs:sequence>
         </xs:complexType>
     </xs:element>

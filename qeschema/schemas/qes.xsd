@@ -287,6 +287,9 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
     <enumeration value="VDW-DF2-C09"/>
     <enumeration value="VDW-DF2-B86R"/>
     <enumeration value="RVV10"/>
+    <enumeration value="BEEF"/>
+    <enumeration value="SCAN"/>
+    <enumeration value="R2SCAN"/>
     </restriction>
   </simpleType>
 
@@ -456,6 +459,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
       <element type="qes:basisSetItemType" name="fft_grid" minOccurs="0" />
       <element type="qes:basisSetItemType" name="fft_smooth" minOccurs="0" />
       <element type="qes:basisSetItemType" name="fft_box" minOccurs="0" />
+      <element type="boolean" name="spline_ps" minOccurs="0" maxOccurs="1"/>
     </sequence>
   </complexType>
   <complexType name="basis_setType">
@@ -519,6 +523,7 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
     <enumeration value="davidson"/>
     <enumeration value="cg"/>
     <enumeration value="ppcg"/>
+    <enumeration value="paro"/>
     </restriction>
   </simpleType>
   <complexType name="k_points_IBZType">
@@ -588,9 +593,12 @@ Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
       <element type="double" name="pressure" default="0.0" />
       <element type="double" name="wmass" minOccurs="0" />
       <element type="double" name="cell_factor" minOccurs="0" />
-      <element type="boolean" name="fix_volume" minOccurs="0" />
-      <element type="boolean" name="fix_area"   minOccurs="0" />
-      <element type="boolean" name="isotropic" minOccurs="0" />
+      <choice minOccurs="0" maxOccurs="1">
+        <element type="boolean" name="fix_volume" />
+        <element type="boolean" name="fix_area" />
+        <element type="boolean" name="fix_xy" />
+        <element type="boolean" name="isotropic" />
+      </choice>
       <element type="qes:integerMatrixType" name="free_cell" minOccurs="0" />
     </sequence>
   </complexType>

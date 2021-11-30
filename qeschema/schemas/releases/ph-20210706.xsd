@@ -204,8 +204,9 @@ Created by Mauro Palumbo
             <element type="positiveInteger" name="start_irr" default="1" 
                  minOccurs="0" />     
             <element type="positiveInteger" name="last_irr" default="3"
-                 minOccurs="0" />
-            <element type="qes_ph:nat_todoType" name="nat_todo" minOccurs="0" maxOccurs="1"/>
+                 minOccurs="0" />           
+            <element type="nonNegativeInteger" name="nat_todo" default="0"
+                 minOccurs="0" /> 
             <element type="nonNegativeInteger" name="modenum" default="0" 
                  minOccurs="0" />
             <element type="boolean" name="only_init" default="false" 
@@ -296,14 +297,6 @@ Created by Mauro Palumbo
             </extension>
         </simpleContent>
     </complexType>
-    <!-- nat_todo -->
-    <complexType name="nat_todoType">
-        <sequence>
-            <element type="positiveInteger" name="atom" minOccurs="0" maxOccurs="unbounded"/>
-        </sequence>
-        <attribute type="nonNegativeInteger" name="natom"/>
-    </complexType>
-    <!-- end nat_todo -->
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->  
   <!-- k points, same as in qes schema -->
     <complexType name="k_points_IBZType">

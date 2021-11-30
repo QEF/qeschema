@@ -71,10 +71,13 @@ class TestCardsFunctions(unittest.TestCase):
         self.assertEqual(context.output, ['ERROR:qeschema:Missing required arguments '
                                           'when building ATOMIC_POSITIONS card!'])
 
-        result = get_atomic_positions_cell_card(
-            'ATOMIC_POSITIONS', atomic_structure={'atomic_positions': {}}
-        )
-        self.assertListEqual(result, ['ATOMIC_POSITIONS bohr'])
+        with self.assertLogs(logger, level='ERROR') as context:
+            result = get_atomic_positions_cell_card(
+                'ATOMIC_POSITIONS', atomic_structure={'atomic_positions': {}}
+            )
+        self.assertListEqual(result, [])
+        self.assertEqual(context.output, ['ERROR:qeschema:Cannot find any atoms '
+                                          'for building ATOMIC_POSITIONS!'])
 
         with self.assertLogs(logger, level='ERROR') as context:
             result = get_atomic_positions_cell_card(
@@ -330,13 +333,19 @@ class TestCardsFunctions(unittest.TestCase):
             '@rank': 2, '@dims': [3, 3], '$': [1, 1, 1, 1, 1, 1, 1, 1, 1]
         }
         result = get_neb_images_positions_card('ATOMIC_POSITIONS', **kwargs)
-        self.assertEqual(len(result), 6)
+        self.assertEqual(len(result), 12)
         self.assertListEqual(result, [
             'BEGIN_POSITIONS ',
             'FIRST_IMAGE ',
             'ATOMIC_POSITIONS { bohr }',
+            'H     -4.56670009    0.00000000    0.00000000',
+            'H      0.00000000    0.00000000    0.00000000',
+            'H      1.55776676    0.00000000    0.00000000',
             'LAST_IMAGE ',
             'ATOMIC_POSITIONS { bohr }',
+            'H     -1.55776676    0.00000000    0.00000000',
+            'H      0.00000000    0.00000000    0.00000000',
+            'H      4.56670009    0.00000000    0.00000000',
             'END_POSITIONS '
         ])
         kwargs.pop('free_positions')
@@ -369,24 +378,7 @@ class TestCardsFunctions(unittest.TestCase):
             result = get_neb_images_positions_card('ATOMIC_POSITIONS', **kwargs)
         self.assertEqual(context.output[0],
                          'ERROR:qeschema:found images with differing number of atoms !!!')
-        self.assertEqual(len(result), 15)
-        self.assertListEqual(result, [
-            'BEGIN_POSITIONS ',
-            'FIRST_IMAGE ',
-            'ATOMIC_POSITIONS { bohr }',
-            'H     -4.56670009    0.00000000    0.00000000',
-            'H      0.00000000    0.00000000    0.00000000',
-            'H      1.55776676    0.00000000    0.00000000',
-            'INTERMEDIATE_IMAGE ',
-            'ATOMIC_POSITIONS { bohr }',
-            'H     -1.55776676    0.00000000    0.00000000',
-            'H      0.00000000    0.00000000    0.00000000',
-            'LAST_IMAGE ',
-            'ATOMIC_POSITIONS { bohr }',
-            'H     -1.55776676    0.00000000    0.00000000',
-            'H      0.00000000    0.00000000    0.00000000',
-            'END_POSITIONS '
-        ])
+        self.assertEqual(result, '')
 
         kwargs['atomic_structure'] = kwargs['atomic_structure'][0]
         with self.assertLogs(logger, level='ERROR') as context:
@@ -422,45 +414,16 @@ class TestCardsFunctions(unittest.TestCase):
             result = get_neb_images_positions_card('ATOMIC_POSITIONS', **kwargs)
         self.assertListEqual(context.output, [
             'ERROR:qeschema:nat provided in first image differs from number '
-            'of atoms in atomic_positions!!!',
-            'ERROR:qeschema:found images with differing number of atoms !!!',
-        ])
-        self.assertEqual(len(result), 11)
-        self.assertListEqual(result, [
-            'BEGIN_POSITIONS ',
-            'FIRST_IMAGE ',
-            'ATOMIC_POSITIONS { bohr }',
-            'H     -4.56670009    0.00000000    0.00000000',
-            'H      0.00000000    0.00000000    0.00000000',
-            'LAST_IMAGE ',
-            'ATOMIC_POSITIONS { bohr }',
-            'H     -1.55776676    0.00000000    0.00000000',
-            'H      0.00000000    0.00000000    0.00000000',
-            'H      4.56670009    0.00000000    0.00000000',
-            'END_POSITIONS '
-        ])
+            'of atoms in atomic_positions!!!'])
+        self.assertEqual(result, '')
 
         kwargs['free_positions'] = {'@rank': 1, '@dims': [1], '$': [1]}
         with self.assertLogs(logger, level='ERROR') as context:
             result = get_neb_images_positions_card('ATOMIC_POSITIONS', **kwargs)
         self.assertListEqual(context.output, [
             'ERROR:qeschema:nat provided in first image differs from number '
-            'of atoms in atomic_positions!!!',
-            'ERROR:qeschema:ATOMIC_POSITIONS: incorrect number of position constraints!',
-            'ERROR:qeschema:found images with differing number of atoms !!!'
-        ])
-        self.assertEqual(len(result), 9)
-        self.assertListEqual(result, [
-            'BEGIN_POSITIONS ',
-            'FIRST_IMAGE ',
-            'ATOMIC_POSITIONS { bohr }',
-            'H      0.00000000    0.00000000    0.00000000',
-            'LAST_IMAGE ',
-            'ATOMIC_POSITIONS { bohr }',
-            'H      0.00000000    0.00000000    0.00000000',
-            'H      4.56670009    0.00000000    0.00000000',
-            'END_POSITIONS '
-        ])
+            'of atoms in atomic_positions!!!'])
+        self.assertEqual(result, '')
 
         kwargs['atomic_structure'][0]['atomic_positions']['atom'].clear()
         with self.assertLogs(logger, level='ERROR') as context:
