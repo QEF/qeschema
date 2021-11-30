@@ -10,6 +10,7 @@
 .coverage*
 !.coveragerc
 .*/
+!.github/
 dist/
 build/
 tests/examples/dummy/write_test_file
