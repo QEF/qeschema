@@ -1,6 +1,7 @@
 # Requirements for setup a development environment for the qeschema package.
 setuptools
 tox
+flake8
 coverage
 xmlschema>=1.3.0
 pyyaml
