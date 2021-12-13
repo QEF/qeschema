@@ -15,10 +15,10 @@ with open("README.rst") as readme:
 
 setup(
     name='qeschema',
-    version='1.2.0',
+    version='1.2.1',
     install_requires=['xmlschema>=1.3.0', 'pyyaml', 'numpy'],
     packages=['qeschema'],
-    package_data={'qeschema': ['schemas/*.xsd']},
+    package_data={'qeschema': ['schemas/*.xsd', 'schemas/releases/*.xsd']},
     scripts = ['scripts/xml2qeinput.py', 'scripts/yaml2qeinput.py'],
     url='https://github.com/QEF/qeschema',
     license='MIT',

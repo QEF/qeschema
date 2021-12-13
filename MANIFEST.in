@@ -1,0 +1,13 @@
+include LICENSE
+include MANIFEST.in
+include README.rst
+include setup.py
+include requirements-dev.txt
+include tox.ini
+include docs/*
+recursive-include qeschema *
+include scripts/*
+recursive-include tests *
+
+global-exclude __pycache__
+global-exclude *.py[cod]

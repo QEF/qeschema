@@ -3,6 +3,7 @@
 *~
 *.swp
 *.in
+!MANIFEST.in
 .tox/
 *.egg-info
 .idea/
