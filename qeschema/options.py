@@ -209,15 +209,15 @@ def get_control_gdir(name, **kwargs):
 
 def get_cell_dofree(name, **kwargs):
     assert isinstance(name, str)
-    cell_dofree_str = "cell_dofree = '%s'"
+    cell_dofree_str = " cell_dofree = '%s'"
     cell_dofree_all = 'all'
-    ret = [cell_dofree_str % cell_dofree_all]
-
+    ret = [cell_dofree_str % cell_dofree_all] 
     map_data = {
         'fix_volume': 'shape',
         'fix_area': '2Dshape',
         'fix_xy': '2Dxy',
-        'isotropic': 'volume'
+        'isotropic': 'volume',
+        'cell_do_free': kwargs.get("cell_do_free")
     }
 
     if len(set(kwargs).intersection(map_data)) > 1:

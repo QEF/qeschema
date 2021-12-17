@@ -490,6 +490,7 @@ class PwInputConverter(RawInputConverter):
             'fix_area': ("CELL[cell_dofree]", options.get_cell_dofree, None),
             'fix_xy': ("CELL[cell_dofree]", options.get_cell_dofree, None),
             'isotropic': ("CELL[cell_dofree]", options.get_cell_dofree, None),
+            'cell_do_free': ("CELL[cell_dofree]",options.get_cell_dofree, None),
         },
         'symmetry_flags': {
             'nosym': "SYSTEM[nosym]",
