@@ -14,6 +14,7 @@ import logging
 
 from .exceptions import XmlDocumentError
 from .utils import to_fortran
+from .lattice_utils import lattice
 
 logger = logging.getLogger('qeschema')
 
@@ -123,7 +124,42 @@ def get_system_nspin(name, **kwargs):
 def set_ibrav_to_zero(name, **_kwargs):
     assert isinstance(name, str)
     line = ' ibrav=0'
-    return [line]
+    alat_ = _kwargs['atomic_structure'].get('@alat', None)
+    if alat_:
+        line2 = f" celldm(1) = {alat_:10.6f}"
+        return [line,line2]
+    else:
+        return [line]
+
+
+
+def get_ibrav(name, **kwargs):
+  assert isinstance((name), str)
+  try:
+    atomic_structure =  kwargs['atomic_structure']
+    cell = atomic_structure['cell']
+  except KeyError:
+    logger.error("Missing required arguments when  computing ibrav value")
+    return []
+  bravais_index_ = atomic_structure.get('@bravais_index',None)
+  alternative_axes_=atomic_structure.get('@alternative_axes',None)
+  alat_ = atomic_structure.get('@alat',None)
+  if bravais_index_ is None:
+    return set_ibrav_to_zero(name, **kwargs) 
+  qe_lattice = lattice(vectors=[cell['a1'],cell['a2'],cell['a3']], bravais_index=bravais_index_,
+  alt_axes=alternative_axes_)
+  ibrav_ = qe_lattice.ibrav
+  abc = tuple((round(_,6) for _ in qe_lattice.conventional_abc.values())) 
+  return [
+    f" ibrav = {ibrav_}",
+    f" A = {abc[0]:9.6f}", 
+    f" B = {abc[1]:9.6f}", 
+    f" C = {abc[2]:9.6f}", 
+    f" COSAB = {abc[5]:9.6f}",
+    f" COSBC = {abc[3]:9.6f}",
+    f" COSAC = {abc[4]:9.6f}"
+  ]
+
 
 
 def get_system_eamp(name, **kwargs):
