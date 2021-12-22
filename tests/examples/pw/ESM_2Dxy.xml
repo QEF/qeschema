@@ -1,6 +1,6 @@
 <qes:espresso xmlns:qes="http://www.quantum-espresso.org/ns/qes/qes-1.0"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes-1.0 ../qespresso/scheme/qes.xsd">
+xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes-1.0 ../../../qeschema/schemas/qes.xsd">
 <input>
 <control_variables>
 <title>ESM_2Dxy</title>
@@ -172,7 +172,7 @@ xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes-1.0 ../qespresso/
 <cell_dynamics>damp-pr</cell_dynamics>
 <pressure>0.000000</pressure>
 <cell_factor>2.000000</cell_factor>
-<fix_xy>true</fix_xy>
+<cell_do_free>2Dxy</cell_do_free>
 </cell_control>
 <symmetry_flags>
 <nosym>true</nosym>

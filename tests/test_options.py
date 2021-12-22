@@ -222,23 +222,32 @@ class TestConversionFunctions(unittest.TestCase):
 
     def test_get_cell_dofree(self):
         result = get_cell_dofree('cell_dofree')
-        self.assertListEqual(result, ["cell_dofree = 'all'"])
+        self.assertListEqual(result, [ " cell_dofree = 'all'"])
 
         result = get_cell_dofree('cell_dofree', fix_volume=True)
-        self.assertListEqual(result, ["cell_dofree = 'shape'"])
+        self.assertListEqual(result, [" cell_dofree = 'shape'"])
 
         result = get_cell_dofree('cell_dofree', fix_area=True)
-        self.assertListEqual(result, ["cell_dofree = '2Dshape'"])
+        self.assertListEqual(result, [" cell_dofree = '2Dshape'"])
 
         result = get_cell_dofree('cell_dofree', isotropic=True)
-        self.assertListEqual(result, ["cell_dofree = 'volume'"])
+        self.assertListEqual(result, [" cell_dofree = 'volume'"])
+
+        result = get_cell_dofree('cell_dofree',cell_do_free="ibrav+volume")
+        self.assertListEqual(result, [" cell_dofree = 'ibrav+volume'"])
 
         with self.assertLogs(logger, level='ERROR') as context:
             result = get_cell_dofree('cell_dofree', fix_volume=True, fix_area=True)
 
-        self.assertListEqual(result, ["cell_dofree = 'all'"])
+        self.assertListEqual(result, [" cell_dofree = 'all'"])
         err = ('ERROR:qeschema:only one of fix_volume, fix_area, fix_xy, '
-               'isotropic can be true')
+               'isotropic, cell_do_free can be true')
+        self.assertEqual(context.output, [err])
+
+        with self.assertLogs(logger, level='ERROR' ) as context:
+          result = get_cell_dofree('cell_dofree', fix_volume=True, cell_do_free="volume")
+        err = ('ERROR:qeschema:only one of fix_volume, fix_area, fix_xy, '
+               'isotropic, cell_do_free can be true')
         self.assertEqual(context.output, [err])
 
     def test_neb_set_system_nat(self):

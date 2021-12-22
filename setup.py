@@ -15,7 +15,7 @@ with open("README.rst") as readme:
 
 setup(
     name='qeschema',
-    version='1.2.1',
+    version='1.2.1+devel',
     install_requires=['xmlschema>=1.3.0', 'pyyaml', 'numpy'],
     packages=['qeschema'],
     package_data={'qeschema': ['schemas/*.xsd', 'schemas/releases/*.xsd']},
