@@ -73,14 +73,12 @@ def conversion_maps_builder(template_map):
             path_key = '/'.join((path, key))
             if isinstance(item, dict):
                 _build_maps(item, path_key)
-                continue
 
-            if isinstance(item, str):
+            elif isinstance(item, str):
                 invariant_map[path_key] = item
-                logger.debug("Added one-to-one association: '{0}'='{1}'".format(path_key, item))
-                continue
+                logger.debug("Added one-to-one association: %r=%r", path_key, item)
 
-            if isinstance(item, tuple) or isinstance(item, list):
+            elif isinstance(item, (tuple, list)):
                 try:
                     variant_map[path_key] = _check_variant(*item)
                     logger.debug("Added single-variant mapping: %r=%r",
@@ -90,10 +88,11 @@ def conversion_maps_builder(template_map):
                     for variant in item:
                         if isinstance(variant, str):
                             invariant_map[path_key] = variant
-                        elif isinstance(item, tuple) or isinstance(item, list):
+                        elif isinstance(variant, (tuple, list)):
                             variants.append(_check_variant(*variant))
                         else:
-                            raise TypeError("Expect a tuple, list or string! {0}".format(variant))
+                            raise TypeError(f"Expect a tuple, list or string! {variant!r}")
+
                     variant_map[path_key] = tuple(variants)
                     logger.debug("Added multi-variant mapping: %r=%r",
                                  path_key, variant_map[path_key])
@@ -107,7 +106,7 @@ def conversion_maps_builder(template_map):
     # Check inconsistencies between maps
     for items in variant_map.values():
         for value in items:
-            logger.debug("Check value: {0}".format(value))
+            logger.debug("Check value: %r", value)
             if isinstance(value, str) and value in invariant_map.inverse():
                 raise ValueError("A variant is also in invariant map! "
                                  "'%s': '%s'" % (invariant_map.getkey(value), value))
@@ -163,7 +162,7 @@ class RawInputConverter(Container):
         if len(node_dict) != 1:
             raise ValueError("The node_dict argument must contains exactly "
                              "one element! {0}".format(node_dict))
-        logger.debug("Set input with path '{0}' and node dict '{1}'".format(path, node_dict))
+        logger.debug("Set input with path %r and node dict %r", path, node_dict)
         _path, _, keyword = path.rpartition('/')
         value = node_dict[tag]
         if isinstance(value, dict) and keyword != tag:
@@ -178,7 +177,7 @@ class RawInputConverter(Container):
                     )
 
         if value is None:
-            logger.debug("Skip element '%s': None value!" % path)
+            logger.debug("Skip element %r: None value!", path)
             return
 
         # Set the target parameter if the path is in invariant_map dictionary
@@ -200,7 +199,7 @@ class RawInputConverter(Container):
             raise ValueError("Wrong value {!r} for invariant parameter {!r}".format(target, path))
 
         self._input[namelist][name] = to_fortran(value)
-        logger.debug("Set {0}[{1}]={2}".format(namelist, name, self._input[namelist][name]))
+        logger.debug("Set %s[%s]=%s", namelist, name, self._input[namelist][name])
 
     def add_kwarg(self, path, tag, node_dict):
         if isinstance(self.variant_map[path][0], str):
@@ -208,8 +207,8 @@ class RawInputConverter(Container):
         else:
             target_items = self.variant_map[path]
         for target, _get_qe_input, _ in target_items:
-            logger.debug("Add argument to '{0}'".format(target))
-            logger.debug("Argument's conversion function: {0}".format(_get_qe_input))
+            logger.debug("Add argument to %r", target)
+            logger.debug("Argument's conversion function: %r", _get_qe_input)
             group, name = self.target_pattern.match(target).groups()
             if name is not None:
                 try:
@@ -251,36 +250,37 @@ class RawInputConverter(Container):
 
             lines.append('&%s' % namelist)
             for name, value in sorted(_input[namelist].items(), key=lambda x: x[0].lower()):
-                logger.debug("Add input for parameter %s[%r] with value %r", namelist, name, value)
+                logger.debug("Add input for parameter %s[%r] with value %r",
+                             namelist, name, value)
+
                 if isinstance(value, dict):
                     # Variant conversion: apply to_fortran_input function with saved arguments
                     try:
                         to_fortran_input = value['_get_qe_input']
                     except KeyError:
-                        logger.debug(
-                            'No conversion function for parameter %s[%r], skip ... ', namelist, name
-                        )
+                        logger.debug('No conversion function for parameter %s[%r], skip ... ',
+                                     namelist, name)
                         continue
 
                     if callable(to_fortran_input):
                         lines.extend(to_fortran_input(name, **value))
                     else:
-                        logger.error(
-                            'Parameter %s[%r] conversion function is not callable!', namelist, name
-                        )
+                        logger.error('Parameter %s[%r] conversion function is not callable!',
+                                     namelist, name)
                 else:
                     # Simple invariant conversion
                     lines.append(' {0}={1}'.format(name, value))
             lines.append('/')
+
         for card in self.input_cards:
-            logger.debug("Add card: %s" % card)
+            logger.debug("Add card %r", card)
             card_args = _input[card]
-            logger.debug("Card arguments: {0}".format(card_args))
+            logger.debug("Card arguments: %r", card_args)
 
             if card not in OPTIONAL_CARDS and \
                     ('_get_qe_input' not in card_args or
                      not callable(card_args['_get_qe_input'])):
-                logger.error("Missing conversion function for card '%s'" % card)
+                logger.error("Missing conversion function for card %r", card)
 
             _get_qe_input = card_args.get('_get_qe_input', None)
 
