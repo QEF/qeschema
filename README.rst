@@ -11,7 +11,7 @@ opEn-Source Package for Research in Electronic Structure, Simulation and Optimiz
 Requirements
 ------------
 
-* Python_ 3.6+
+* Python_ 3.7+
 * xmlschema_ (Python library for processing XML Schema based documents)
 
 .. _Python: http://www.python.org/
