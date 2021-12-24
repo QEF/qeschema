@@ -56,6 +56,7 @@ Authors
 Davide Brunato
 Pietro Delugas
 Giovanni Borghi
+Alexandr Fonari
 
 
 License
