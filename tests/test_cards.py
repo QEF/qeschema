@@ -15,7 +15,7 @@ from qeschema.cards import get_atomic_species_card, get_atomic_positions_cell_ca
     get_atomic_constraints_card, get_k_points_card, get_atomic_forces_card, \
     get_cell_parameters_card, get_qpoints_card, get_climbing_images, \
     get_neb_images_positions_card, get_neb_cell_parameters_card, \
-    get_neb_atomic_forces_card
+    get_neb_atomic_forces_card, get_positions_units
 
 logger = logging.getLogger('qeschema')
 
@@ -39,7 +39,28 @@ class TestCardsFunctions(unittest.TestCase):
 
         self.assertListEqual(result, [])
         self.assertEqual(context.output, ["ERROR:qeschema:Missing required arguments when "
-                                          "building ATOMIC_SPECIES card! 'atomic_species'"])
+                                              "building ATOMIC_SPECIES card! 'atomic_species'"])
+
+    def test_get_positions_units(self):
+        item = {
+            '@nat': 2,
+            '@alat': 1.0,
+            'crystal_positions': {'atom': [
+                {'@name': 'Fe', '@index': 1, '$': [0.0, 0.0, 0.0]},
+                {'@name': 'Fe1', '@index': 2, '$': [0.5, 0.5, 0.5]}
+            ]},
+            'cell': {'a1': [5.406506, 0.0, 0.0],
+                     'a2': [0.0, 5.406506, 0.0],
+                     'a3': [0.0, 0.0, 5.406506]}
+        }
+
+        result, unit = get_positions_units(item)
+        self.assertDictEqual(result, item['crystal_positions'])
+        self.assertEqual(unit, 'crystal')
+
+        result, unit = get_positions_units(item={})
+        self.assertDictEqual(result, {})
+        self.assertIsNone(unit)
 
     def test_get_atomic_positions_cell_card(self):
         kwargs = {
@@ -328,6 +349,14 @@ class TestCardsFunctions(unittest.TestCase):
             'H      4.56670009    0.00000000    0.00000000',
             'END_POSITIONS '
         ])
+
+        kwargs['free_positions'] = {
+            '@rank': 2, '@dims': [3, 3], '$': [1, 1]  # Wrong number of free positions
+        }
+        with self.assertLogs(logger, level='ERROR') as ctx:
+            get_neb_images_positions_card('ATOMIC_POSITIONS', **kwargs)
+        self.assertListEqual(ctx.output, ['ERROR:qeschema:ATOMIC_POSITIONS: '
+                                          'incorrect number of position constraints!'])
 
         kwargs['free_positions'] = {
             '@rank': 2, '@dims': [3, 3], '$': [1, 1, 1, 1, 1, 1, 1, 1, 1]

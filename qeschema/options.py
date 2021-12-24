@@ -211,7 +211,7 @@ def get_cell_dofree(name, **kwargs):
     assert isinstance(name, str)
     cell_dofree_str = " cell_dofree = '%s'"
     cell_dofree_all = 'all'
-    ret = [cell_dofree_str % cell_dofree_all] 
+    ret = [cell_dofree_str % cell_dofree_all]
     map_data = {
         'fix_volume': 'shape',
         'fix_area': '2Dshape',

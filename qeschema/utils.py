@@ -48,12 +48,13 @@ def set_logger(loglevel=1, logfile=None):
         lh.setLevel(effective_level)
 
         if effective_level <= logging.DEBUG:
-            formatter = logging.Formatter("[%(levelname)s:%(module)s:%(funcName)s: %(lineno)s] %(message)s")
+            fmt = "[%(levelname)s:%(module)s:%(funcName)s: %(lineno)s] %(message)s"
         elif effective_level <= logging.INFO:
-            formatter = logging.Formatter("[%(levelname)s:%(module)s] %(message)s")
+            fmt = "[%(levelname)s:%(module)s] %(message)s"
         else:
-            formatter = logging.Formatter("%(levelname)s: %(message)s")
+            fmt = "%(levelname)s: %(message)s"
 
+        formatter = logging.Formatter(fmt)
         lh.setFormatter(formatter)
         logger.addHandler(lh)
     else:

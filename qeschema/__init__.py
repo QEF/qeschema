@@ -14,11 +14,11 @@ from .converters import RawInputConverter, PwInputConverter, PhononInputConverte
 from .exceptions import QESchemaError, XmlDocumentError
 from .utils import set_logger
 
-__version__ = '1.2.1'
+__version__ = '1.3.0'
 
 __all__ = [
     'XmlDocument', 'QeDocument', 'PwDocument', 'PhononDocument', 'NebDocument',
     'TdDocument', 'TdSpectrumDocument', 'RawInputConverter', 'PwInputConverter',
     'PhononInputConverter', 'TdInputConverter', 'TdSpectrumInputConverter',
-    'NebInputConverter', 'QESchemaError', 'XmlDocumentError', 'set_logger'
+    'NebInputConverter', 'QESchemaError', 'XmlDocumentError', 'set_logger', 'hdf5'
 ]

@@ -25,7 +25,7 @@ class TestDocuments(unittest.TestCase):
         cls.test_dir = os.path.dirname(os.path.abspath(__file__))
         cls.pkg_folder = os.path.dirname(cls.test_dir)
         cls.schemas_dir = os.path.join(cls.pkg_folder, 'qeschema/schemas')
-        cls.output_file = os.path.join(cls.test_dir, 'examples/dummy/write_test_file')
+        cls.output_file = os.path.join(cls.test_dir, 'resources/dummy/write_test_file')
 
     def setUp(self):
         if os.path.isfile(self.output_file):
@@ -90,7 +90,7 @@ class TestDocuments(unittest.TestCase):
         self.assertIsInstance(PwDocument(), PwDocument)
         self.assertTrue(document.schema.url.endswith("qeschema/schemas/qes.xsd"))
 
-        source = os.path.join(self.test_dir, 'examples/pw/Al001_relax_bfgs.xml')
+        source = os.path.join(self.test_dir, 'resources/pw/Al001_relax_bfgs.xml')
         document = PwDocument(source)
         if platform.system() == 'Linux':
             self.assertEqual(document.filename, source)
@@ -105,7 +105,7 @@ class TestDocuments(unittest.TestCase):
             self.assertTrue(document.filename.endswith('Al001_relax_bfgs.xml'))
         self.assertTrue(document.schema.url.endswith("qeschema/schemas/qes.xsd"))
 
-        source = os.path.join(self.test_dir, 'examples/pw/Al001_rlx_damp.xml')
+        source = os.path.join(self.test_dir, 'resources/pw/Al001_rlx_damp.xml')
         document = PwDocument(source)
         if platform.system() == 'Linux':
             self.assertEqual(document.filename, source)
@@ -138,7 +138,7 @@ class TestDocuments(unittest.TestCase):
         self.assertIsInstance(TdSpectrumDocument(schema=schema), TdSpectrumDocument)
 
     def test_init_from_xml_resource(self):
-        xml_file = os.path.join(self.test_dir, 'examples/pw/CO_bgfs_relax.xml')
+        xml_file = os.path.join(self.test_dir, 'resources/pw/CO_bgfs_relax.xml')
         document = PwDocument(source=XMLResource(xml_file))
         if platform.system() == 'Linux':
             self.assertEqual(document.filename, xml_file)
@@ -213,22 +213,22 @@ class TestDocuments(unittest.TestCase):
 
         schema = os.path.join(self.schemas_dir, 'qes.xsd')
         document = TdSpectrumDocument(schema=schema)
-        document.read(os.path.join(self.test_dir, 'examples/pw/Al001_relax_bfgs.xml'))
+        document.read(os.path.join(self.test_dir, 'resources/pw/Al001_relax_bfgs.xml'))
 
         with self.assertRaises(XmlDocumentError):
             document.get_fortran_input()
 
     def test_read_method(self):
-        schema = os.path.join(self.test_dir, 'examples/dummy/schema.xsd')
+        schema = os.path.join(self.test_dir, 'resources/dummy/schema.xsd')
         document = XmlDocument(schema=schema)
-        filename = os.path.join(self.test_dir, 'examples/dummy/instance.xml')
+        filename = os.path.join(self.test_dir, 'resources/dummy/instance.xml')
 
         with open(filename) as f:
             with self.assertRaises(TypeError):
                 document.read(f)
 
         with self.assertRaises(ValueError):
-            document.read(os.path.join(self.test_dir, 'examples/unknown.xml'))
+            document.read(os.path.join(self.test_dir, 'resources/unknown.xml'))
 
         document.read(filename)
         self.assertTrue(hasattr(document.root, 'tag'))
@@ -238,7 +238,7 @@ class TestDocuments(unittest.TestCase):
         else:
             self.assertTrue(document.filename.endswith('instance.xml'))
 
-        filename = os.path.join(self.test_dir, 'examples/dummy/instance_xml')
+        filename = os.path.join(self.test_dir, 'resources/dummy/instance_xml')
         document.read(filename)
         self.assertTrue(hasattr(document.root, 'tag'))
         self.assertEqual(document.format, 'xml')
@@ -247,7 +247,7 @@ class TestDocuments(unittest.TestCase):
         else:
             self.assertTrue(document.filename.endswith('instance_xml'))
 
-        filename = os.path.join(self.test_dir, 'examples/dummy/instance.json')
+        filename = os.path.join(self.test_dir, 'resources/dummy/instance.json')
         document.read(filename)
         self.assertTrue(hasattr(document.root, 'tag'))
         self.assertEqual(document.root.tag, 'root')
@@ -257,7 +257,7 @@ class TestDocuments(unittest.TestCase):
         else:
             self.assertTrue(document.filename.endswith('instance.json'))
 
-        filename = os.path.join(self.test_dir, 'examples/dummy/instance_json')
+        filename = os.path.join(self.test_dir, 'resources/dummy/instance_json')
         document.read(filename)
         self.assertTrue(hasattr(document.root, 'tag'))
         self.assertEqual(document.root.tag, 'root')
@@ -267,7 +267,7 @@ class TestDocuments(unittest.TestCase):
         else:
             self.assertTrue(document.filename.endswith('instance_json'))
 
-        filename = os.path.join(self.test_dir, 'examples/dummy/instance.yaml')
+        filename = os.path.join(self.test_dir, 'resources/dummy/instance.yaml')
         document.read(filename)
         self.assertTrue(hasattr(document.root, 'tag'))
         self.assertEqual(document.root.tag, 'root')
@@ -277,7 +277,7 @@ class TestDocuments(unittest.TestCase):
         else:
             self.assertTrue(document.filename.endswith('instance.yaml'))
 
-        filename = os.path.join(self.test_dir, 'examples/dummy/instance_yaml')
+        filename = os.path.join(self.test_dir, 'resources/dummy/instance_yaml')
         document.read(filename)
         self.assertTrue(hasattr(document.root, 'tag'))
         self.assertEqual(document.root.tag, 'root')
@@ -287,14 +287,14 @@ class TestDocuments(unittest.TestCase):
         else:
             self.assertTrue(document.filename.endswith('instance_yaml'))
 
-        filename = os.path.join(self.test_dir, 'examples/dummy/instance.csv')
+        filename = os.path.join(self.test_dir, 'resources/dummy/instance.csv')
         with self.assertRaises(ValueError):
             document.read(filename)
 
     def test_from_xml_method(self):
-        schema = os.path.join(self.test_dir, 'examples/dummy/schema.xsd')
+        schema = os.path.join(self.test_dir, 'resources/dummy/schema.xsd')
         document = XmlDocument(schema=schema)
-        filename = os.path.join(self.test_dir, 'examples/dummy/instance.xml')
+        filename = os.path.join(self.test_dir, 'resources/dummy/instance.xml')
 
         document.from_xml(filename)
         self.assertTrue(hasattr(document.root, 'tag'))
@@ -319,8 +319,8 @@ class TestDocuments(unittest.TestCase):
         self.assertEqual(len(document.errors), 1)
 
     def test_from_json_method(self):
-        document = XmlDocument(schema=os.path.join(self.test_dir, 'examples/dummy/schema.xsd'))
-        filename = os.path.join(self.test_dir, 'examples/dummy/instance.json')
+        document = XmlDocument(schema=os.path.join(self.test_dir, 'resources/dummy/schema.xsd'))
+        filename = os.path.join(self.test_dir, 'resources/dummy/instance.json')
 
         document.from_json(filename)
         self.assertTrue(hasattr(document.root, 'tag'))
@@ -340,8 +340,8 @@ class TestDocuments(unittest.TestCase):
         self.assertGreaterEqual(len(document.errors), 1)
 
     def test_from_yaml_method(self):
-        document = XmlDocument(schema=os.path.join(self.test_dir, 'examples/dummy/schema.xsd'))
-        filename = os.path.join(self.test_dir, 'examples/dummy/instance.yaml')
+        document = XmlDocument(schema=os.path.join(self.test_dir, 'resources/dummy/schema.xsd'))
+        filename = os.path.join(self.test_dir, 'resources/dummy/instance.yaml')
 
         document.from_yaml(filename)
         self.assertTrue(hasattr(document.root, 'tag'))
@@ -366,7 +366,7 @@ class TestDocuments(unittest.TestCase):
         self.assertGreaterEqual(len(document.errors), 1)
 
     def test_from_dict_method(self):
-        document = XmlDocument(schema=os.path.join(self.test_dir, 'examples/dummy/schema.xsd'))
+        document = XmlDocument(schema=os.path.join(self.test_dir, 'resources/dummy/schema.xsd'))
 
         document.from_dict({'root': {'node': [None, None, None]}})
         self.assertTrue(hasattr(document.root, 'tag'))
@@ -382,8 +382,8 @@ class TestDocuments(unittest.TestCase):
         self.assertGreaterEqual(len(document.errors), 1)
 
     def test_write_method(self):
-        schema = os.path.join(self.test_dir, 'examples/dummy/schema.xsd')
-        filename = os.path.join(self.test_dir, 'examples/dummy/instance.xml')
+        schema = os.path.join(self.test_dir, 'resources/dummy/schema.xsd')
+        filename = os.path.join(self.test_dir, 'resources/dummy/instance.xml')
         document = XmlDocument(schema=schema)
 
         with self.assertRaises(RuntimeError):
@@ -395,8 +395,8 @@ class TestDocuments(unittest.TestCase):
         self.assertIsInstance(ElementTree.parse(self.output_file), ElementTree.ElementTree)
 
     def test_write_method_from_unbound(self):
-        schema = os.path.join(self.test_dir, 'examples/dummy/schema.xsd')
-        filename = os.path.join(self.test_dir, 'examples/dummy/instance.xml')
+        schema = os.path.join(self.test_dir, 'resources/dummy/schema.xsd')
+        filename = os.path.join(self.test_dir, 'resources/dummy/instance.xml')
 
         with open(filename) as fp:
             xml_data = fp.read()
@@ -412,8 +412,8 @@ class TestDocuments(unittest.TestCase):
             self.assertTrue(document.filename.endswith('write_test_file'))
 
     def test_write_other_formats(self):
-        schema = os.path.join(self.test_dir, 'examples/dummy/schema.xsd')
-        filename = os.path.join(self.test_dir, 'examples/dummy/instance.xml')
+        schema = os.path.join(self.test_dir, 'resources/dummy/schema.xsd')
+        filename = os.path.join(self.test_dir, 'resources/dummy/instance.xml')
 
         document = XmlDocument(filename, schema)
         document.write(self.output_file, output_format='json')
@@ -433,9 +433,9 @@ class TestDocuments(unittest.TestCase):
             document.write(self.output_file, output_format='csv')
 
     def test_to_dict_method(self):
-        schema = os.path.join(self.test_dir, 'examples/dummy/schema.xsd')
+        schema = os.path.join(self.test_dir, 'resources/dummy/schema.xsd')
         document = XmlDocument(schema=schema)
-        filename = os.path.join(self.test_dir, 'examples/dummy/instance.xml')
+        filename = os.path.join(self.test_dir, 'resources/dummy/instance.xml')
         document.read(filename)
 
         self.assertEqual(document.to_dict(keep_unknown=True),
@@ -444,9 +444,9 @@ class TestDocuments(unittest.TestCase):
                          {'node': [{"@a":10}, "value", None]})
 
     def test_to_json_method(self):
-        schema = os.path.join(self.test_dir, 'examples/dummy/schema.xsd')
+        schema = os.path.join(self.test_dir, 'resources/dummy/schema.xsd')
         document = XmlDocument(schema=schema)
-        filename = os.path.join(self.test_dir, 'examples/dummy/instance.xml')
+        filename = os.path.join(self.test_dir, 'resources/dummy/instance.xml')
 
         document.read(filename)
         self.assertEqual(document.to_json().replace(' ', '').replace('\n', ''),
@@ -473,8 +473,8 @@ class TestDocuments(unittest.TestCase):
                              '{"root":{"node":[{"@a":10},"value",null]}}')
 
     def test_to_yaml_method(self):
-        schema = os.path.join(self.test_dir, 'examples/dummy/schema.xsd')
-        filename = os.path.join(self.test_dir, 'examples/dummy/instance.xml')
+        schema = os.path.join(self.test_dir, 'resources/dummy/schema.xsd')
+        filename = os.path.join(self.test_dir, 'resources/dummy/instance.xml')
         document = XmlDocument(filename, schema)
 
         self.assertEqual(document.to_yaml(), "root:\n  node:\n  - '@a': 10\n  - value\n  - null\n")
@@ -498,27 +498,27 @@ class TestDocuments(unittest.TestCase):
             self.assertEqual(f.read(), "root:\n  node:\n  - '@a': 10\n  - value\n  - null\n")
 
     def test_iter_method(self):
-        schema = os.path.join(self.test_dir, 'examples/dummy/schema.xsd')
+        schema = os.path.join(self.test_dir, 'resources/dummy/schema.xsd')
         document = XmlDocument(schema=schema)
-        filename = os.path.join(self.test_dir, 'examples/dummy/instance.xml')
+        filename = os.path.join(self.test_dir, 'resources/dummy/instance.xml')
         document.read(filename)
 
         root = document.root
         self.assertEqual(list(document.iter()), [root, root[0], root[1], root[2]])
 
     def test_find_method(self):
-        schema = os.path.join(self.test_dir, 'examples/dummy/schema.xsd')
+        schema = os.path.join(self.test_dir, 'resources/dummy/schema.xsd')
         document = XmlDocument(schema=schema)
-        filename = os.path.join(self.test_dir, 'examples/dummy/instance.xml')
+        filename = os.path.join(self.test_dir, 'resources/dummy/instance.xml')
         document.read(filename)
 
         self.assertEqual(document.find('.'), document.root)
         self.assertEqual(document.find('/node'), document.root[0])
 
     def test_findall_method(self):
-        schema = os.path.join(self.test_dir, 'examples/dummy/schema.xsd')
+        schema = os.path.join(self.test_dir, 'resources/dummy/schema.xsd')
         document = XmlDocument(schema=schema)
-        filename = os.path.join(self.test_dir, 'examples/dummy/instance.xml')
+        filename = os.path.join(self.test_dir, 'resources/dummy/instance.xml')
         document.read(filename)
 
         self.assertEqual(document.findall('.'), [document.root])
@@ -526,13 +526,28 @@ class TestDocuments(unittest.TestCase):
 
     def test_unsupported_schema(self):
         with self.assertRaises(NotImplementedError):
-            PwDocument(schema=os.path.join(self.test_dir, 'examples/dummy/schema.xsd'))
+            PwDocument(schema=os.path.join(self.test_dir, 'resources/dummy/schema.xsd'))
+
+    def test_incomplete_schema(self):
+        schema_path = os.path.join(self.test_dir, 'resources/dummy/incomplete.xsd')
+        document = PwDocument(schema=schema_path)
+
+        xml_filename = os.path.join(self.test_dir, 'resources/dummy/incomplete.xml')
+        document.read(xml_filename)
+
+        with self.assertRaises(XmlDocumentError) as ctx:
+            document.get_fortran_input()
+        self.assertEqual(str(ctx.exception), "Missing input './input' in XML data!")
+
+        document.root.append(ElementTree.Element('input'))
+        with self.assertRaises(XmlDocumentError) as ctx:
+            document.get_fortran_input()
+        self.assertEqual(str(ctx.exception), "Missing input element in XSD schema!")
 
     def test_pw_document(self):
-        xml_filename = os.path.join(self.test_dir, 'examples/pw/Al001_relax_bfgs.xml')
-        document = PwDocument()
+        xml_filename = os.path.join(self.test_dir, 'resources/pw/Al001_relax_bfgs.xml')
+        document = PwDocument(source=xml_filename)
 
-        document.read(xml_filename)
         self.assertTrue(hasattr(document.root, 'tag'))
         self.assertEqual(document.root.tag,
                          '{http://www.quantum-espresso.org/ns/qes/qes-1.0}espresso')
@@ -546,8 +561,50 @@ class TestDocuments(unittest.TestCase):
         self.assertEqual(document.input_path, 'input')
         self.assertEqual(document.output_path, 'output')
 
+    def test_pw_output_get_forces(self):
+        xml_filename = os.path.join(self.test_dir, 'resources/pw/Si.xml')
+        document = PwDocument(source=xml_filename)
+
+        self.assertIsNone(document.get_forces())
+
+        # TODO: add a case with ./output/forces/ section
+
+    def test_pw_output_get_k_points(self):
+        xml_filename = os.path.join(self.test_dir, 'resources/pw/Ni.xml')
+        document = PwDocument(source=xml_filename)
+
+        k_points = document.get_k_points()
+        expected = [
+            [-0.1666666666666667, 0.1666666666666667, 0.1666666666666667],
+            [0.5, -0.5, 0.8333333333333333],
+            [0.1666666666666667, -0.1666666666666667, 0.5],
+            [-0.1666666666666666, -1.166666666666667, 0.1666666666666666],
+            [-0.4999999999999999, -0.8333333333333334, -0.1666666666666666],
+            [0.5, -0.5, -0.5]
+        ]
+        self.assertListEqual(k_points, expected)
+
+    def test_pw_output_get_ks_eigenvalues(self):
+        xml_filename = os.path.join(self.test_dir, 'resources/pw/Ni.xml')
+        document = PwDocument(source=xml_filename)
+
+        ks_eigenvalues = document.get_ks_eigenvalues()
+
+        self.assertEqual(len(ks_eigenvalues), 6)
+        for row in ks_eigenvalues:
+            self.assertEqual(len(row), 18)
+            for value in row:
+                self.assertIsInstance(value, float)
+
+    def test_pw_output_get_total_energy(self):
+        xml_filename = os.path.join(self.test_dir, 'resources/pw/Ni.xml')
+        document = PwDocument(source=xml_filename)
+
+        total_energy = document.get_total_energy()
+        self.assertEqual(total_energy, -30.44558256272531)
+
     def test_phonon_document(self):
-        xml_filename = os.path.join(self.test_dir, 'examples/ph/al.elph.xml')
+        xml_filename = os.path.join(self.test_dir, 'resources/ph/al.elph.xml')
         document = PhononDocument(xml_filename)
 
         self.assertTrue(hasattr(document.root, 'tag'))
@@ -564,7 +621,7 @@ class TestDocuments(unittest.TestCase):
         self.assertEqual(document.output_path, 'outputPH')
 
     def test_neb_document(self):
-        xml_filename = os.path.join(self.test_dir, 'examples/neb/Al001_plus_H_bc3.xml')
+        xml_filename = os.path.join(self.test_dir, 'resources/neb/Al001_plus_H_bc3.xml')
         document = NebDocument()
 
         document.read(xml_filename)
@@ -581,7 +638,7 @@ class TestDocuments(unittest.TestCase):
         self.assertEqual(document.output_path, 'output')
 
     def test_td_document(self):
-        xml_filename = os.path.join(self.test_dir, 'examples/tddfpt/Ag.tddfpt-eels.xml')
+        xml_filename = os.path.join(self.test_dir, 'resources/tddfpt/Ag.tddfpt-eels.xml')
         document = TdDocument(source=xml_filename)
 
         self.assertTrue(hasattr(document.root, 'tag'))
@@ -598,7 +655,7 @@ class TestDocuments(unittest.TestCase):
         self.assertEqual(document.output_path, 'output')
 
     def test_td_spectrum_document(self):
-        xml_filename = os.path.join(self.test_dir, 'examples/tddfpt/CH4.tddfpt_pp.xml')
+        xml_filename = os.path.join(self.test_dir, 'resources/tddfpt/CH4.tddfpt_pp.xml')
         document = TdSpectrumDocument()
 
         document.read(xml_filename)
@@ -616,7 +673,7 @@ class TestDocuments(unittest.TestCase):
         self.assertEqual(document.output_path, 'output')
 
     def test_fortran_input_generator(self):
-        xml_filename = os.path.join(self.test_dir, 'examples/pw/Al001_relax_bfgs.xml')
+        xml_filename = os.path.join(self.test_dir, 'resources/pw/Al001_relax_bfgs.xml')
         document = PwDocument()
         document.read(xml_filename)
 
@@ -634,23 +691,23 @@ class TestDocuments(unittest.TestCase):
         self.assertEqual(fortran_input, document.get_fortran_input())
 
     def test_pw_get_atomic_positions(self):
-        source = os.path.join(self.test_dir, 'examples/pw/Al001_relax_bfgs.xml')
+        source = os.path.join(self.test_dir, 'resources/pw/Al001_relax_bfgs.xml')
         document = PwDocument(source)
         positions = document.get_atomic_positions()
         self.assertIsNone(positions)
 
-        source = os.path.join(self.test_dir, 'examples/pw/Ni.xml')
+        source = os.path.join(self.test_dir, 'resources/pw/Ni.xml')
         document = PwDocument(source)
         positions = document.get_atomic_positions()
         self.assertEqual(positions, (['Ni'], [[0.0, 0.0, 0.0]]))
 
     def test_pw_get_cell_parameters(self):
-        source = os.path.join(self.test_dir, 'examples/pw/Al001_relax_bfgs.xml')
+        source = os.path.join(self.test_dir, 'resources/pw/Al001_relax_bfgs.xml')
         document = PwDocument(source)
         cells = document.get_cell_parameters()
         self.assertIsNone(cells)
 
-        source = os.path.join(self.test_dir, 'examples/pw/Ni.xml')
+        source = os.path.join(self.test_dir, 'resources/pw/Ni.xml')
         document = PwDocument(source)
         cells = document.get_cell_parameters()
         self.assertListEqual(
@@ -658,12 +715,12 @@ class TestDocuments(unittest.TestCase):
         )
 
     def test_pw_get_stress(self):
-        source = os.path.join(self.test_dir, 'examples/pw/Al001_relax_bfgs.xml')
+        source = os.path.join(self.test_dir, 'resources/pw/Al001_relax_bfgs.xml')
         document = PwDocument(source)
         stress = document.get_stress()
         self.assertIsNone(stress)
 
-        source = os.path.join(self.test_dir, 'examples/pw/Si.xml')
+        source = os.path.join(self.test_dir, 'resources/pw/Si.xml')
         document = PwDocument(source)
         stress = document.get_stress()
         self.assertListEqual(

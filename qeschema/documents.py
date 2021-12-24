@@ -498,7 +498,7 @@ class QeDocument(XmlDocument, metaclass=ABCMeta):
             rel_path = path.replace(input_path, '.')
             xsd_element = schema_root.find(path)
             if xsd_element is None:
-                logger.error("%r doesn't match any element!" % path)
+                logger.error("%r doesn't match any element!", path)
                 continue
             else:
                 value = xsd_element.decode(elem, use_defaults=use_defaults)
@@ -594,6 +594,7 @@ class PwDocument(QeDocument):
         if elem is not None:
             forces = self.schema.find(path).decode(elem)
             path = './/output//atomic_positions'
+            breakpoint()
             atomic_positions = self.schema.find(path).decode(self.find(path))
             atoms = atomic_positions.get('atom', [])
             if not isinstance(atoms, list):
@@ -622,7 +623,15 @@ class PwDocument(QeDocument):
         :return: nested list of KS eigenvalues for each k_point in Hartree Units
         """
         path = './/output//ks_energies/eigenvalues'
-        return [self.schema.find(path).decode(e)['$'] for e in self.findall(path)]
+        eigenvalues = []
+        for e in self.findall(path):
+            obj = self.schema.find(path).decode(e)
+            if isinstance(obj, dict):
+                eigenvalues.append(obj['$'])  # pragma: no cover
+            else:
+                eigenvalues.append(obj)
+
+        return eigenvalues
 
     @requires_xml_data
     def get_total_energy(self):
