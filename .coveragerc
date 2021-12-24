@@ -5,7 +5,8 @@ source = qeschema/
 [report]
 exclude_lines =
     # Exclude not implemented features
-    raise NotImplementedError
+    pragma: no cover
+    raise NotImplementedError()
 
     # Exclude lines where yaml library is not installed
     except ImportError\:

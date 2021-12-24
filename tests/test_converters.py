@@ -65,7 +65,7 @@ class ConverterTestCase(unittest.TestCase):
         cls.pkg_folder = os.path.dirname(cls.test_dir)
 
     def test_xml2qeinput_script(self):
-        xml_filename = os.path.join(self.test_dir, 'examples/pw/Al001_relax_bfgs.xml')
+        xml_filename = os.path.join(self.test_dir, 'resources/pw/Al001_relax_bfgs.xml')
         in_filename = xml_filename[:-4] + '.in'
         py_filename = os.path.join(self.pkg_folder, 'scripts/xml2qeinput.py')
         if os.path.isfile(in_filename):
@@ -85,7 +85,7 @@ class ConverterTestCase(unittest.TestCase):
                             'Test output file %r missing!' % in_filename)
 
     def test_yaml2qeinput_script(self):
-        xml_filename = os.path.join(self.test_dir, 'examples/pw/Al001_relax_bfgs.yml')
+        xml_filename = os.path.join(self.test_dir, 'resources/pw/Al001_relax_bfgs.yml')
         in_filename = xml_filename[:-4] + '.in'
         py_filename = os.path.join(self.pkg_folder, 'scripts/yaml2qeinput.py')
         if os.path.isfile(in_filename):
@@ -110,7 +110,7 @@ class ConverterTestCase(unittest.TestCase):
 #
 test_dir = os.path.dirname(os.path.abspath(__file__))
 
-for filename in glob.glob(os.path.join(test_dir, "examples/*/*.xml")):
+for filename in glob.glob(os.path.join(test_dir, "resources/*/*.xml")):
     qe_input_filename = '%s.in.test' % filename[:-4]
     if not os.path.isfile(qe_input_filename):
         continue
