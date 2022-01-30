@@ -23,7 +23,8 @@ except ImportError:
 
 from .namespaces import XSD_NAMESPACE
 from .converters import RawInputConverter, PwInputConverter, PhononInputConverter, \
-    NebInputConverter, TdInputConverter, TdSpectrumInputConverter
+    NebInputConverter, TdInputConverter, TdSpectrumInputConverter, \
+    XSpectraInputConverter
 from .exceptions import XmlDocumentError
 from .utils import etree_iter_path
 
@@ -699,3 +700,16 @@ class TdSpectrumDocument(QeDocument):
     @property
     def input_path(self):
         return 'spectrumIn'
+
+
+###TODO
+class XSpectraDocument(QeDocument):
+    """
+    Class to manage XSPECTRA XML documents.
+    """
+    DEFAULT_SCHEMA = 'xspectra.xsd'
+    DEFAULT_INPUT_BUILDER = XSpectraInputConverter
+
+    @property
+    def input_path(self):
+        return 'input'
