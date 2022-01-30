@@ -911,10 +911,13 @@ TD_spctInConverter = TdSpectrumInputConverter
 ### TODO
 class XSpectraInputConverter(RawInputConverter):
     """
-    Converts the XML input file described by qes_spectrum scheme in
-    namelist input for turbo_spectrum post-processing tool.
+    Converts the XML input file described by XSPECTRA scheme in
+    namelist input for XSPECTRA post-processing tool.
+    """
     SPEC_TEMPLATE_MAP = {
-        'itermax': 'lr_input[itermax]',
+        'lplus': 'input_spectra[lplus]',
+    }
+    """
         'itermax0': 'lr_input[itermax0]',
         'itermax_actual': 'lr_input[itermax_actual]',
         'extrapolation': 'lr_input[extrapolation]',
@@ -933,11 +936,8 @@ class XSpectraInputConverter(RawInputConverter):
         'eels': ('lr_input[eels]', options.set_boolean_flag, None),
     }
     """
-    SPEC_TEMPLATE_MAP = {
-    }
-
     def __init__(self, **_kwargs):
         super(XSpectraInputConverter, self).__init__(
             *conversion_maps_builder(self.SPEC_TEMPLATE_MAP),
-            input_namelists=['xspectra_input']
+            input_namelists=['input_spectra']
         )

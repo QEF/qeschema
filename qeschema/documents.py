@@ -713,3 +713,5 @@ class XSpectraDocument(QeDocument):
     @property
     def input_path(self):
         return 'input'
+
+    ###TODO Add get_fortran_input() method
