@@ -7,175 +7,95 @@ Authors: Gianfranco Abrusci
 	xmlns:xspectra="http://www.quantum-espresso.org/ns/qes/xspectra"
 	targetNamespace="http://www.quantum-espresso.org/ns/qes/xspectra" version="20220120">
     <element name="xspectra" type="xspectra"/>
-        <complexType name="input_spectra">
-            <sequence>
-                <element name="calculation" type="string"   minOccurs="1" maxOccurs="1"  default=""/>
-                <element name="edge"        type="string"   minOccurs="0" maxOccurs="1"  default="K"/>
-                <element name="lplus"       type="boolean"  minOccurs="0" maxOccurs="1"  default="false"/>
-                <element name="lminus"      type="boolean"  minOccurs="0" maxOccurs="1"  default="false"/>
-                <element name="prefix"      type="string"   minOccurs="0" maxOccurs="1"  default=""/>
-                <element name="outdir"      type="string"   minOccurs="0" maxOccurs="1"  default="./"/>
-                <element name="verbosity"   type="string"   minOccurs="0" maxOccurs="1"  default="low"/>
-                <!-- position within the atomic species: quindi positiveInteger?-->
-                <element name="xiabs"       type="integer"  minOccurs="0" maxOccurs="1"  default="1"/>
-                <!-- this should be a vector-->
-                <element name="xkvec"       type="double"   minOccurs="0" maxOccurs="1"  default="(1.0,0.0,0.0)"/>
-                <!--
-                <element name="xkvec"       type="xspectra:d3vectorType"   minOccurs="0" maxOccurs="1"  default="(1.0,0.0,0.0)"/>
-                <element name="xkvec1"       type="double"   minOccurs="0" maxOccurs="1"  default="1.0"/>
-                <element name="xkvec2"       type="double"   minOccurs="0" maxOccurs="1"  default="0.0"/>
-                <element name="xkvec3"       type="double"   minOccurs="0" maxOccurs="1"  default="0.0"/>
-                -->
-                <!-- problemi con xepsilon(i) / da risolvere come per xkvec-->
-                <!-- check d3vector -->
-                <element name="xepsilon1"   type="double"   minOccurs="0" maxOccurs="1"  default="0.0"/>
-                <element name="xepsilon2"   type="double"   minOccurs="0" maxOccurs="1"  default="0.0"/>
-                <element name="xepsilon3"   type="double"   minOccurs="0" maxOccurs="1"  default="0.0"/>
-                <element name="xcoordcrys"  type="boolean"  minOccurs="0" maxOccurs="1"  default="true"/>
-                <element name="xonly_plot"  type="boolean"  minOccurs="0" maxOccurs="1"  default="false"/>
-                <element name="x_save_file" type="string"   minOccurs="0" maxOccurs="1"  default="xanes.sav"/>
-                <!-- deprecated but still used-->
-                <element name="ef_r"        type="double"   minOccurs="0" maxOccurs="1"  default=""/>
-                <element name="xe0"         type="double"   minOccurs="0" maxOccurs="1"  default="1.d4"/>
-                <element name="xniter"      type="integer"  minOccurs="0" maxOccurs="1"  default="50"/>
-                <element name="xcheck_conv" type="integer"  minOccurs="0" maxOccurs="1"  default="5"/>
-                <element name="xerror"      type="double"   minOccurs="0" maxOccurs="1"  default="0.1"/>
-                <element name="show_status" type="logical"  minOccurs="0" maxOccurs="1"  default="false"/>
-                <element name="U_projection_type" type="string"   minOccurs="0" maxOccurs="1"  default="atomic"/>
-                <element name="time_limit" type="integer"   minOccurs="0" maxOccurs="1"  default="1.d8"/>
-                <element name="restart_mode" type="string"   minOccurs="0" maxOccurs="1"  default="from_scratch"/>
-            </sequence>
-        </complexType>
-
-        <complextype name="plot">
-            <sequence>
-                <element name="calculation" type="string"   minoccurs="1" maxoccurs="1"  default=""/>
-                <element name="edge"        type="string"   minoccurs="0" maxoccurs="1"  default="k"/>
-                <element name="lplus"       type="boolean"  minoccurs="0" maxoccurs="1"  default="false"/>
-        </complextype>
-
-        <complextype name="pseudos">
-            <sequence>
-                <element name="edge"        type="string"   minoccurs="0" maxoccurs="1"  default="k"/>
-                <element name="lplus"       type="boolean"  minoccurs="0" maxoccurs="1"  default="false"/>
-        </complextype>
-
-        <complextype name="cut_occ">
-            <sequence>
-                <element name="calculation" type="string"   minoccurs="1" maxoccurs="1"  default=""/>
-                <element name="edge"        type="string"   minoccurs="0" maxoccurs="1"  default="k"/>
-                <element name="lplus"       type="boolean"  minoccurs="0" maxoccurs="1"  default="false"/>
-        </complextype>
-    </element>
-
-  <simpleType name="d3vectorType">
-    <restriction>
-       <simpleType>
-         <list itemType="double"/>
-       </simpleType>
-       <length value="3"/>
-    </restriction>
-  </simpleType>
-</schema>
-
-<!-- TO REMOVE-->
-    <complexType name="inputType">
+    <complexType name="input_spectra">
         <annotation>
             <documentation>
                 Describes the information contained in the lr_input namelist for the TDDFPT codes
             </documentation>
         </annotation>
         <sequence>
-            <element name="prefix" type="string" minOccurs="0" maxOccurs="1" default="pwscf"/>
-            <element name="restart" type="boolean" minOccurs="0" maxOccurs="1" default="false"/>
-            <element name="restart_step" type="nonNegativeInteger" minOccurs="0" maxOccurs="1"/>
-            <element name="verbosity" type="nonNegativeInteger" minOccurs="0" maxOccurs="1" default="1"/>
-            <element name="disk_io" type="qes_lr:disk_ioType" minOccurs="0" maxOccurs="1" default="default"/>
-            <element name="outdir" type="string" minOccurs="0" maxOccurs="1" default="./"/>
-            <element name="wfcdir" type="string" minOccurs="0" maxOccurs="1"/>
-            <element name="max_seconds" type="positiveInteger" minOccurs="0" maxOccurs="1"/>
+            <element name="calculation" type="string"   minOccurs="1" maxOccurs="1"  default=""/>
+            <element name="edge"        type="string"   minOccurs="0" maxOccurs="1"  default="K"/>
+            <element name="lplus"       type="boolean"  minOccurs="0" maxOccurs="1"  default="false"/>
+            <element name="lminus"      type="boolean"  minOccurs="0" maxOccurs="1"  default="false"/>
+            <element name="prefix"      type="string"   minOccurs="0" maxOccurs="1"  default=""/>
+            <element name="outdir"      type="string"   minOccurs="0" maxOccurs="1"  default="./"/>
+            <element name="verbosity"   type="string"   minOccurs="0" maxOccurs="1"  default="low"/>
+            <!-- position within the atomic species: quindi positiveInteger?-->
+            <element name="xiabs"       type="integer"  minOccurs="0" maxOccurs="1"  default="1"/>
+            <!-- this should be a vector-->
+            <element name="xkvec"       type="double"   minOccurs="0" maxOccurs="1"  default="(1.0,0.0,0.0)"/>
+            <!--
+            <element name="xkvec"       type="xspectra:d3vectorType"   minOccurs="0" maxOccurs="1"  default="(1.0,0.0,0.0)"/>
+            <element name="xkvec1"       type="double"   minOccurs="0" maxOccurs="1"  default="1.0"/>
+            <element name="xkvec2"       type="double"   minOccurs="0" maxOccurs="1"  default="0.0"/>
+            <element name="xkvec3"       type="double"   minOccurs="0" maxOccurs="1"  default="0.0"/>
+            -->
+            <!-- problemi con xepsilon(i) / da risolvere come per xkvec-->
+            <!-- check d3vector -->
+            <element name="xepsilon1"   type="double"   minOccurs="0" maxOccurs="1"  default="0.0"/>
+            <element name="xepsilon2"   type="double"   minOccurs="0" maxOccurs="1"  default="0.0"/>
+            <element name="xepsilon3"   type="double"   minOccurs="0" maxOccurs="1"  default="0.0"/>
+            <element name="xcoordcrys"  type="boolean"  minOccurs="0" maxOccurs="1"  default="true"/>
+            <element name="xonly_plot"  type="boolean"  minOccurs="0" maxOccurs="1"  default="false"/>
+            <element name="x_save_file" type="string"   minOccurs="0" maxOccurs="1"  default="xanes.sav"/>
+            <!-- deprecated but still used-->
+            <element name="ef_r"        type="double"   minOccurs="0" maxOccurs="1"  default=""/>
+            <element name="xe0"         type="double"   minOccurs="0" maxOccurs="1"  default="1.d4"/>
+            <element name="xniter"      type="integer"  minOccurs="0" maxOccurs="1"  default="50"/>
+            <element name="xcheck_conv" type="integer"  minOccurs="0" maxOccurs="1"  default="5"/>
+            <element name="xerror"      type="double"   minOccurs="0" maxOccurs="1"  default="0.1"/>
+            <element name="show_status" type="logical"  minOccurs="0" maxOccurs="1"  default="false"/>
+            <element name="U_projection_type" type="string"   minOccurs="0" maxOccurs="1"  default="atomic"/>
+            <element name="time_limit"  type="integer"   minOccurs="0" maxOccurs="1"  default="1.d8"/>
+            <element name="restart_mode" type="string"   minOccurs="0" maxOccurs="1"  default="from_scratch"/>
         </sequence>
     </complexType>
-    <simpleType name="disk_ioType">
-        <restriction base="string">
-            <enumeration value="reduced"/>
-            <enumeration value="default"/>
+
+    <complextype name="plot">
+        <sequence>
+            <element name="xnepoint"    type="integer"  minoccurs="0" maxoccurs="1"  default="100"/>
+            <element name="xemax"       type="double"   minoccurs="0" maxoccurs="1"  default="10.0"/>
+            <element name="xemin"       type="double"   minoccurs="0" maxoccurs="1"  default="0.0"/>
+            <!-- cut occ states -->
+    </complextype>
+
+
+    <complextype name="pseudos">
+        <sequence>
+            <element name="filecore"    type="string"   minoccurs="0" maxoccurs="1"  default="Core.wfc"/>
+            <!-- how manu r_paw? 2?-->
+            <element name="r_paw"       type="double"  minoccurs="0" maxoccurs="1"  default="1.5*rc"/>
+    </complextype>
+
+    <complextype name="cut_occ">
+        <sequence>
+            <element name="cut_ierror"   type="double"   minoccurs="0" maxoccurs="1"  default="1.d-7"/>
+            <element name="cut_stepu"    type="double"   minoccurs="0" maxoccurs="1"  default="1.d-2"/>
+            <element name="cut_step1"    type="double"   minoccurs="0" maxoccurs="1"  default="1.d-3"/>
+            <element name="cut_startt"   type="double"   minoccurs="0" maxoccurs="1"  default="1.d0"/>
+            <element name="cut_tinf"     type="double"   minoccurs="0" maxoccurs="1"  default="1.d-6"/>
+            <element name="cut_tsup"     type="double"   minoccurs="0" maxoccurs="1"  default="100.d0"/>
+            <element name="cut_desmooth" type="double"   minoccurs="0" maxoccurs="1"  default="1.d-2"/>
+            <element name="cut_nmemu"    type="integer"  minoccurs="0" maxoccurs="1"  default="100000"/>
+            <element name="cut_nmem1"    type="integer"  minoccurs="0" maxoccurs="1"  default="100000"/>
+    </complextype>
+    </element>
+
+    <simpleType name="d3vectorType">
+        <restriction>
+        <simpleType>
+            <list itemType="double"/>
+        </simpleType>
+        <length value="3"/>
         </restriction>
     </simpleType>
-    <complexType name="lanczosType">
-        <sequence>
-            <element type="positiveInteger" name="itermax"/>
-            <element type="positiveInteger" name="n_pol" minOccurs="0" maxOccurs="1" default="1"/>
-            <element type="integer" name = "ipol" minOccurs="0" maxOccurs="1" default="1"/>
-            <element type="boolean" name="ltammd" minOccurs="0" maxOccurs="1"/>
-            <element type="boolean" name="lrpa" minOccurs="0" maxOccurs="1" />
-            <element type="boolean" name="charge_response" minOccurs="0" maxOccurs="1" />
-            <element type="boolean" name="tqr" minOccurs="0" maxOccurs="1"/>
-            <element type="boolean" name="auto_rs" minOccurs="0" maxOccurs="1"/>
-            <element type="boolean" name="no_hxc" minOccurs="0" maxOccurs="1"/>
-            <element type="boolean" name="lproject" minOccurs="0" maxOccurs="1"/>
-            <element type="double" name="scissor" minOccurs="0" maxOccurs="1"/>
-            <element type="double" name="ecutfock" minOccurs="0" maxOccurs="1"/>
-            <element type="boolean" name="pseudo_hermitian" minOccurs="0" maxOccurs="1" />
-            <element type="boolean" name="d0psi_rs" minOccurs="0" maxOccurs="1" />
-            <element type="boolean" name="lshift_d0psi" minOccurs="0" maxOccurs="1" />
-            <element type="double" name="q1" minOccurs="0" maxOccurs="1"/>
-            <element type="double" name="q2" minOccurs="0" maxOccurs="1"/>
-            <element type="double" name="q3" minOccurs="0" maxOccurs="1"/>
-            <element type="qes_lr:eelsApproxType" name="eels_approx" minOccurs="0" maxOccurs="1"/>
-        </sequence>
-    </complexType>
-    <simpleType name="eelsApproxType">
-        <restriction base="string">
-            <enumeration value="TDDFT"/>
-            <enumeration value="IPA"/>
-            <enumeration value="RPA_with_CLFE"/>
+    <simpleType name="d2vectorType">
+        <restriction>
+        <simpleType>
+            <list itemType="double"/>
+        </simpleType>
+        <length value="2"/>
         </restriction>
     </simpleType>
-    <complexType name="postType">
-        <sequence>
-            <element type="double" name="omeg" minOccurs="0" maxOccurs="1"/>
-            <element type="string" name="beta_z_gamma_prefix" minOccurs="0" maxOccurs="1"/>
-            <element type="integer" name="w_T_npol" minOccurs="0" maxOccurs="1"/>
-            <element type="integer" name="plot_type"/>
-            <element type="double" name="epsil"/>
-            <element type="positiveInteger" name="iter_maxint" minOccurs="0" maxOccurs="1"/>
-            <element type="boolean" name="sum_rule" minOccurs="0" maxOccurs="1"/>
-        </sequence>
-    </complexType>
-    <complexType name="davidsonType">
-        <sequence>
-            <element type="integer" name="num_eignv"/>
-            <element type="integer" name="num_init"/>
-            <element type="integer" name="num_basis_max"/>
-            <element type="double" name="res_conv_thr"/>
-            <element type="boolean" name="precondition" minOccurs="0" maxOccurs="1"/>
-            <element type="double" name="reference"/>
-            <element type="boolean" name="single_pole" minOccurs="0" maxOccurs="1"/>
-            <element type="boolean" name="sort_contr" minOccurs="0" maxOccurs="1"/>
-            <element type="boolean" name="diag_of_h" minOccurs="0" maxOccurs="1"/>
-            <element type="boolean" name="close_pre" minOccurs="0" maxOccurs="1" default="false"/>
-            <element type="double" name="broadening" minOccurs="0" maxOccurs="1" default="0.05"/>
-            <element type="boolean" name="print_spectrum" minOccurs="0" maxOccurs="1"/>
-            <element type="double" name="start"/>
-            <element type="double" name="finish"/>
-            <element type="double" name="step"/>
-            <element type="boolean" name="if_check_orth" minOccurs="0" maxOccurs="1"/>
-            <element type="boolean" name="if_random_init" minOccurs="0" maxOccurs="1"/>
-            <element type="boolean" name="if_check_her" minOccurs="0" maxOccurs="1"/>
-            <element type="positiveInteger" name="p_nbnd_occ"/>
-            <element type="positiveInteger" name="p_nbnd_virt"/>
-            <element type="boolean" name="poor_of_ram" minOccurs="0" maxOccurs="1"/>
-            <element type="positiveInteger" name="max_iter" minOccurs="0" maxOccurs="1"/>
-            <element type="double" name="ecutfock" minOccurs="0" maxOccurs="1"/>
-            <element type="boolean" name="conv_assistant" minOccurs="0" maxOccurs="1"/>
-            <element type="boolean" name="if_dft_spectrum" minOccurs="0" maxOccurs="1"/>
-            <element type="boolean" name="no_hxc" minOccurs="0" maxOccurs="1"/>
-            <element type="boolean" name="d0psi_rs" minOccurs="0" maxOccurs="1"/>
-            <element type="boolean" name="lshift_d0psi" minOccurs="0" maxOccurs="1"/>
-            <element type="boolean" name="lplot_drho" minOccurs="0" maxOccurs="1"/>
-            <element type="double" name = "vccouple_shift" minOccurs="0" maxOccurs="1"/>
-            <element type="boolean" name="ltammd" minOccurs="0" maxOccurs="1"/>
-        </sequence>
-    </complexType>
 </schema>
