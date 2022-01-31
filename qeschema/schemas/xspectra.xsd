@@ -18,7 +18,7 @@ Authors: Gianfranco Abrusci
             <element name="edge"        type="string"   minOccurs="0" maxOccurs="1"  default="K"/>
             <element name="lplus"       type="boolean"  minOccurs="0" maxOccurs="1"  default="false"/>
             <element name="lminus"      type="boolean"  minOccurs="0" maxOccurs="1"  default="false"/>
-            <element name="prefix"      type="string"   minOccurs="0" maxOccurs="1"  default=""/>
+            <element name="prefix"      type="string"   minOccurs="1" maxOccurs="1"  default=""/>
             <element name="outdir"      type="string"   minOccurs="0" maxOccurs="1"  default="./"/>
             <element name="verbosity"   type="string"   minOccurs="0" maxOccurs="1"  default="low"/>
             <!-- position within the atomic species: quindi positiveInteger?-->
@@ -80,6 +80,8 @@ Authors: Gianfranco Abrusci
             <element name="cut_nmemu"    type="integer"  minoccurs="0" maxoccurs="1"  default="100000"/>
             <element name="cut_nmem1"    type="integer"  minoccurs="0" maxoccurs="1"  default="100000"/>
     </complextype>
+    <!-- Insert 3 positive integers and 3 integers that can be 0 or 1 -->
+    <!-- 40 40 40 0 0 0 -->
     </element>
 
     <simpleType name="d3vectorType">
