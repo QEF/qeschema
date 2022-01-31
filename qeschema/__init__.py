@@ -14,7 +14,7 @@ from .converters import RawInputConverter, PwInputConverter, PhononInputConverte
 from .exceptions import QESchemaError, XmlDocumentError
 from .utils import set_logger
 
-__version__ = '1.3.0'
+__version__ = '1.3.0a1'
 
 __all__ = [
     'XmlDocument', 'QeDocument', 'PwDocument', 'PhononDocument', 'NebDocument',
