@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<qes_xspectra:xspectra xmlns:qes_xspectra="http://www.quantum-espresso.org/ns/qes/xspectra"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes-1.0 xspectra_short.xsd">
+    <input>
+      <input_xspectra>
+        <calculation>xanes_dipole</calculation>
+        <edge>L2</edge>
+      </input_xspectra>
+      <plot>
+        <xnepoint>100</xnepoint>
+      </plot>
+      <pseudos>
+        <filecore>Core.wfc</filecore>
+      </pseudos>
+      <cut_occ>
+      </cut_occ>
+      <kpoints>
+        <tmp_kpoint>0 0 0</tmp_kpoint>
+      </kpoints>
+  </input> 
+</qes_xspectra:xspectra>
