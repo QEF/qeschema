@@ -9,43 +9,39 @@ Authors: Gianfranco Abrusci
     <element name="xspectra" type="qes_xspectra:xspectra"/>
     <complexType name="input">
         <sequence>
-            <element name="input_xspectra" type="qes_xspectra:input_xspectra"/>
+            <element name="input_xspectra" type="qes_xspectra:input_xspectra" />
             <element name="plot" type="qes_xspectra:plot"/>
             <element name="pseudos" type="qes_xspectra:pseudos"/>
             <element name="cut_occ" type="qes_xspectra:cut_occ"/>
             <element name="kpoints" type="qes_xspectra:kpoints"/>
         </sequence>
     </complexType>
-    <complexType name="input_xspectra" type="qes_xspectra:input_xspectra">
-        <annotation>
-            <documentation>
-            Short version of the input file for the XSpectra code. 
-            </documentation>
-        </annotation>
+
+    <complexType name="input_xspectra" >
         <sequence>
             <element name="calculation" type="string"   minOccurs="1" maxOccurs="1"  default=""/>
             <element name="edge"        type="string"   minOccurs="0" maxOccurs="1"  default="K"/>
         </sequence>
     </complexType>
 
-    <complextype name="plot">
+    <complexType name="plot">
         <sequence>
-            <element name="xnepoint"    type="integer"  minoccurs="0" maxoccurs="1"  default="100"/>
+            <element name="xnepoint"    type="integer"  minOccurs="0" maxOccurs="1"  default="100"/>
         </sequence>
-    </complextype>
+    </complexType>
 
 
-    <complextype name="pseudos">
+    <complexType name="pseudos">
         <sequence>
-            <element name="filecore"    type="string"   minoccurs="0" maxoccurs="1"  default="Core.wfc"/>
+            <element name="filecore"    type="string"   minOccurs="0" maxOccurs="1"  default="Core.wfc"/>
         </sequence>
-    </complextype>
+    </complexType>
 
-    <complextype name="cut_occ">
+    <complexType name="cut_occ">
         <sequence>
-            <element name="cut_ierror"   type="double"   minoccurs="0" maxoccurs="1"  default="1.d-7"/>
+            <element name="cut_ierror"   type="double"   minOccurs="0" maxOccurs="1"  default="1.d-7"/>
         </sequence>
-    </complextype>
+    </complexType>
     <complexType name="kpoints">
         <sequence>
             <element name="tmp_kpoint" type="string" minOccurs="1" maxOccurs="1"/>
