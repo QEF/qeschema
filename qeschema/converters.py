@@ -917,16 +917,58 @@ class XSpectraInputConverter(RawInputConverter):
     namelist input for XSPECTRA post-processing tool.
     """
     XSPECTRA_TEMPLATE_MAP = {
-        'input_xspectra': { 'calculation': 'input_xspectra[calculation]',
-                            'edge' : 'input_xspectra[edge]',
-                            'lplus': 'input_xspectra[lplus]'
+        'input_xspectra': { 'calculation'   : 'input_xspectra[calculation]',
+                            'verbosity'     : 'input_xspectra[verbosity]',
+                            'prefix'        : 'input_xspectra[prefix]',
+                            'outdir'        : 'input_xspectra[outdir]',
+                            'xiabs'         : 'input_xspectra[xiabs]',
+                            # xkvec, xepsilon
+                            'xcoordcrys'    : 'input_xspectra[xcoordcrys]',
+                            'ef_r'          : 'input_xspectra[ef_r]',
+                            'xe0'           : 'input_xspectra[xe0]',
+                            'xonly_pot'     : 'input_xspectra[xonly_pot]',
+                            'xread_wf'      : 'input_xspectra[xread_wf]',
+                            'x_save_file'   : 'input_xspectra[x_save_file]',
+                            'xniter'        : 'input_xspectra[xniter]',
+                            'xerror'        : 'input_xspectra[xerror]',
+                            'xcheck_conv'   : 'input_xspectra[xcheck_conv]',
+                            'show_status'   : 'input_xspectra[show_status]',
+                            'nelup'         : 'input_xspectra[nelup]',
+                            'neldw'         : 'input_xspectra[neldw]',
+                            'U_projection_type': 'input_xspectra[U_projection_type]',
+                            'time_limit'    : 'input_xspectra[time_limit]',
+                            'restart_mode'  : 'input_xspectra[restart_mode]',
+                            'edge'          : 'input_xspectra[edge]',
+                            'lplus'         : 'input_xspectra[lplus]',
+                            'lminus'        : 'input_xspectra[lminus]',
             },
-        'plot': { 'xnepoint': 'plot[xnepoint]', 
+        'plot'          : { 'xnepoint'      : 'plot[xnepoint]',
+                            'xgamma'        : 'plot[xgamma]',
+                            'xemax'         : 'plot[xemax]',
+                            'xemin'         : 'plot[xemin]',
+                            'cut_occ_states': 'plot[cut_occ_states]',
+                            'terminator'    : 'plot[terminator]',
+                            'gamma_mode'    : 'plot[gamma_mode]',
+                            'gamma_file'    : 'plot[gamma_file]',
+                            'gamma_energy'  : 'plot[gamma_energy]',
+                            'gamma_value'   : 'plot[gamma_value]',
+                            'xanes_file'    : 'plot[xanes_file]',
         },
-        'pseudos': { 'filecore': 'pseudos[filecore]',
+        'pseudos'       : { 'filecore'      : 'pseudos[filecore]',
+                            'filerecon'     : 'pseudos[filerecon]',
+                            # rpaw
         },
-        'cut_occ': { 'cut_ierror': 'cut_occ[cut_ierror]',
+        'cut_occ'       : { 'cut_ierror'    : 'cut_occ[cut_ierror]',
+                            'cut_stepu'     : 'cut_occ[cut_stepu]',
+                            'cut_stepl'     : 'cut_occ[cut_stepl]',
+                            'cut_startt'    : 'cut_occ[cut_startt]',
+                            'cut_tinf'      : 'cut_occ[cut_tinf]',
+                            'cut_tsup'      : 'cut_occ[cut_tsup]',
+                            'cut_desmooth'  : 'cut_occ[cut_desmooth]',
+                            'cut_nmemu'     : 'cut_occ[cut_nmemu]',
+                            'cut_nmeml'     : 'cut_occ[cut_nmeml]',
         }
+        # TODO: add kpoints
     }
 
     def __init__(self, **_kwargs):
@@ -934,4 +976,7 @@ class XSpectraInputConverter(RawInputConverter):
             *conversion_maps_builder(self.XSPECTRA_TEMPLATE_MAP),
             input_namelists=('input_xspectra', 'plot', 'pseudos', 'cut_occ')
         )
+        print("WARNING: missing kpoints")
+        print("WARNING: missing rpaw")
+        print("WARNING: missing ")
         

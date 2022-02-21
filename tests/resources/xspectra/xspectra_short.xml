@@ -5,16 +5,62 @@
 	       <input>	       
       <input_xspectra>
         <calculation>xanes_dipole</calculation>
+        <verbosity>high</verbosity>
+        <prefix>$TMP_DIR/</prefix>
+        <outdir>bubu</outdir>
+        <xiabs>1</xiabs>
+        <!--xkvec-->
+        <!--xepsilon-->
+        <x_save_file>xanes.sav</x_save_file>
+        <xniter>50</xniter>
+        <xcheck_conv>5</xcheck_conv>
+        <xonly_plot>false</xonly_plot>
+        <xread_wf>false</xread_wf>
+        <xerror>1.e-10</xerror>
+        <ef_r>0.45</ef_r>
+        <xe0>0.0</xe0>
+        <xcoordcrys>true</xcoordcrys>
+        <show_status>false</show_status>
+        <U_projection_type>atomic</U_projection_type>
+        <restart_mode>from_scratch</restart_mode>
+        <time_limit>1.e8</time_limit>
         <edge>L2</edge>
-        <lplus>true</lplus>
+        <lplus>false</lplus>
+        <lminus>false</lminus>
+        <nelup>1</nelup>
+        <neldw>1</neldw>
+        <!-- 23 elements without the two vectors-->
       </input_xspectra>
       <plot>
-        <xnepoint>100</xnepoint>
+        <xnepoint>200</xnepoint>
+        <xgamma>0.1e0</xgamma>
+        <xemax>10.e0</xemax>
+        <xemin>0.e0</xemin>
+        <cut_occ_states>false</cut_occ_states>
+        <terminator>false</terminator>
+        <gamma_mode>constant</gamma_mode>
+        <gamma_file>gamma.dat</gamma_file>
+        <xanes_file>xanes.dat</xanes_file>
+        <gamma_value>10.e0</gamma_value>
+        <gamma_energy>0.e0</gamma_energy>
+        <!-- 11 elements-->
       </plot>
       <pseudos>
         <filecore>Core.wfc</filecore>
+        <filerecon>bubu</filerecon>
+        <!-- missing r_paw-->
       </pseudos>
       <cut_occ>
+        <cut_ierror>1.e-10</cut_ierror>
+        <cut_stepu>1.e-4</cut_stepu>
+        <cut_stepl>1.e-4</cut_stepl>
+        <cut_startt>1.e-0</cut_startt>
+        <cut_tinf>1.e-6</cut_tinf>
+        <cut_tsup>100.e0</cut_tsup>
+        <cut_desmooth>1.e-4</cut_desmooth>
+        <cut_nmemu>10000</cut_nmemu>
+        <cut_nmeml>10000</cut_nmeml>
+        <!-- 9 elements-->
       </cut_occ>
       <kpoints>
         <tmp_kpoint>0 0 0</tmp_kpoint>

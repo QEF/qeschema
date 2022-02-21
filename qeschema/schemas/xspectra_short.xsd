@@ -15,42 +15,93 @@
             </documentation>
         </annotation>
         <sequence>
-            <element name="input_xspectra" type="qes_xspectra:input_xspectraType" minOccurs="1"/>
-            <element name="plot" type="qes_xspectra:plotType"/>
-            <element name="pseudos" type="qes_xspectra:pseudosType"/>
-            <element name="cut_occ" type="qes_xspectra:cut_occType"/>
-            <element name="kpoints" type="qes_xspectra:kpointsType"/>
+            <element name="input_xspectra" type="qes_xspectra:input_xspectraType" minOccurs="0" maxOccurs="1"/>
+            <element name="plot" type="qes_xspectra:plotType"         minOccurs="0" maxOccurs="1"/>
+            <element name="pseudos" type="qes_xspectra:pseudosType"   minOccurs="0" maxOccurs="1"/>
+            <element name="cut_occ" type="qes_xspectra:cut_occType"   minOccurs="0" maxOccurs="1"/>
+            <element name="kpoints" type="qes_xspectra:kpointsType"   minOccurs="1" maxOccurs="1"/>
         </sequence>
     </complexType>
     
     <complexType name="input_xspectraType" >
-        <sequence>
-            <element name="calculation" type="string"   minOccurs="1" maxOccurs="1"  default=""/>
-            <element name="edge"        type="string"   minOccurs="0" maxOccurs="1"  default="K"/>
-            <element name="lplus"       type="boolean"   minOccurs="0" maxOccurs="1"  default="true"/>
-        </sequence>
+        <all>
+            <element name="calculation"  type="string"   minOccurs="0" maxOccurs="1" />
+            <element name="verbosity"    type="string"   minOccurs="0" maxOccurs="1" />
+            <element name="prefix"       type="string"   minOccurs="1" maxOccurs="1" />
+            <element name="outdir"       type="string"   minOccurs="0" maxOccurs="1" />
+            <element name="xiabs"        type="integer"  minOccurs="0" maxOccurs="1" />
+            <!-- this is a vector so it is read as xkvec(1), 2, 3
+            <element name="xkvec"        type="double"   minOccurs="0" maxOccurs="1" />
+            <element name="xepsilon"     type="double"   minOccurs="0" maxOccurs="1" />
+            -->
+            <element name="xcoordcrys"   type="boolean"  minOccurs="0" maxOccurs="1" />
+            <element name="ef_r"         type="double"   minOccurs="0" maxOccurs="1" />
+            <element name="xe0"          type="double"   minOccurs="0" maxOccurs="1" />
+            <element name="xonly_plot"   type="boolean"  minOccurs="0" maxOccurs="1" />
+            <element name="xread_wf"     type="boolean"  minOccurs="0" maxOccurs="1" />
+            <element name="x_save_file"  type="string"   minOccurs="0" maxOccurs="1" />
+            <element name="xniter"       type="positiveInteger"   minOccurs="0" maxOccurs="1" />
+            <element name="xerror"       type="double"   minOccurs="0" maxOccurs="1" />
+            <element name="xcheck_conv"  type="positiveInteger"  minOccurs="0" maxOccurs="1" />
+            <element name="show_status"  type="boolean"  minOccurs="0" maxOccurs="1" />
+            <element name="nelup"        type="integer"  minOccurs="0" maxOccurs="1" />
+            <element name="neldw"        type="integer"  minOccurs="0" maxOccurs="1" />
+            <element name="U_projection_type" type="string" minOccurs="0" maxOccurs="1" />
+            <element name="time_limit"   type="double"   minOccurs="0" maxOccurs="1" />
+            <element name="restart_mode" type="string"   minOccurs="0" maxOccurs="1" />
+            <element name="edge"         type="string"   minOccurs="0" maxOccurs="1" />
+            <element name="lplus"        type="boolean"  minOccurs="0" maxOccurs="1" />
+            <element name="lminus"       type="boolean"  minOccurs="0" maxOccurs="1" />
+        </all>
     </complexType>
 
     <complexType name="plotType">
-        <sequence>
-            <element name="xnepoint"    type="integer"  minOccurs="0" maxOccurs="1"  default="100"/>
-        </sequence>
+        <all>
+            <element name="xnepoint"     type="integer"  minOccurs="0" maxOccurs="1"  />
+            <element name="xgamma"       type="double"   minOccurs="0" maxOccurs="1"  />
+            <element name="xemax"        type="double"   minOccurs="0" maxOccurs="1"  />
+            <element name="xemin"        type="double"   minOccurs="0" maxOccurs="1"  />
+            <element name="cut_occ_states" type="boolean"  minOccurs="0" maxOccurs="1"/>
+            <element name="terminator"   type="boolean"  minOccurs="0" maxOccurs="1"  />
+            <element name="gamma_mode"   type="string"   minOccurs="0" maxOccurs="1"  />
+            <element name="gamma_file"   type="string"   minOccurs="0" maxOccurs="1"  />
+            <element name="gamma_energy" type="double"   minOccurs="0" maxOccurs="1"  />
+            <element name="gamma_value"  type="double"   minOccurs="0" maxOccurs="1"  />
+            <element name="xanes_file"   type="string"   minOccurs="0" maxOccurs="1"  />
+        </all>
     </complexType>
 
 
     <complexType name="pseudosType">
-        <sequence>
-            <element name="filecore"    type="string"   minOccurs="0" maxOccurs="1"  default="Core.wfc"/>
-        </sequence>
+        <all>
+            <element name="filecore"     type="string"   minOccurs="0" maxOccurs="1"  />
+            <element name="filerecon"    type="string"   minOccurs="0" maxOccurs="1"  />
+            <!-- this is a vector
+            <element name="r_paw"      type="double"   minOccurs="0" maxOccurs="1"  />
+            -->
+        </all>
     </complexType>
 
     <complexType name="cut_occType">
-        <sequence>
-            <element name="cut_ierror"   type="string"   minOccurs="0" maxOccurs="1"  default="1.d-7"/>
-        </sequence>
+        <all>
+            <element name="cut_ierror"   type="double"   minOccurs="0" maxOccurs="1"  />
+            <element name="cut_stepu"    type="double"   minOccurs="0" maxOccurs="1"  />
+            <element name="cut_stepl"    type="double"   minOccurs="0" maxOccurs="1"  />
+            <element name="cut_startt"   type="double"   minOccurs="0" maxOccurs="1"  />
+            <element name="cut_tinf"     type="double"   minOccurs="0" maxOccurs="1"  />
+            <element name="cut_tsup"     type="double"   minOccurs="0" maxOccurs="1"  />
+            <element name="cut_desmooth" type="double"   minOccurs="0" maxOccurs="1"  />
+            <element name="cut_nmemu"    type="integer"  minOccurs="0" maxOccurs="1"  />
+            <element name="cut_nmeml"    type="integer"  minOccurs="0" maxOccurs="1"  />
+        </all>
     </complexType>
     <complexType name="kpointsType">
         <sequence>
+        <!-- Here I would write 6 different values, kind of:
+          - k1,k2,k3 (>=0)
+          - k4,k5,k6 large integer and define a function that writes the string like
+          3 3 3 0 0 0 
+        -->
             <element name="tmp_kpoint" type="string" minOccurs="1" maxOccurs="1"/>
         </sequence>
     </complexType>
