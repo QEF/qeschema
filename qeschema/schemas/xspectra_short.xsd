@@ -27,6 +27,7 @@
         <sequence>
             <element name="calculation" type="string"   minOccurs="1" maxOccurs="1"  default=""/>
             <element name="edge"        type="string"   minOccurs="0" maxOccurs="1"  default="K"/>
+            <element name="lplus"       type="boolean"   minOccurs="0" maxOccurs="1"  default="true"/>
         </sequence>
     </complexType>
 

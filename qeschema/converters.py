@@ -852,6 +852,8 @@ class TdInputConverter(RawInputConverter):
         :return: the input as obtained from its input builder
         """
         temp = super(TdInputConverter, self).get_qe_input().split('\n')
+        for i,j in enumerate(temp):
+            print(i, " - " , j)
         td = temp[1]
         start = temp.index('&lr_input')
         end = start + temp[start:].index('/')
@@ -914,30 +916,22 @@ class XSpectraInputConverter(RawInputConverter):
     Converts the XML input file described by XSPECTRA scheme in
     namelist input for XSPECTRA post-processing tool.
     """
-    SPEC_TEMPLATE_MAP = {
-        'lplus': 'input_spectra[lplus]',
+    XSPECTRA_TEMPLATE_MAP = {
+        'input_xspectra': { 'calculation': 'input_xspectra[calculation]',
+                            'edge' : 'input_xspectra[edge]',
+                            'lplus': 'input_xspectra[lplus]'
+            },
+        'plot': { 'xnepoint': 'plot[xnepoint]', 
+        },
+        'pseudos': { 'filecore': 'pseudos[filecore]',
+        },
+        'cut_occ': { 'cut_ierror': 'cut_occ[cut_ierror]',
+        }
     }
-    """
-        'itermax0': 'lr_input[itermax0]',
-        'itermax_actual': 'lr_input[itermax_actual]',
-        'extrapolation': 'lr_input[extrapolation]',
-        'start': 'lr_input[start]',
-        'end': 'lr_input[end]',
-        'increment': 'lr_input[increment]',
-        'ipol': 'lr_input[ipol]',
-        'outdir': 'lr_input[outdir]',
-        'prefix': 'lr_input[prefix]',
-        'epsil': 'lr_input[epsil]',
-        'sym_op': 'lr_input[sym_op]',
-        'verbosity': 'lr_input[verbosity]',
-        'units': 'lr_input[units]',
-        'td': 'lr_input[td]',
-        'eign_file': 'lr_input[eign_file]',
-        'eels': ('lr_input[eels]', options.set_boolean_flag, None),
-    }
-    """
+
     def __init__(self, **_kwargs):
         super(XSpectraInputConverter, self).__init__(
-            *conversion_maps_builder(self.SPEC_TEMPLATE_MAP),
-            input_namelists=['input_spectra']
+            *conversion_maps_builder(self.XSPECTRA_TEMPLATE_MAP),
+            input_namelists=('input_xspectra', 'plot', 'pseudos', 'cut_occ')
         )
+        

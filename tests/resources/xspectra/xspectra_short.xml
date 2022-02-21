@@ -6,6 +6,7 @@
       <input_xspectra>
         <calculation>xanes_dipole</calculation>
         <edge>L2</edge>
+        <lplus>true</lplus>
       </input_xspectra>
       <plot>
         <xnepoint>100</xnepoint>
