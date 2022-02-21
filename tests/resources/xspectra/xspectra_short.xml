@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<qes_xspectra:xspectra xmlns:qes_xspectra="http://www.quantum-espresso.org/ns/qes/xspectra"
-               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes-1.0 xspectra_short.xsd">
-    <input>
+<?xml version="1.0" encoding="UTF-8"?>
+<qes_xspectra:xspectra xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes_xspectra-1.0 xspectra_short.xsd"
+               xmlns:qes_xspectra="http://www.quantum-espresso.org/ns/qes/qes_xspectra-1.0"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+	       <input>	       
       <input_xspectra>
         <calculation>xanes_dipole</calculation>
         <edge>L2</edge>
@@ -18,5 +18,5 @@
       <kpoints>
         <tmp_kpoint>0 0 0</tmp_kpoint>
       </kpoints>
-  </input> 
+</input>
 </qes_xspectra:xspectra>

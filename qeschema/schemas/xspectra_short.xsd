@@ -1,51 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-Source: https://github.com/QEF/q-e/blob/master/XSpectra/Doc/INPUT_XSPECTRA
-Authors: Gianfranco Abrusci
--->
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
-	xmlns:qes_xspectra="http://www.quantum-espresso.org/ns/qes/xspectra"
-	targetNamespace="http://www.quantum-espresso.org/ns/qes/xspectra" version="20220120">
-    <element name="xspectra" type="qes_xspectra:xspectra"/>
-    <complexType name="input">
+	xmlns:qes_xspectra="http://www.quantum-espresso.org/ns/qes/qes_xspectra-1.0"
+	targetNamespace="http://www.quantum-espresso.org/ns/qes/qes_xspectra-1.0" version="20220217">
+    <element name="xspectra" type="qes_xspectra:xspectraType"/>
+    <complexType name="xspectraType">
         <sequence>
-            <element name="input_xspectra" type="qes_xspectra:input_xspectra" />
-            <element name="plot" type="qes_xspectra:plot"/>
-            <element name="pseudos" type="qes_xspectra:pseudos"/>
-            <element name="cut_occ" type="qes_xspectra:cut_occ"/>
-            <element name="kpoints" type="qes_xspectra:kpoints"/>
+            <element name="input" type="qes_xspectra:xspectraInType"/>
         </sequence>
     </complexType>
-
-    <complexType name="input_xspectra" >
+    <complexType name="xspectraInType">
+        <annotation>
+            <documentation>
+            Short example of the input file for the xspectra calculation.
+            </documentation>
+        </annotation>
+        <sequence>
+            <element name="input_xspectra" type="qes_xspectra:input_xspectraType" minOccurs="1"/>
+            <element name="plot" type="qes_xspectra:plotType"/>
+            <element name="pseudos" type="qes_xspectra:pseudosType"/>
+            <element name="cut_occ" type="qes_xspectra:cut_occType"/>
+            <element name="kpoints" type="qes_xspectra:kpointsType"/>
+        </sequence>
+    </complexType>
+    
+    <complexType name="input_xspectraType" >
         <sequence>
             <element name="calculation" type="string"   minOccurs="1" maxOccurs="1"  default=""/>
             <element name="edge"        type="string"   minOccurs="0" maxOccurs="1"  default="K"/>
         </sequence>
     </complexType>
 
-    <complexType name="plot">
+    <complexType name="plotType">
         <sequence>
             <element name="xnepoint"    type="integer"  minOccurs="0" maxOccurs="1"  default="100"/>
         </sequence>
     </complexType>
 
 
-    <complexType name="pseudos">
+    <complexType name="pseudosType">
         <sequence>
             <element name="filecore"    type="string"   minOccurs="0" maxOccurs="1"  default="Core.wfc"/>
         </sequence>
     </complexType>
 
-    <complexType name="cut_occ">
+    <complexType name="cut_occType">
         <sequence>
-            <element name="cut_ierror"   type="double"   minOccurs="0" maxOccurs="1"  default="1.d-7"/>
+            <element name="cut_ierror"   type="string"   minOccurs="0" maxOccurs="1"  default="1.d-7"/>
         </sequence>
     </complexType>
-    <complexType name="kpoints">
+    <complexType name="kpointsType">
         <sequence>
             <element name="tmp_kpoint" type="string" minOccurs="1" maxOccurs="1"/>
         </sequence>
     </complexType>
-
 </schema>
