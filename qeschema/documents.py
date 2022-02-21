@@ -447,7 +447,7 @@ class QeDocument(XmlDocument, metaclass=ABCMeta):
             self.input_builder = input_builder
 
         self.default_namespace = self.schema.target_namespace
-        qe_prefixes = ['qes', 'neb', 'qes_ph', 'qes_lr', 'qes_spectrum']
+        qe_prefixes = ['qes', 'neb', 'qes_ph', 'qes_lr', 'qes_spectrum', 'qes_xspectra']
         qe_nslist = list(map(self.schema.namespaces.get, qe_prefixes))
         if self.default_namespace not in qe_nslist:
             raise NotImplementedError(
