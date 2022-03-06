@@ -33,6 +33,7 @@
             <!-- this is a vector so it is read as xkvec(1), 2, 3
             <element name="xkvec"        type="double"   minOccurs="0" maxOccurs="1" />
             <element name="xepsilon"     type="double"   minOccurs="0" maxOccurs="1" />
+            from 1 to 3
             -->
             <element name="xcoordcrys"   type="boolean"  minOccurs="0" maxOccurs="1" />
             <element name="ef_r"         type="double"   minOccurs="0" maxOccurs="1" />
@@ -78,6 +79,7 @@
             <element name="filerecon"    type="string"   minOccurs="0" maxOccurs="1"  />
             <!-- this is a vector
             <element name="r_paw"      type="double"   minOccurs="0" maxOccurs="1"  />
+            0:lmaxx, with lmaxx=4
             -->
         </all>
     </complexType>
