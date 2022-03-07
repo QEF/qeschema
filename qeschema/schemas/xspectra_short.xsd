@@ -30,11 +30,14 @@
             <element name="prefix"       type="string"   minOccurs="1" maxOccurs="1" />
             <element name="outdir"       type="string"   minOccurs="0" maxOccurs="1" />
             <element name="xiabs"        type="integer"  minOccurs="0" maxOccurs="1" />
-            <!-- this is a vector so it is read as xkvec(1), 2, 3
-            <element name="xkvec"        type="double"   minOccurs="0" maxOccurs="1" />
-            <element name="xepsilon"     type="double"   minOccurs="0" maxOccurs="1" />
-            from 1 to 3
-            -->
+            <!-- these vectors have 3 components-->
+            <element name="xkvec1"       type="double"   minOccurs="0" maxOccurs="1" />
+            <element name="xkvec2"       type="double"   minOccurs="0" maxOccurs="1" />
+            <element name="xkvec3"       type="double"   minOccurs="0" maxOccurs="1" />
+            <element name="xepsilon1"    type="double"   minOccurs="0" maxOccurs="1" />
+            <element name="xepsilon2"    type="double"   minOccurs="0" maxOccurs="1" />
+            <element name="xepsilon3"    type="double"   minOccurs="0" maxOccurs="1" />
+            <!-- end of vectors -->
             <element name="xcoordcrys"   type="boolean"  minOccurs="0" maxOccurs="1" />
             <element name="ef_r"         type="double"   minOccurs="0" maxOccurs="1" />
             <element name="xe0"          type="double"   minOccurs="0" maxOccurs="1" />
@@ -77,10 +80,11 @@
         <all>
             <element name="filecore"     type="string"   minOccurs="0" maxOccurs="1"  />
             <element name="filerecon"    type="string"   minOccurs="0" maxOccurs="1"  />
-            <!-- this is a vector
-            <element name="r_paw"      type="double"   minOccurs="0" maxOccurs="1"  />
-            0:lmaxx, with lmaxx=4
-            -->
+            <!-- this is a vector 0:lmaxx, with lmaxx=4 -->
+            <element name="r_paw1"       type="double"   minOccurs="0" maxOccurs="1"  />
+            <element name="r_paw2"       type="double"   minOccurs="0" maxOccurs="1"  />
+            <element name="r_paw3"       type="double"   minOccurs="0" maxOccurs="1"  />
+            <element name="r_paw4"       type="double"   minOccurs="0" maxOccurs="1"  />
         </all>
     </complexType>
 
