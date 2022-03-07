@@ -305,3 +305,11 @@ def set_boolean_flag(name, **kwargs):
 def set_what_td_calculation(name, **kwargs):
     assert isinstance(name, str)
     return [kwargs['whatTD']]
+
+
+def get_xspectra_component(name, **kwargs):
+    value = float(kwargs[name])
+    lines = []
+    lines.append(f" {name[:-1]}({name[-1]})={value}")
+    return lines
+
