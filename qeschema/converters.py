@@ -987,7 +987,5 @@ class XSpectraInputConverter(RawInputConverter):
             *conversion_maps_builder(self.XSPECTRA_TEMPLATE_MAP),
             input_namelists=('input_xspectra', 'plot', 'pseudos', 'cut_occ')
         )
-        print("WARNING: missing kpoints")
-        print("WARNING: missing rpaw")
-        print("WARNING: missing ")
+        print("WARNING: missing kpoints\n")
             
