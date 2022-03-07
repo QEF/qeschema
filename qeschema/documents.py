@@ -702,7 +702,7 @@ class TdSpectrumDocument(QeDocument):
         return 'spectrumIn'
 
 
-###TODO
+### DOING
 class XSpectraDocument(QeDocument):
     """
     Class to manage XSPECTRA XML documents.
@@ -713,5 +713,3 @@ class XSpectraDocument(QeDocument):
     @property
     def input_path(self):
         return 'input'
-
-    ###TODO Add get_fortran_input() method

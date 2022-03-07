@@ -308,6 +308,12 @@ def set_what_td_calculation(name, **kwargs):
 
 
 def get_xspectra_component(name, **kwargs):
+    """
+    Get the xspectra component of a vector and print it in the form
+    vector(component)=value
+    
+    We may add comma=True to enable the comma
+    """
     value = float(kwargs[name])
     lines = []
     lines.append(f" {name[:-1]}({name[-1]})={value}")
