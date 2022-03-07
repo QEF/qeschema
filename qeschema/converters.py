@@ -922,7 +922,14 @@ class XSpectraInputConverter(RawInputConverter):
                             'prefix'        : 'input_xspectra[prefix]',
                             'outdir'        : 'input_xspectra[outdir]',
                             'xiabs'         : 'input_xspectra[xiabs]',
-                            # xkvec, xepsilon
+                            # xkvec, 
+                            'xkvec1'        : ('input_xspectra[xkvec1]', options.get_xspectra_component, None), 
+                            'xkvec2'        : ('input_xspectra[xkvec2]', options.get_xspectra_component, None), 
+                            'xkvec3'        : ('input_xspectra[xkvec3]', options.get_xspectra_component, None), 
+                            # xepsilon
+                            'xepsilon1'     : ('input_xspectra[xepsilon1]', options.get_xspectra_component, None), 
+                            'xepsilon2'     : ('input_xspectra[xepsilon2]', options.get_xspectra_component, None), 
+                            'xepsilon3'     : ('input_xspectra[xepsilon3]', options.get_xspectra_component, None), 
                             'xcoordcrys'    : 'input_xspectra[xcoordcrys]',
                             'ef_r'          : 'input_xspectra[ef_r]',
                             'xe0'           : 'input_xspectra[xe0]',
@@ -957,6 +964,10 @@ class XSpectraInputConverter(RawInputConverter):
         'pseudos'       : { 'filecore'      : 'pseudos[filecore]',
                             'filerecon'     : 'pseudos[filerecon]',
                             # rpaw
+                            'r_paw1'        : ('pseudos[r_paw1]', options.get_xspectra_component, None), 
+                            'r_paw2'        : ('pseudos[r_paw2]', options.get_xspectra_component, None), 
+                            'r_paw3'        : ('pseudos[r_paw3]', options.get_xspectra_component, None), 
+                            'r_paw4'        : ('pseudos[r_paw4]', options.get_xspectra_component, None), 
         },
         'cut_occ'       : { 'cut_ierror'    : 'cut_occ[cut_ierror]',
                             'cut_stepu'     : 'cut_occ[cut_stepu]',
@@ -979,4 +990,4 @@ class XSpectraInputConverter(RawInputConverter):
         print("WARNING: missing kpoints")
         print("WARNING: missing rpaw")
         print("WARNING: missing ")
-        
+            
