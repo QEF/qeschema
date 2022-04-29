@@ -21,7 +21,7 @@ setup(
         'HDF5': ['h5py'],
         'YAML': ['pyyaml'],
     },
-    packages=['qeschema'],
+    packages=['qeschema', 'qeschema.hdf5'],
     package_data={'qeschema': ['schemas/*.xsd', 'schemas/releases/*.xsd']},
     scripts = ['scripts/xml2qeinput.py', 'scripts/yaml2qeinput.py'],
     url='https://github.com/QEF/qeschema',
