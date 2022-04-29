@@ -88,3 +88,16 @@ Exception classes and utilities
 .. autoclass:: qeschema.XmlDocumentError
 
 .. autofunction:: qeschema.set_logger
+
+
+HDF5 utilities
+..............
+
+.. note::
+    The following functions can be used if the *h5py* package is installed.
+
+
+.. autofunction:: qeschema.hdf5.read_charge_file
+.. autofunction:: qeschema.hdf5.get_wf_attributes
+.. autofunction:: qeschema.hdf5.get_wavefunctions
+.. autofunction:: qeschema.hdf5.get_wfc_miller_indices

@@ -21,9 +21,16 @@ Requirements
 Installation
 ------------
 
-You can install the library with *pip* in a Python 3.6+ environment::
+You can install the library with *pip* in a Python 3.7+ environment::
 
     pip install qeschema
+
+If you need HDF5 utilities and/or the YAML format, install the extra
+features using the appropriate command from these alternatives::
+
+    pip install qeschema[HDF5]
+    pip install qeschema[YAML]
+    pip install qeschema[HDF5,YAML]
 
 
 Usage
