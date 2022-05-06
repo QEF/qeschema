@@ -312,7 +312,7 @@ def get_xspectra_component(name, comma=False, **kwargs):
     Get the xspectra component of a vector and print it in the form
     vector(component)=value
     
-    We may add comma=True to enable the comma
+    We may add comma=True to enable the comma - not necessary and need to be tested.
     """
     value = float(kwargs[name])
     lines = []
