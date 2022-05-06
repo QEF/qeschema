@@ -979,8 +979,6 @@ class XSpectraInputConverter(RawInputConverter):
                             'cut_nmemu'     : 'cut_occ[cut_nmemu]',
                             'cut_nmeml'     : 'cut_occ[cut_nmeml]',
         },
-        # TODO: add kpoints
-        #'k_points_IBZ': ('K_POINTS', cards.get_k_points_card, None),
         'k_points_IBZ': ('K_POINTS', cards.get_xspectra_k_points_card, None),
     }
 
