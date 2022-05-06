@@ -121,9 +121,9 @@ Authors: Gianfranco Abrusci
                 <attribute type="positiveInteger" name="nk1"/>
                 <attribute type="positiveInteger" name="nk2"/>
                 <attribute type="positiveInteger" name="nk3"/>
-                <attribute type="integer" name="k1"/>
-                <attribute type="integer" name="k2"/>
-                <attribute type="integer" name="k3"/>
+                <attribute type="nonNegativeInteger" name="k1"/>
+                <attribute type="nonNegativeInteger" name="k2"/>
+                <attribute type="nonNegativeInteger" name="k3"/>
             </extension>
         </simpleContent>
     </complexType>
