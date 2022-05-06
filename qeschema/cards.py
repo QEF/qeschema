@@ -434,7 +434,6 @@ def get_neb_atomic_forces_card(name, **kwargs):
 
 
 def get_xspectra_k_points_card(name, **kwargs):
-    # TODO
     """
     Convert XML data to K_POINTS card for xspectra calculation.
 

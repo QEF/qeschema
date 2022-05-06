@@ -910,7 +910,7 @@ class TdSpectrumInputConverter(RawInputConverter):
 
 TD_spctInConverter = TdSpectrumInputConverter
 
-### TODO
+# XSpectra Input Converter
 class XSpectraInputConverter(RawInputConverter):
     """
     Converts the XML input file described by XSPECTRA scheme in
