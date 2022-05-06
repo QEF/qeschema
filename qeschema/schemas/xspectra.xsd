@@ -111,7 +111,7 @@ Authors: Gianfranco Abrusci
   <!-- k points, same as in qes schema -->
     <complexType name="k_points_IBZType">
         <sequence>
-            <element type="qes_xspectra:monkhorst_packType" name="monkhorst_pack" minOccurs="0"
+            <element type="qes_xspectra:monkhorst_packType" name="monkhorst_pack" minOccurs="1"
                maxOccurs="1"/>
         </sequence>
     </complexType>
