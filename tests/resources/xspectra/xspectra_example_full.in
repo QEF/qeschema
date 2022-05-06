@@ -1,0 +1,63 @@
+&input_xspectra
+ calculation='xanes_dipole'
+ edge='L2'
+ ef_r=0.45
+ lminus=.false.
+ lplus=.false.
+ neldw=1
+ nelup=1
+ outdir='bubu'
+ prefix='$TMP_DIR/'
+ restart_mode='from_scratch'
+ show_status=.false.
+ time_limit=100000000.0
+ U_projection_type='atomic'
+ verbosity='high'
+ x_save_file='xanes.sav'
+ xcheck_conv=5
+ xcoordcrys=.true.
+ xe0=0.0
+ xepsilon(1)=0.01
+ xepsilon(2)=0.02
+ xepsilon(3)=0.03
+ xerror=1e-10
+ xiabs=1
+ xkvec(1)=10.0
+ xkvec(2)=20.0
+ xkvec(3)=30.0
+ xniter=50
+ xread_wf=.false.
+/
+&plot
+ cut_occ_states=.false.
+ gamma_energy=0.0
+ gamma_file='gamma.dat'
+ gamma_mode='constant'
+ gamma_value=10.0
+ terminator=.false.
+ xanes_file='xanes.dat'
+ xemax=10.0
+ xemin=0.0
+ xgamma=0.1
+ xnepoint=200
+/
+&pseudos
+ filecore='Core.wfc'
+ filerecon='bubu'
+ r_paw(1)=1.01
+ r_paw(2)=2.02
+ r_paw(3)=3.03
+ r_paw(4)=4.04
+/
+&cut_occ
+ cut_desmooth=0.0001
+ cut_ierror=1e-10
+ cut_nmeml=10000
+ cut_nmemu=10000
+ cut_startt=1.0
+ cut_stepl=0.0001
+ cut_stepu=0.0001
+ cut_tinf=1e-06
+ cut_tsup=100.0
+/
+ 1 1 1 0 0 0

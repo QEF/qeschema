@@ -431,3 +431,21 @@ def get_neb_atomic_forces_card(name, **kwargs):
     # TODO
     assert isinstance(name, str)
     assert isinstance(kwargs, dict)
+
+
+def get_xspectra_k_points_card(name, **kwargs):
+    # TODO
+    """
+    Convert XML data to K_POINTS card for xspectra calculation.
+
+    :param name: Card name
+    :param kwargs: Dictionary with converted data from XML file
+    :return: List of strings
+    """
+    lines = []
+    k_points_ibz = kwargs['k_points_IBZ']
+    monkhorst_pack = k_points_ibz.get('monkhorst_pack', {})
+
+    lines.append(' %(@nk1)s %(@nk2)s %(@nk3)s %(@k1)s %(@k2)s %(@k3)s' % monkhorst_pack)
+
+    return lines

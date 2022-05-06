@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<qes_xspectra:xspectra xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes_xspectra-1.0 xspectra_short.xsd"
+<qes_xspectra:xspectra xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes_xspectra-1.0 xspectra.xsd"
                xmlns:qes_xspectra="http://www.quantum-espresso.org/ns/qes/qes_xspectra-1.0"
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
 	       <input>	       
@@ -71,8 +71,8 @@
         <cut_nmeml>10000</cut_nmeml>
         <!-- 9 elements-->
       </cut_occ>
-      <kpoints>
-        <tmp_kpoint>0 0 0</tmp_kpoint>
-      </kpoints>
+      <k_points_IBZ>
+        <monkhorst_pack nk1="1" nk2="1" nk3="1" k1="0" k2="0" k3="0">K-point mesh</monkhorst_pack>
+      </k_points_IBZ>
 </input>
 </qes_xspectra:xspectra>

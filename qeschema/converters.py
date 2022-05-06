@@ -978,14 +978,15 @@ class XSpectraInputConverter(RawInputConverter):
                             'cut_desmooth'  : 'cut_occ[cut_desmooth]',
                             'cut_nmemu'     : 'cut_occ[cut_nmemu]',
                             'cut_nmeml'     : 'cut_occ[cut_nmeml]',
-        }
+        },
         # TODO: add kpoints
+        #'k_points_IBZ': ('K_POINTS', cards.get_k_points_card, None),
+        'k_points_IBZ': ('K_POINTS', cards.get_xspectra_k_points_card, None),
     }
 
     def __init__(self, **_kwargs):
         super(XSpectraInputConverter, self).__init__(
             *conversion_maps_builder(self.XSPECTRA_TEMPLATE_MAP),
-            input_namelists=('input_xspectra', 'plot', 'pseudos', 'cut_occ')
+            input_namelists=('input_xspectra', 'plot', 'pseudos', 'cut_occ'),
+            input_cards=("K_POINTS",)
         )
-        print("WARNING: missing kpoints\n")
-            

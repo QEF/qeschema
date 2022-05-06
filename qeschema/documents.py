@@ -707,7 +707,7 @@ class XSpectraDocument(QeDocument):
     """
     Class to manage XSPECTRA XML documents.
     """
-    DEFAULT_SCHEMA = 'xspectra_short.xsd'
+    DEFAULT_SCHEMA = 'xspectra.xsd'
     DEFAULT_INPUT_BUILDER = XSpectraInputConverter
 
     @property
