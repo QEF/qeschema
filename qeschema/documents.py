@@ -702,7 +702,7 @@ class TdSpectrumDocument(QeDocument):
         return 'spectrumIn'
 
 
-### DOING
+### XSPECTRA custom document
 class XSpectraDocument(QeDocument):
     """
     Class to manage XSPECTRA XML documents.
