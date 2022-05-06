@@ -30,8 +30,8 @@ def parse_args():
 
 if __name__ == '__main__':
 
-    if sys.version_info < (3, 5, 0):
-        sys.stderr.write("You need python 3.5 or later to run this program\n")
+    if sys.version_info < (3, 7, 0):
+        sys.stderr.write("You need python 3.7 or later to run this program\n")
         sys.exit(1)
 
     args = parse_args()

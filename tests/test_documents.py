@@ -13,6 +13,11 @@ import platform
 import xml.etree.ElementTree as ElementTree
 from xmlschema import XMLSchemaValidationError, XMLSchema, XMLResource
 
+try:
+    import yaml
+except ImportError:
+    yaml = None
+
 from qeschema import QeDocument, PwDocument, PhononDocument, NebDocument, \
     TdDocument, TdSpectrumDocument, XmlDocumentError, PwInputConverter
 from qeschema.documents import XmlDocument
@@ -267,29 +272,30 @@ class TestDocuments(unittest.TestCase):
         else:
             self.assertTrue(document.filename.endswith('instance_json'))
 
-        filename = os.path.join(self.test_dir, 'resources/dummy/instance.yaml')
-        document.read(filename)
-        self.assertTrue(hasattr(document.root, 'tag'))
-        self.assertEqual(document.root.tag, 'root')
-        self.assertEqual(document.format, 'yaml')
-        if platform.system() == 'Linux':
-            self.assertEqual(document.filename, filename)
-        else:
-            self.assertTrue(document.filename.endswith('instance.yaml'))
-
-        filename = os.path.join(self.test_dir, 'resources/dummy/instance_yaml')
-        document.read(filename)
-        self.assertTrue(hasattr(document.root, 'tag'))
-        self.assertEqual(document.root.tag, 'root')
-        self.assertEqual(document.format, 'yaml')
-        if platform.system() == 'Linux':
-            self.assertEqual(document.filename, filename)
-        else:
-            self.assertTrue(document.filename.endswith('instance_yaml'))
-
-        filename = os.path.join(self.test_dir, 'resources/dummy/instance.csv')
-        with self.assertRaises(ValueError):
+        if yaml is not None:
+            filename = os.path.join(self.test_dir, 'resources/dummy/instance.yaml')
             document.read(filename)
+            self.assertTrue(hasattr(document.root, 'tag'))
+            self.assertEqual(document.root.tag, 'root')
+            self.assertEqual(document.format, 'yaml')
+            if platform.system() == 'Linux':
+                self.assertEqual(document.filename, filename)
+            else:
+                self.assertTrue(document.filename.endswith('instance.yaml'))
+
+            filename = os.path.join(self.test_dir, 'resources/dummy/instance_yaml')
+            document.read(filename)
+            self.assertTrue(hasattr(document.root, 'tag'))
+            self.assertEqual(document.root.tag, 'root')
+            self.assertEqual(document.format, 'yaml')
+            if platform.system() == 'Linux':
+                self.assertEqual(document.filename, filename)
+            else:
+                self.assertTrue(document.filename.endswith('instance_yaml'))
+
+            filename = os.path.join(self.test_dir, 'resources/dummy/instance.csv')
+            with self.assertRaises(ValueError):
+                document.read(filename)
 
     def test_from_xml_method(self):
         schema = os.path.join(self.test_dir, 'resources/dummy/schema.xsd')
@@ -339,6 +345,7 @@ class TestDocuments(unittest.TestCase):
         self.assertEqual(document.root.tag, 'root')
         self.assertGreaterEqual(len(document.errors), 1)
 
+    @unittest.skipIf(yaml is None, "PyYAML library is not installed")
     def test_from_yaml_method(self):
         document = XmlDocument(schema=os.path.join(self.test_dir, 'resources/dummy/schema.xsd'))
         filename = os.path.join(self.test_dir, 'resources/dummy/instance.yaml')
@@ -421,9 +428,10 @@ class TestDocuments(unittest.TestCase):
             self.assertEqual(f.read().replace(' ', '').replace('\n', ''),
                              '{"root":{"node":[{"@a":10},"value",null]}}')
 
-        document.write(self.output_file, output_format='yaml')
-        with open(self.output_file) as f:
-            self.assertEqual(f.read(), "root:\n  node:\n  - '@a': 10\n  - value\n  - null\n")
+        if yaml is not None:
+            document.write(self.output_file, output_format='yaml')
+            with open(self.output_file) as f:
+                self.assertEqual(f.read(), "root:\n  node:\n  - '@a': 10\n  - value\n  - null\n")
 
         with self.assertRaises(TypeError):
             with open(self.output_file, mode='w+') as f:
@@ -472,6 +480,7 @@ class TestDocuments(unittest.TestCase):
             self.assertEqual(f.read().replace(' ', '').replace('\n', ''),
                              '{"root":{"node":[{"@a":10},"value",null]}}')
 
+    @unittest.skipIf(yaml is None, "PyYAML library is not installed")
     def test_to_yaml_method(self):
         schema = os.path.join(self.test_dir, 'resources/dummy/schema.xsd')
         filename = os.path.join(self.test_dir, 'resources/dummy/instance.xml')

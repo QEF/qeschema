@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright (c), 2015-2019, Quantum Espresso Foundation and SISSA (Scuola
+# Copyright (c), 2015-2022, Quantum Espresso Foundation and SISSA (Scuola
 # Internazionale Superiore di Studi Avanzati). All rights reserved.
 # This file is distributed under the terms of the MIT License. See the
 # file 'LICENSE' in the root directory of the present distribution, or
@@ -15,15 +15,19 @@ with open("README.rst") as readme:
 
 setup(
     name='qeschema',
-    version='1.3.0',
-    install_requires=['xmlschema>=1.6.4', 'pyyaml', 'numpy', 'h5py'],
-    packages=['qeschema'],
+    version='1.4.0',
+    install_requires=['xmlschema>=1.6.4', 'numpy'],
+    extras_require={
+        'HDF5': ['h5py'],
+        'YAML': ['pyyaml'],
+    },
+    packages=['qeschema', 'qeschema.hdf5'],
     package_data={'qeschema': ['schemas/*.xsd', 'schemas/releases/*.xsd']},
     scripts = ['scripts/xml2qeinput.py', 'scripts/yaml2qeinput.py'],
     url='https://github.com/QEF/qeschema',
     license='MIT',
     license_file='LICENSE',
-    description='Schema-based tools and interfaces for Quantum Espresso data.',
+    description='Schema-based tools and interfaces for Quantum Espresso data',
     long_description=long_description,
     classifiers=[
         'Development Status :: 5 - Production/Stable',

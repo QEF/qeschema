@@ -16,6 +16,11 @@ import glob
 import platform
 import xml.etree.ElementTree as ElementTree
 
+try:
+    import yaml
+except ImportError:
+    yaml = None
+
 import qeschema
 
 
@@ -84,6 +89,7 @@ class ConverterTestCase(unittest.TestCase):
             self.assertTrue(os.path.isfile(in_filename),
                             'Test output file %r missing!' % in_filename)
 
+    @unittest.skipIf(yaml is None, "PyYAML library is not installed")
     def test_yaml2qeinput_script(self):
         xml_filename = os.path.join(self.test_dir, 'resources/pw/Al001_relax_bfgs.yml')
         in_filename = xml_filename[:-4] + '.in'
