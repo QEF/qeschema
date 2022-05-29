@@ -1,0 +1,29 @@
+&input_xspectra
+ calculation='xanes_dipole'
+ outdir='$TMP_DIR/'
+ prefix='NiO'
+ x_save_file='NiO.xspectra_dip.sav'
+ xcheck_conv=50
+ xepsilon(1)=1.0
+ xepsilon(2)=0.0
+ xepsilon(3)=0.0
+ xerror=0.001
+ xiabs=1
+ xniter=1000
+/
+&plot
+ cut_occ_states=.true.
+ terminator=.true.
+ xemax=20.0
+ xemin=-10.0
+ xgamma=0.8
+ xnepoint=300
+/
+&pseudos
+ filecore='Ni.wfc'
+ r_paw(1)=1.5
+/
+&cut_occ
+ cut_desmooth=0.1
+/
+ 2 2 2 0 0 0

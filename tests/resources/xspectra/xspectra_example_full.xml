@@ -54,10 +54,10 @@
       <pseudos>
         <filecore>Core.wfc</filecore>
         <filerecon>bubu</filerecon>
-        <r_paw1>1.01</r_paw1>
-        <r_paw2>2.02</r_paw2>
-        <r_paw3>3.03</r_paw3>
-        <r_paw4>4.04</r_paw4>
+        <r_paw0>1.01</r_paw0>
+        <r_paw1>2.02</r_paw1>
+        <r_paw2>3.03</r_paw2>
+        <r_paw3>4.04</r_paw3>
       </pseudos>
       <cut_occ>
         <cut_ierror>1.e-10</cut_ierror>

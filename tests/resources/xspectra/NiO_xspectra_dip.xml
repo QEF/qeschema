@@ -5,33 +5,35 @@
 	       <input>	       
       <input_xspectra>
         <calculation>xanes_dipole</calculation>
-        <edge>L2</edge>
-        <verbosity>high</verbosity>
-        <prefix>Cu</prefix>
+        <prefix>NiO</prefix>
         <outdir>$TMP_DIR/</outdir>
-        <xniter>50</xniter>
-        <xcheck_conv>500</xcheck_conv>
+        <xniter>1000</xniter>
+        <xcheck_conv>50</xcheck_conv>
+        <!--xepsilon-->
         <xepsilon1>1.0</xepsilon1>
-        <xepsilon2>1.0</xepsilon2>
-        <xepsilon3>1.0</xepsilon3>
-        <xe0>11.5335</xe0>
-        <xerror>0.01</xerror>
+        <xepsilon2>0.0</xepsilon2>
+        <xepsilon3>0.0</xepsilon3>
+        <xiabs>1</xiabs>
+        <x_save_file>NiO.xspectra_dip.sav</x_save_file>
+        <xerror>0.001</xerror>
       </input_xspectra>
       <plot>
-        <xnepoint>1000</xnepoint>
-        <xgamma>0.5</xgamma>
-        <xemax>-10.</xemax>
-        <xemin>80.0</xemin>
+        <xnepoint>300</xnepoint>
+        <xgamma>0.8</xgamma>
+        <xemin>-10.0</xemin>
+        <xemax>20.0</xemax>
         <terminator>true</terminator>
         <cut_occ_states>true</cut_occ_states>
       </plot>
       <pseudos>
-        <filecore>Cu.wfc</filecore>
-        <r_paw0>2.0</r_paw0>
-        <r_paw2>2.0</r_paw2>
+        <filecore>Ni.wfc</filecore>
+        <r_paw1>1.5</r_paw1>
       </pseudos>
+      <cut_occ>
+        <cut_desmooth>0.1</cut_desmooth>
+      </cut_occ>
       <k_points_IBZ>
-        <monkhorst_pack nk1="3" nk2="3" nk3="3" k1="0" k2="0" k3="0">K-point mesh</monkhorst_pack>
+        <monkhorst_pack nk1="2" nk2="2" nk3="2" k1="0" k2="0" k3="0">K-point mesh</monkhorst_pack>
       </k_points_IBZ>
 </input>
 </qes_xspectra:xspectra>

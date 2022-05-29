@@ -88,10 +88,10 @@ Authors: Gianfranco Abrusci
             <element name="filecore"     type="string"   minOccurs="0" maxOccurs="1"  />
             <element name="filerecon"    type="string"   minOccurs="0" maxOccurs="1"  />
             <!-- this is a vector 0:lmaxx, with lmaxx=4 -->
+            <element name="r_paw0"       type="double"   minOccurs="0" maxOccurs="1"  />
             <element name="r_paw1"       type="double"   minOccurs="0" maxOccurs="1"  />
             <element name="r_paw2"       type="double"   minOccurs="0" maxOccurs="1"  />
             <element name="r_paw3"       type="double"   minOccurs="0" maxOccurs="1"  />
-            <element name="r_paw4"       type="double"   minOccurs="0" maxOccurs="1"  />
         </all>
     </complexType>
 
