@@ -319,3 +319,12 @@ def get_xspectra_component(name, comma=False, **kwargs):
     lines.append(f" {name[:-1]}({name[-1]})={value}{',' if comma else ''}")
     return lines
 
+def get_xspectra_r_paw_component(name, **kwargs):
+    """
+    Get the xspectra component of r_paw that starts from 0
+    
+    """
+    value = float(kwargs[name])
+    lines = []
+    lines.append(f" {name[:-1]}({int(name[-1])-1})={value}")
+    return lines

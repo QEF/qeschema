@@ -44,10 +44,10 @@
 &pseudos
  filecore='Core.wfc'
  filerecon='bubu'
- r_paw(1)=1.01
- r_paw(2)=2.02
- r_paw(3)=3.03
- r_paw(4)=4.04
+ r_paw(0)=1.01
+ r_paw(1)=2.02
+ r_paw(2)=3.03
+ r_paw(3)=4.04
 /
 &cut_occ
  cut_desmooth=0.0001
