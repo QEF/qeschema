@@ -9,7 +9,7 @@
         <verbosity>high</verbosity>
         <prefix>Cu</prefix>
         <outdir>$TMP_DIR/</outdir>
-        <xniter>50</xniter>
+        <xniter>5000</xniter>
         <xcheck_conv>500</xcheck_conv>
         <xepsilon1>1.0</xepsilon1>
         <xepsilon2>1.0</xepsilon2>

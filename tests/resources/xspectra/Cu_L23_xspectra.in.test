@@ -10,7 +10,7 @@
  xepsilon(2)=1.0
  xepsilon(3)=1.0
  xerror=0.01
- xniter=50
+ xniter=5000
 /
 &plot
  cut_occ_states=.true.
