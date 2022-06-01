@@ -490,17 +490,17 @@ class TestCardsFunctions(unittest.TestCase):
         result = get_neb_cell_parameters_card('CELL_PARAMETERS', **kwargs)
         self.assertListEqual([re.sub(r'\s+', ' ', s) for s in result],
                              ['CELL_PARAMETERS bohr',
-                              ' 12.00000000 0.00000000 0.00000000',
-                              ' 0.00000000 12.00000000 0.00000000',
-                              ' 0.00000000 0.00000000 12.00000000'])
+                              ' 12.00000000 0.00000000 0.00000000 ',
+                              ' 0.00000000 12.00000000 0.00000000 ',
+                              ' 0.00000000 0.00000000 12.00000000 '])
 
         result = get_neb_cell_parameters_card('CELL_PARAMETERS',
                                               atomic_structure=kwargs['atomic_structure'][0])
         self.assertListEqual([re.sub(r'\s+', ' ', s) for s in result],
                              ['CELL_PARAMETERS bohr',
-                              ' 12.00000000 0.00000000 0.00000000',
-                              ' 0.00000000 12.00000000 0.00000000',
-                              ' 0.00000000 0.00000000 12.00000000'])
+                              ' 12.00000000 0.00000000 0.00000000 ',
+                              ' 0.00000000 12.00000000 0.00000000 ',
+                              ' 0.00000000 0.00000000 12.00000000 '])
 
         with self.assertLogs(logger, level='ERROR') as context:
             result = get_neb_cell_parameters_card('CELL_PARAMETERS', atomic_structure=[])

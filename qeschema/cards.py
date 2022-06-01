@@ -229,6 +229,27 @@ def get_atomic_forces_card(name, **kwargs):
     return lines
 
 
+def _get_cell_lines(name, cells):
+    """
+    Return cell lines
+
+    :param str name: Card name
+    :params dict cells: Lattice params
+    :return list[str]: List of strings representing the CELL
+    """
+
+    if cells:
+        lines = ['%s bohr' % name]
+        for key in sorted(cells):
+            if key not in ['a1', 'a2', 'a3']:
+                continue
+
+            lines.append((3 * '{:12.8f} ').format(*cells[key]))
+        return lines
+
+    return []
+
+
 def get_cell_parameters_card(name, **kwargs):
     """
     Convert XML data to CELL_PARAMETERS card
@@ -244,14 +265,7 @@ def get_cell_parameters_card(name, **kwargs):
         return []
     # Add cell parameters card
     cells = atomic_structure.get('cell', {})
-    if cells:
-        lines = ['%s bohr' % name]
-        for key in sorted(cells):
-            if key not in ['a1', 'a2', 'a3']:
-                continue
-            lines.append((3 * '{:12.8f} ').format(*cells[key]))
-        return lines
-    return []
+    return _get_cell_lines(name, cells)
 
 
 #
@@ -417,14 +431,7 @@ def get_neb_cell_parameters_card(name, **kwargs):
 
     atomic_structure = images[0]
     cells = atomic_structure.get('cell', {})
-    if cells:
-        lines = ['%s bohr' % name]
-        for key in sorted(cells):
-            if key not in ['a1', 'a2', 'a3']:
-                continue
-            lines.append((3 * '{:12.8f}').format(*cells[key]))
-        return lines
-    return []
+    return _get_cell_lines(name, cells)
 
 
 def get_neb_atomic_forces_card(name, **kwargs):
