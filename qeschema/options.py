@@ -307,15 +307,14 @@ def set_what_td_calculation(name, **kwargs):
     return [kwargs['whatTD']]
 
 
-def get_xspectra_component(name, comma=False, **kwargs):
+def get_xspectra_c(name, comma=False, **kwargs):
     """
     Get the xspectra component of a vector and print it in the form
     vector(component)=value
-    
+
     We may add comma=True to enable the comma - not necessary and need to be tested.
     """
     value = float(kwargs[name])
     lines = []
     lines.append(f" {name[:-1]}({name[-1]})={value}{',' if comma else ''}")
     return lines
-
