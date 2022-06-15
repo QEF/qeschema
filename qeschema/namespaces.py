@@ -37,3 +37,7 @@ TD_NAMESPACE = "http://www.quantum-espresso.org/ns/neb"
 
 TD_SPECTRUM_NAMESPACE = "http://www.quantum-espresso.org/ns/qes/qes_spectrum-1.0"
 "URI of the Quantum Espresso namespace for turbo-spectrum application"
+
+# XSpectra namespace
+XSPECTRA_NAMESPACE = "http://www.quantum-espresso.org/ns/qes/qes_xspectra-1.0"
+"URI of the Quantum Espresso namespace for XSPECTRA application"

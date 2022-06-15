@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<qes_xspectra:xspectra xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes_xspectra-1.0 xspectra.xsd"
+               xmlns:qes_xspectra="http://www.quantum-espresso.org/ns/qes/qes_xspectra-1.0"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+	       <input>	       
+      <input_xspectra>
+        <calculation>xanes_dipole</calculation>
+        <verbosity>high</verbosity>
+        <prefix>$TMP_DIR/</prefix>
+        <outdir>bubu</outdir>
+        <xiabs>1</xiabs>
+        <!--xkvec-->
+        <xkvec1>10.0</xkvec1>
+        <xkvec3>30.0</xkvec3>
+        <xkvec2>20.0</xkvec2>
+        <!--xepsilon-->
+        <xepsilon1>0.010</xepsilon1>
+        <xepsilon2>0.020</xepsilon2>
+        <xepsilon3>0.030</xepsilon3>
+        <x_save_file>xanes.sav</x_save_file>
+        <xniter>50</xniter>
+        <xcheck_conv>5</xcheck_conv>
+        <xonly_plot>false</xonly_plot>
+        <xread_wf>false</xread_wf>
+        <xerror>1.e-10</xerror>
+        <ef_r>0.45</ef_r>
+        <xe0>0.0</xe0>
+        <xcoordcrys>true</xcoordcrys>
+        <show_status>false</show_status>
+        <U_projection_type>atomic</U_projection_type>
+        <restart_mode>from_scratch</restart_mode>
+        <time_limit>1.e8</time_limit>
+        <edge>L2</edge>
+        <lplus>false</lplus>
+        <lminus>false</lminus>
+        <nelup>1</nelup>
+        <neldw>1</neldw>
+        <!-- 23 elements without the two vectors-->
+      </input_xspectra>
+      <plot>
+        <xnepoint>200</xnepoint>
+        <xgamma>0.1e0</xgamma>
+        <xemax>10.e0</xemax>
+        <xemin>0.e0</xemin>
+        <cut_occ_states>false</cut_occ_states>
+        <terminator>false</terminator>
+        <gamma_mode>constant</gamma_mode>
+        <gamma_file>gamma.dat</gamma_file>
+        <xanes_file>xanes.dat</xanes_file>
+        <gamma_value>10.e0</gamma_value>
+        <gamma_energy>0.e0</gamma_energy>
+        <!-- 11 elements-->
+      </plot>
+      <pseudos>
+        <filecore>Core.wfc</filecore>
+        <filerecon>bubu</filerecon>
+        <r_paw0>1.01</r_paw0>
+        <r_paw1>2.02</r_paw1>
+        <r_paw2>3.03</r_paw2>
+        <r_paw3>4.04</r_paw3>
+      </pseudos>
+      <cut_occ>
+        <cut_ierror>1.e-10</cut_ierror>
+        <cut_stepu>1.e-4</cut_stepu>
+        <cut_stepl>1.e-4</cut_stepl>
+        <cut_startt>1.e-0</cut_startt>
+        <cut_tinf>1.e-6</cut_tinf>
+        <cut_tsup>100.e0</cut_tsup>
+        <cut_desmooth>1.e-4</cut_desmooth>
+        <cut_nmemu>10000</cut_nmemu>
+        <cut_nmeml>10000</cut_nmeml>
+        <!-- 9 elements-->
+      </cut_occ>
+      <k_points_IBZ>
+        <monkhorst_pack nk1="1" nk2="1" nk3="1" k1="0" k2="0" k3="0">K-point mesh</monkhorst_pack>
+      </k_points_IBZ>
+</input>
+</qes_xspectra:xspectra>
