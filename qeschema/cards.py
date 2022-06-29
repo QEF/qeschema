@@ -10,6 +10,7 @@
 """
 Conversion functions for Quantum Espresso cards.
 """
+from collections import namedtuple
 import logging
 from typing import Union, List
 
@@ -267,6 +268,75 @@ def get_cell_parameters_card(name, **kwargs):
     cells = atomic_structure.get('cell', {})
     return _get_cell_lines(name, cells)
 
+
+def get_hubbard_card(name, **kwargs):
+    """
+    Convert XML data for specie related options. Map single values,
+    vectors and matrices. Skip 0 values for Hubbard parameters or
+    negative values for starting_ns eigenvalues. Skip entire vector
+    or matrix when
+
+    :param name: parameter name
+    :param kwargs: related input data
+    :return: a list
+    """
+
+    LabelValue = namedtuple('LabelValue', 'label value')
+
+    HUBB_U = 'Hubbard_U'
+    # Mapping between Hubbard schema types and .in types
+    HUBB_TYPES = {HUBB_U: 'U', 'Hubbard_J0': 'J0', 'Hubbard_J': 'J'}
+
+    lines = []
+
+    try:
+        dftu = kwargs['dftU']
+    except KeyError as err:
+        logger.error('Missing required argument %s when building parameter %s' %
+                     (str(err), name))
+        return lines
+
+    data = {}
+
+    for htype in HUBB_TYPES:
+
+        is_hubb_u_type = htype == HUBB_U
+
+        species = dftu.get(htype, None)
+        if species is None and is_hubb_u_type:
+            raise ValueError('Hubbard requires Hubbard_U tag')
+        elif species is None:
+            continue
+
+        data[htype] = {}
+
+        for specie in species:
+            label = specie['@label']
+            if label == 'no Hubbard':
+                continue
+
+            name = specie['@specie']
+            val = specie['$']
+
+            label_val = LabelValue(label, val)
+
+            if not is_hubb_u_type and name not in data[HUBB_U]:
+                raise ValueError('Species %s set in %s, but not in %s.' %
+                                 (name, htype, HUBB_U))
+
+            data[htype][name] = label_val
+
+    if not data:
+        return lines
+
+    lines = ['HUBBARD %s' % dftu['U_projection_type']]
+    for htype, species in data.items():
+        for name, val in species.items():
+            line = '{0} {1}-{2} {3}'.format(HUBB_TYPES[htype], name, val.label,
+                                            val.value)
+            lines.append(line)
+
+    return lines
 
 #
 # Phonon Cards

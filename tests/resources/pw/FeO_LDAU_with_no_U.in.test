@@ -21,12 +21,8 @@
  ecutrho=240.0
  ecutwfc=30.0
  force_symmorphic=.false.
- Hubbard_U(2)=7.349865e-10
- Hubbard_U(3)=7.349865e-10
  ibrav=0
  input_dft='PZ'
- lda_plus_u = .true.
- lda_plus_u_kind=0
  lspinorb=.false.
  nat=4
  nbnd=20
@@ -43,7 +39,6 @@
  starting_magnetization(2)=0.5
  starting_magnetization(3)=-0.5
  tot_charge=0.0
- U_projection_type='atomic'
  use_all_frac=.false.
 /
 &ELECTRONS
@@ -87,3 +82,6 @@ CELL_PARAMETERS bohr
   0.50000000   0.50000000   1.00000000 
   0.50000000   1.00000000   0.50000000 
   1.00000000   0.50000000   0.50000000 
+HUBBARD atomic
+U Fe1-3d 7.349865e-10
+U Fe2-3d 7.349865e-10

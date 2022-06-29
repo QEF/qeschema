@@ -362,29 +362,7 @@ class PwInputConverter(RawInputConverter):
                 'x_gamma_extrapolation': 'SYSTEM[x_gamma_extrapolation]',
                 'ecutvcut': ('SYSTEM[ecutvcut]', options.ha2ry, None)
             },
-            'dftU': {
-                'lda_plus_u_kind': 'SYSTEM[lda_plus_u_kind]',
-                'Hubbard_U': {
-                    '$': [('SYSTEM[Hubbard_U]', options.get_specie_related_values, None),
-                          ('SYSTEM[lda_plus_u]', options.set_lda_plus_u_flag, None)]
-                },
-                'Hubbard_J0': {
-                    '$': ('SYSTEM[Hubbard_J0]', options.get_specie_related_values, None),
-                },
-                'Hubbard_alpha': {
-                    '$': ('SYSTEM[Hubbard_alpha]', options.get_specie_related_values, None),
-                },
-                'Hubbard_beta': {
-                    '$': ('SYSTEM[Hubbard_beta]', options.get_specie_related_values, None),
-                },
-                'Hubbard_J': {
-                    '$': ('SYSTEM[Hubbard_J]', options.get_specie_related_values, None),
-                },
-                'starting_ns': {
-                    '$': ('SYSTEM[starting_ns_eigenvalue]', options.get_specie_related_values, None)
-                },
-                'U_projection_type': 'SYSTEM[U_projection_type]',
-            },
+            'dftU': ('HUBBARD', cards.get_hubbard_card, None),
             'vdW': {
                 'vdw_corr': 'SYSTEM[vdw_corr]',
                 'london_s6': 'SYSTEM[london_s6]',
@@ -561,7 +539,7 @@ class PwInputConverter(RawInputConverter):
             input_namelists=('CONTROL', 'SYSTEM', 'ELECTRONS', 'IONS', 'CELL',
                              FCP_NAMELIST),
             input_cards=('ATOMIC_SPECIES', 'ATOMIC_POSITIONS', 'K_POINTS',
-                         'CELL_PARAMETERS', 'ATOMIC_FORCES')
+                         'CELL_PARAMETERS', 'ATOMIC_FORCES', 'HUBBARD')
         )
         if 'xml_file' in kwargs:
             self._input['CONTROL']['input_xml_schema_file'] = "{!r}".format(
@@ -741,7 +719,7 @@ class NebInputConverter(RawInputConverter):
             *conversion_maps_builder(self.NEB_TEMPLATE_MAP),
             input_namelists=('PATH', 'CONTROL', 'SYSTEM', 'ELECTRONS', 'IONS', 'CELL'),
             input_cards=('CLIMBING_IMAGES', 'ATOMIC_SPECIES', 'ATOMIC_POSITIONS', 'K_POINTS',
-                         'CELL_PARAMETERS', 'ATOMIC_FORCES')
+                         'CELL_PARAMETERS', 'ATOMIC_FORCES', 'HUBBARD')
         )
 
     def get_qe_input(self):
