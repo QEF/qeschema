@@ -338,6 +338,7 @@ def get_hubbard_card(name, **kwargs):
 
     return lines
 
+
 #
 # Phonon Cards
 #
