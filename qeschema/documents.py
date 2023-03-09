@@ -14,7 +14,8 @@ from abc import ABCMeta
 from functools import wraps
 from xml.etree import ElementTree
 import xmlschema
-from xmlschema.etree import etree_tostring
+from xmlschema import etree_tostring
+
 
 try:
     import yaml
