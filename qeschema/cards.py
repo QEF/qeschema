@@ -130,24 +130,19 @@ def get_atomic_constraints_card(name, **kwargs):
     :return: List of strings
     """
     try:
-        num_of_constraints = kwargs['num_of_constraints']
-        tolerance = kwargs['tolerance']
-        atomic_constraints = kwargs['atomic_constraints']
+        num_of_constraints = kwargs['atomic_constraints']['num_of_constraints']
+        tolerance = kwargs['atomic_constraints']['tolerance']
+        atomic_constraints = kwargs['atomic_constraints']['atomic_constraint']
     except KeyError:
         logger.error("Missing required arguments when building CONSTRAINTS card!")
         return []
 
-    lines = [name, '{0} {1}'.format(num_of_constraints, tolerance)]
+    lines = [name, f"{num_of_constraints} {tolerance}"]
     for constraint in atomic_constraints:
-        constr_parms = constraint['constr_parms']  # list with 4 float items
-        constr_parms.extend([0] * max(0, 4 - len(constr_parms)))
+        constr_parms = constraint['constr_parms']  # list with at most 4 float items
         constr_type = constraint['constr_type']  # string
-        constr_target = constraint['constr_target']  # float
-        lines.append('{0} {1} {2}'.format(
-            constr_type,
-            ' '.join([str(item) for item in constr_parms]),
-            constr_target
-        ))
+        constr_target = constraint.get('constr_target', "")  # float or empty
+        lines.append(f"{constr_type} {' '.join([str(_) for _ in constr_parms])} {constr_target}")
     return lines
 
 

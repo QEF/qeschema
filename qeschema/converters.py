@@ -23,7 +23,7 @@ logger = logging.getLogger('qeschema')
 
 FCP_NAMELIST = 'FCP'
 PH_NAT_TODO_CARD = 'ph_nat_todo_card'
-OPTIONAL_CARDS = {PH_NAT_TODO_CARD}
+OPTIONAL_CARDS = {PH_NAT_TODO_CARD, "CONSTRAINTS", "HUBBARD", "SOLVENTS"}
 
 
 def conversion_maps_builder(template_map):
@@ -561,7 +561,7 @@ class PwInputConverter(RawInputConverter):
             input_namelists=('CONTROL', 'SYSTEM', 'ELECTRONS', 'IONS', 'CELL',
                              FCP_NAMELIST),
             input_cards=('ATOMIC_SPECIES', 'ATOMIC_POSITIONS', 'K_POINTS',
-                         'CELL_PARAMETERS', 'ATOMIC_FORCES')
+                         'CELL_PARAMETERS', 'ATOMIC_FORCES', 'CONSTRAINTS')
         )
         if 'xml_file' in kwargs:
             self._input['CONTROL']['input_xml_schema_file'] = "{!r}".format(
@@ -741,7 +741,7 @@ class NebInputConverter(RawInputConverter):
             *conversion_maps_builder(self.NEB_TEMPLATE_MAP),
             input_namelists=('PATH', 'CONTROL', 'SYSTEM', 'ELECTRONS', 'IONS', 'CELL'),
             input_cards=('CLIMBING_IMAGES', 'ATOMIC_SPECIES', 'ATOMIC_POSITIONS', 'K_POINTS',
-                         'CELL_PARAMETERS', 'ATOMIC_FORCES')
+                         'CELL_PARAMETERS', 'ATOMIC_FORCES', 'CONSTRAINTS')
         )
 
     def get_qe_input(self):
