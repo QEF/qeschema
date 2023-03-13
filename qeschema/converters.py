@@ -576,7 +576,7 @@ class PwInputConverter(RawInputConverter):
             input_namelists=('CONTROL', 'SYSTEM', 'ELECTRONS', 'IONS', 'CELL',
                              FCP_NAMELIST),
             input_cards=('ATOMIC_SPECIES', 'ATOMIC_POSITIONS', 'K_POINTS',
-                         'CELL_PARAMETERS', 'ATOMIC_FORCES', 'CONSTRAINTS','SOLVENTS', 'HUBBARD')
+                         'CELL_PARAMETERS', 'ATOMIC_FORCES', 'CONSTRAINTS', 'SOLVENTS', 'HUBBARD')
         )
         if 'xml_file' in kwargs:
             self._input['CONTROL']['input_xml_schema_file'] = "{!r}".format(

@@ -11,7 +11,6 @@
 Conversion functions for Quantum Espresso cards.
 """
 import logging
-from typing import Union, List
 
 logger = logging.getLogger('qeschema')
 
