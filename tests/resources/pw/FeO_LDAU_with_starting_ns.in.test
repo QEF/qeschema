@@ -26,7 +26,7 @@
  ibrav=0
  input_dft='PZ'
  lda_plus_u = .true.
- lda_plus_u_kind=0
+ lda_plus_u_kind = 0
  lspinorb=.false.
  nat=4
  nbnd=20
@@ -45,7 +45,7 @@
  starting_ns_eigenvalue(3,1,3)=1.0
  starting_ns_eigenvalue(3,2,2)=1.0
  tot_charge=0.0
- U_projection_type='atomic'
+ U_projection_type = 'atomic'
  use_all_frac=.false.
 /
 &ELECTRONS
