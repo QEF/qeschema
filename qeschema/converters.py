@@ -363,27 +363,42 @@ class PwInputConverter(RawInputConverter):
                 'ecutvcut': ('SYSTEM[ecutvcut]', options.ha2ry, None)
             },
             'dftU': {
-                'lda_plus_u_kind': 'SYSTEM[lda_plus_u_kind]',
+                '@new_format': [('HUBBARD', cards.get_hubbard_card, None),
+                                ('SYSTEM[lda_plus_u_kind]', options.set_lda_plus_u_kind, None),
+                                ('SYSTEM[lda_plus_u]', options.set_lda_plus_u_flag, None),
+                                ('SYSTEM[Hubbard_U]', options.get_specie_related_values, None),
+                                ('SYSTEM[Hubbard_J]', options.get_specie_related_values, None),
+                                ('SYSTEM[Hubbard_J0]', options.get_specie_related_values, None),
+                                ('SYSTEM[Hubbard_alpha]', options.get_specie_related_values, None),
+                                ('SYSTEM[Hubbard_beta]', options.get_specie_related_values, None),
+                                ('SYSTEM[U_projection_type]', options.set_u_projection_type, None)],
+                'lda_plus_u_kind': ('SYSTEM[lda_plus_u_kind]', options.set_lda_plus_u_kind, None),
                 'Hubbard_U': {
                     '$': [('SYSTEM[Hubbard_U]', options.get_specie_related_values, None),
+                          ('HUBBARD', cards.get_hubbard_card, None),
                           ('SYSTEM[lda_plus_u]', options.set_lda_plus_u_flag, None)]
                 },
                 'Hubbard_J0': {
-                    '$': ('SYSTEM[Hubbard_J0]', options.get_specie_related_values, None),
+                    '$': [('SYSTEM[Hubbard_J0]', options.get_specie_related_values, None),
+                          ('HUBBARD', cards.get_hubbard_card, None)]
                 },
                 'Hubbard_alpha': {
-                    '$': ('SYSTEM[Hubbard_alpha]', options.get_specie_related_values, None),
+                    '$': [('SYSTEM[Hubbard_alpha]', options.get_specie_related_values, None),
+                          ('HUBBARD', cards.get_hubbard_card, None)]
                 },
                 'Hubbard_beta': {
-                    '$': ('SYSTEM[Hubbard_beta]', options.get_specie_related_values, None),
+                    '$': [('SYSTEM[Hubbard_beta]', options.get_specie_related_values, None),
+                          ('HUBBARD', cards.get_hubbard_card, None)]
                 },
                 'Hubbard_J': {
-                    '$': ('SYSTEM[Hubbard_J]', options.get_specie_related_values, None),
+                    '$': [('SYSTEM[Hubbard_J]', options.get_specie_related_values, None),
+                          ('HUBBARD', cards.get_hubbard_card, None)]
                 },
                 'starting_ns': {
                     '$': ('SYSTEM[starting_ns_eigenvalue]', options.get_specie_related_values, None)
                 },
-                'U_projection_type': 'SYSTEM[U_projection_type]',
+                'U_projection_type': ('SYSTEM[U_projection_type]',
+                                      options.set_u_projection_type, None)
             },
             'vdW': {
                 'vdw_corr': 'SYSTEM[vdw_corr]',
@@ -561,7 +576,7 @@ class PwInputConverter(RawInputConverter):
             input_namelists=('CONTROL', 'SYSTEM', 'ELECTRONS', 'IONS', 'CELL',
                              FCP_NAMELIST),
             input_cards=('ATOMIC_SPECIES', 'ATOMIC_POSITIONS', 'K_POINTS',
-                         'CELL_PARAMETERS', 'ATOMIC_FORCES', 'CONSTRAINTS')
+                         'CELL_PARAMETERS', 'ATOMIC_FORCES', 'CONSTRAINTS','SOLVENTS', 'HUBBARD')
         )
         if 'xml_file' in kwargs:
             self._input['CONTROL']['input_xml_schema_file'] = "{!r}".format(

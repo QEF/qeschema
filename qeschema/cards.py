@@ -190,6 +190,77 @@ def get_k_points_card(name, **kwargs):
     return lines
 
 
+def get_hubbard_card(name, **kwargs):
+    """
+    writes the hubbard card for new format
+    """
+    try:
+        new_format = kwargs['dftU']['@new_format']
+    except KeyError:
+        new_format = False
+    if not new_format:
+        return []
+    try:
+        dftu = kwargs['dftU']
+    except KeyError as err:
+        logger.error("Missing required argument %s when building "
+                     "parameter %r", str(err), name)
+        return []
+
+    projtype = kwargs.get('U_projection_type', 'atomic')
+    lines = [f"{name} {projtype}"]
+    for tag in iter(['U', 'J0', 'alpha', 'beta']):
+        lines.extend(_hubbard_lines(dftu, tag))
+    for tag in iter(['J', 'U2', 'V']):
+        lines.extend(_hubbard_special_lines(dftu, tag))
+    return lines
+
+
+def _hubbard_lines(dftu, tag):
+    related_data = dftu.get(f"Hubbard_{tag}", [])
+    lines = []
+    for value in iter(related_data if isinstance(related_data, list) else [related_data]):
+        specie = value['@specie']
+        label = value['@label']
+        if label != 'no Hubbard':
+            lines.append(f"{tag}  {specie}-{label}  {value['$']:8.3f}")
+    return lines
+
+
+def _hubbard_special_lines(dftu, tag):
+    related_data = dftu.get(f"Hubbard_{tag}", [])
+    llabels = ['s', 'p', 'd', 'f']
+    lines = []
+    for value in iter(related_data if isinstance(related_data, list) else [related_data]):
+        specie = value['@specie']
+        label = value.get('@label', 'not found')
+        if label != 'no Hubbard':
+            if tag == 'J':
+                lines.append(f"J {specie}-{label} {value['$'][0]:8.3f}")
+                if 'd' in label:
+                    lines.append(f"B {specie}-{label} {value['$'][1]:8.3f}")
+                elif 'f' in label:
+                    lines.extend([f"E2 {specie}-{label} {value['$'][1]:8.3f}",
+                                  f"E3 {specie}-{label} {value['$'][2]:8.3f}"])
+            elif tag == 'U2':
+                background = value['@background']
+                if label == 'not found':
+                    def labnl(nnum, lnum):
+                        return f"{nnum}{llabels[lnum-1]}"
+
+                    label = labnl(value['n2_number'], value['l2_number'])
+                    if 'two' in background:
+                        label = f"{label}-{labnl(value['n3_number'],value['l3_number'])}"
+                    lines.append(f"U {specie}-{label}  {value['$']:8.3f}")
+            elif tag == 'V':
+                speclab1 = f"{value['@specie1']}-{value['@label1']}"
+                speclab2 = f"{value['@specie2']}-{value['@label2']}"
+                index1 = value['@index1']
+                index2 = value['@index2']
+                lines.append(f"{tag} {speclab1} {speclab2} {index1} {index2} {value['$']:8.3f}")
+    return lines
+
+
 def get_atomic_forces_card(name, **kwargs):
     """
     Convert XML data to ATOMIC_FORCES card
