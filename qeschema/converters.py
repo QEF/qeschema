@@ -23,7 +23,7 @@ logger = logging.getLogger('qeschema')
 
 FCP_NAMELIST = 'FCP'
 PH_NAT_TODO_CARD = 'ph_nat_todo_card'
-OPTIONAL_CARDS = {PH_NAT_TODO_CARD}
+OPTIONAL_CARDS = {PH_NAT_TODO_CARD, "CONSTRAINTS", "HUBBARD", "SOLVENTS"}
 
 
 def conversion_maps_builder(template_map):
@@ -363,27 +363,42 @@ class PwInputConverter(RawInputConverter):
                 'ecutvcut': ('SYSTEM[ecutvcut]', options.ha2ry, None)
             },
             'dftU': {
-                'lda_plus_u_kind': 'SYSTEM[lda_plus_u_kind]',
+                '@new_format': [('HUBBARD', cards.get_hubbard_card, None),
+                                ('SYSTEM[lda_plus_u_kind]', options.set_lda_plus_u_kind, None),
+                                ('SYSTEM[lda_plus_u]', options.set_lda_plus_u_flag, None),
+                                ('SYSTEM[Hubbard_U]', options.get_specie_related_values, None),
+                                ('SYSTEM[Hubbard_J]', options.get_specie_related_values, None),
+                                ('SYSTEM[Hubbard_J0]', options.get_specie_related_values, None),
+                                ('SYSTEM[Hubbard_alpha]', options.get_specie_related_values, None),
+                                ('SYSTEM[Hubbard_beta]', options.get_specie_related_values, None),
+                                ('SYSTEM[U_projection_type]', options.set_u_projection_type, None)],
+                'lda_plus_u_kind': ('SYSTEM[lda_plus_u_kind]', options.set_lda_plus_u_kind, None),
                 'Hubbard_U': {
                     '$': [('SYSTEM[Hubbard_U]', options.get_specie_related_values, None),
+                          ('HUBBARD', cards.get_hubbard_card, None),
                           ('SYSTEM[lda_plus_u]', options.set_lda_plus_u_flag, None)]
                 },
                 'Hubbard_J0': {
-                    '$': ('SYSTEM[Hubbard_J0]', options.get_specie_related_values, None),
+                    '$': [('SYSTEM[Hubbard_J0]', options.get_specie_related_values, None),
+                          ('HUBBARD', cards.get_hubbard_card, None)]
                 },
                 'Hubbard_alpha': {
-                    '$': ('SYSTEM[Hubbard_alpha]', options.get_specie_related_values, None),
+                    '$': [('SYSTEM[Hubbard_alpha]', options.get_specie_related_values, None),
+                          ('HUBBARD', cards.get_hubbard_card, None)]
                 },
                 'Hubbard_beta': {
-                    '$': ('SYSTEM[Hubbard_beta]', options.get_specie_related_values, None),
+                    '$': [('SYSTEM[Hubbard_beta]', options.get_specie_related_values, None),
+                          ('HUBBARD', cards.get_hubbard_card, None)]
                 },
                 'Hubbard_J': {
-                    '$': ('SYSTEM[Hubbard_J]', options.get_specie_related_values, None),
+                    '$': [('SYSTEM[Hubbard_J]', options.get_specie_related_values, None),
+                          ('HUBBARD', cards.get_hubbard_card, None)]
                 },
                 'starting_ns': {
                     '$': ('SYSTEM[starting_ns_eigenvalue]', options.get_specie_related_values, None)
                 },
-                'U_projection_type': 'SYSTEM[U_projection_type]',
+                'U_projection_type': ('SYSTEM[U_projection_type]',
+                                      options.set_u_projection_type, None)
             },
             'vdW': {
                 'vdw_corr': 'SYSTEM[vdw_corr]',
@@ -561,7 +576,7 @@ class PwInputConverter(RawInputConverter):
             input_namelists=('CONTROL', 'SYSTEM', 'ELECTRONS', 'IONS', 'CELL',
                              FCP_NAMELIST),
             input_cards=('ATOMIC_SPECIES', 'ATOMIC_POSITIONS', 'K_POINTS',
-                         'CELL_PARAMETERS', 'ATOMIC_FORCES')
+                         'CELL_PARAMETERS', 'ATOMIC_FORCES', 'CONSTRAINTS', 'SOLVENTS', 'HUBBARD')
         )
         if 'xml_file' in kwargs:
             self._input['CONTROL']['input_xml_schema_file'] = "{!r}".format(
@@ -741,7 +756,7 @@ class NebInputConverter(RawInputConverter):
             *conversion_maps_builder(self.NEB_TEMPLATE_MAP),
             input_namelists=('PATH', 'CONTROL', 'SYSTEM', 'ELECTRONS', 'IONS', 'CELL'),
             input_cards=('CLIMBING_IMAGES', 'ATOMIC_SPECIES', 'ATOMIC_POSITIONS', 'K_POINTS',
-                         'CELL_PARAMETERS', 'ATOMIC_FORCES')
+                         'CELL_PARAMETERS', 'ATOMIC_FORCES', 'CONSTRAINTS')
         )
 
     def get_qe_input(self):
@@ -852,6 +867,8 @@ class TdInputConverter(RawInputConverter):
         :return: the input as obtained from its input builder
         """
         temp = super(TdInputConverter, self).get_qe_input().split('\n')
+        for i, j in enumerate(temp):
+            print(i, " - ", j)
         td = temp[1]
         start = temp.index('&lr_input')
         end = start + temp[start:].index('/')
@@ -907,3 +924,79 @@ class TdSpectrumInputConverter(RawInputConverter):
 
 
 TD_spctInConverter = TdSpectrumInputConverter
+
+
+# XSpectra Input Converter
+class XSpectraInputConverter(RawInputConverter):
+    """
+    Converts the XML input file described by XSPECTRA scheme in
+    namelist input for XSPECTRA post-processing tool.
+    """
+    XSPECTRA_TEMPLATE_MAP = {
+        'input_xspectra': {'calculation': 'input_xspectra[calculation]',
+                           'verbosity': 'input_xspectra[verbosity]',
+                           'prefix': 'input_xspectra[prefix]',
+                           'outdir': 'input_xspectra[outdir]',
+                           'xiabs': 'input_xspectra[xiabs]',
+                           # xkvec
+                           'xkvec1': ('input_xspectra[xkvec1]', options.get_xspectra_c, None),
+                           'xkvec2': ('input_xspectra[xkvec2]', options.get_xspectra_c, None),
+                           'xkvec3': ('input_xspectra[xkvec3]', options.get_xspectra_c, None),
+                           # xepsilon
+                           'xepsilon1': ('input_xspectra[xepsilon1]', options.get_xspectra_c, None),
+                           'xepsilon2': ('input_xspectra[xepsilon2]', options.get_xspectra_c, None),
+                           'xepsilon3': ('input_xspectra[xepsilon3]', options.get_xspectra_c, None),
+                           'xcoordcrys': 'input_xspectra[xcoordcrys]',
+                           'ef_r': 'input_xspectra[ef_r]',
+                           'xe0': 'input_xspectra[xe0]',
+                           'xonly_pot': 'input_xspectra[xonly_pot]',
+                           'xread_wf': 'input_xspectra[xread_wf]',
+                           'x_save_file': 'input_xspectra[x_save_file]',
+                           'xniter': 'input_xspectra[xniter]',
+                           'xerror': 'input_xspectra[xerror]',
+                           'xcheck_conv': 'input_xspectra[xcheck_conv]',
+                           'show_status': 'input_xspectra[show_status]',
+                           'nelup': 'input_xspectra[nelup]',
+                           'neldw': 'input_xspectra[neldw]',
+                           'U_projection_type': 'input_xspectra[U_projection_type]',
+                           'time_limit': 'input_xspectra[time_limit]',
+                           'restart_mode': 'input_xspectra[restart_mode]',
+                           'edge': 'input_xspectra[edge]',
+                           'lplus': 'input_xspectra[lplus]',
+                           'lminus': 'input_xspectra[lminus]'},
+        'plot': {'xnepoint': 'plot[xnepoint]',
+                 'xgamma': 'plot[xgamma]',
+                 'xemax': 'plot[xemax]',
+                 'xemin': 'plot[xemin]',
+                 'cut_occ_states': 'plot[cut_occ_states]',
+                 'terminator': 'plot[terminator]',
+                 'gamma_mode': 'plot[gamma_mode]',
+                 'gamma_file': 'plot[gamma_file]',
+                 'gamma_energy': 'plot[gamma_energy]',
+                 'gamma_value': 'plot[gamma_value]',
+                 'xanes_file': 'plot[xanes_file]'},
+        'pseudos': {'filecore': 'pseudos[filecore]',
+                    'filerecon': 'pseudos[filerecon]',
+                    # rpaw
+                    'r_paw0': ('pseudos[r_paw0]', options.get_xspectra_c, None),
+                    'r_paw1': ('pseudos[r_paw1]', options.get_xspectra_c, None),
+                    'r_paw2': ('pseudos[r_paw2]', options.get_xspectra_c, None),
+                    'r_paw3': ('pseudos[r_paw3]', options.get_xspectra_c, None)},
+        'cut_occ': {'cut_ierror': 'cut_occ[cut_ierror]',
+                    'cut_stepu': 'cut_occ[cut_stepu]',
+                    'cut_stepl': 'cut_occ[cut_stepl]',
+                    'cut_startt': 'cut_occ[cut_startt]',
+                    'cut_tinf': 'cut_occ[cut_tinf]',
+                    'cut_tsup': 'cut_occ[cut_tsup]',
+                    'cut_desmooth': 'cut_occ[cut_desmooth]',
+                    'cut_nmemu': 'cut_occ[cut_nmemu]',
+                    'cut_nmeml': 'cut_occ[cut_nmeml]'},
+        'k_points_IBZ': ('K_POINTS', cards.get_xspectra_k_points_card, None),
+    }
+
+    def __init__(self, **_kwargs):
+        super(XSpectraInputConverter, self).__init__(
+            *conversion_maps_builder(self.XSPECTRA_TEMPLATE_MAP),
+            input_namelists=('input_xspectra', 'plot', 'pseudos', 'cut_occ'),
+            input_cards=("K_POINTS",)
+        )

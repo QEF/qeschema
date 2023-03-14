@@ -1,0 +1,30 @@
+&input_xspectra
+ calculation='xanes_dipole'
+ edge='L2'
+ outdir='$TMP_DIR/'
+ prefix='Cu'
+ verbosity='high'
+ xcheck_conv=500
+ xe0=11.5335
+ xepsilon(1)=1.0
+ xepsilon(2)=1.0
+ xepsilon(3)=1.0
+ xerror=0.01
+ xniter=5000
+/
+&plot
+ cut_occ_states=.true.
+ terminator=.true.
+ xemax=-10.0
+ xemin=80.0
+ xgamma=0.5
+ xnepoint=1000
+/
+&pseudos
+ filecore='Cu.wfc'
+ r_paw(0)=2.0
+ r_paw(2)=2.0
+/
+&cut_occ
+/
+ 3 3 3 0 0 0

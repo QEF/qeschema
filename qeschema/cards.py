@@ -11,7 +11,6 @@
 Conversion functions for Quantum Espresso cards.
 """
 import logging
-from typing import Union, List
 
 logger = logging.getLogger('qeschema')
 
@@ -130,24 +129,19 @@ def get_atomic_constraints_card(name, **kwargs):
     :return: List of strings
     """
     try:
-        num_of_constraints = kwargs['num_of_constraints']
-        tolerance = kwargs['tolerance']
-        atomic_constraints = kwargs['atomic_constraints']
+        num_of_constraints = kwargs['atomic_constraints']['num_of_constraints']
+        tolerance = kwargs['atomic_constraints']['tolerance']
+        atomic_constraints = kwargs['atomic_constraints']['atomic_constraint']
     except KeyError:
         logger.error("Missing required arguments when building CONSTRAINTS card!")
         return []
 
-    lines = [name, '{0} {1}'.format(num_of_constraints, tolerance)]
+    lines = [name, f"{num_of_constraints} {tolerance}"]
     for constraint in atomic_constraints:
-        constr_parms = constraint['constr_parms']  # list with 4 float items
-        constr_parms.extend([0] * max(0, 4 - len(constr_parms)))
+        constr_parms = constraint['constr_parms']  # list with at most 4 float items
         constr_type = constraint['constr_type']  # string
-        constr_target = constraint['constr_target']  # float
-        lines.append('{0} {1} {2}'.format(
-            constr_type,
-            ' '.join([str(item) for item in constr_parms]),
-            constr_target
-        ))
+        constr_target = constraint.get('constr_target', "")  # float or empty
+        lines.append(f"{constr_type} {' '.join([str(_) for _ in constr_parms])} {constr_target}")
     return lines
 
 
@@ -195,6 +189,77 @@ def get_k_points_card(name, **kwargs):
     return lines
 
 
+def get_hubbard_card(name, **kwargs):
+    """
+    writes the hubbard card for new format
+    """
+    try:
+        new_format = kwargs['dftU']['@new_format']
+    except KeyError:
+        new_format = False
+    if not new_format:
+        return []
+    try:
+        dftu = kwargs['dftU']
+    except KeyError as err:
+        logger.error("Missing required argument %s when building "
+                     "parameter %r", str(err), name)
+        return []
+
+    projtype = kwargs.get('U_projection_type', 'atomic')
+    lines = [f"{name} {projtype}"]
+    for tag in iter(['U', 'J0', 'alpha', 'beta']):
+        lines.extend(_hubbard_lines(dftu, tag))
+    for tag in iter(['J', 'U2', 'V']):
+        lines.extend(_hubbard_special_lines(dftu, tag))
+    return lines
+
+
+def _hubbard_lines(dftu, tag):
+    related_data = dftu.get(f"Hubbard_{tag}", [])
+    lines = []
+    for value in iter(related_data if isinstance(related_data, list) else [related_data]):
+        specie = value['@specie']
+        label = value['@label']
+        if label != 'no Hubbard':
+            lines.append(f"{tag}  {specie}-{label}  {value['$']:8.3f}")
+    return lines
+
+
+def _hubbard_special_lines(dftu, tag):
+    related_data = dftu.get(f"Hubbard_{tag}", [])
+    llabels = ['s', 'p', 'd', 'f']
+    lines = []
+    for value in iter(related_data if isinstance(related_data, list) else [related_data]):
+        specie = value['@specie']
+        label = value.get('@label', 'not found')
+        if label != 'no Hubbard':
+            if tag == 'J':
+                lines.append(f"J {specie}-{label} {value['$'][0]:8.3f}")
+                if 'd' in label:
+                    lines.append(f"B {specie}-{label} {value['$'][1]:8.3f}")
+                elif 'f' in label:
+                    lines.extend([f"E2 {specie}-{label} {value['$'][1]:8.3f}",
+                                  f"E3 {specie}-{label} {value['$'][2]:8.3f}"])
+            elif tag == 'U2':
+                background = value['@background']
+                if label == 'not found':
+                    def labnl(nnum, lnum):
+                        return f"{nnum}{llabels[lnum-1]}"
+
+                    label = labnl(value['n2_number'], value['l2_number'])
+                    if 'two' in background:
+                        label = f"{label}-{labnl(value['n3_number'],value['l3_number'])}"
+                    lines.append(f"U {specie}-{label}  {value['$']:8.3f}")
+            elif tag == 'V':
+                speclab1 = f"{value['@specie1']}-{value['@label1']}"
+                speclab2 = f"{value['@specie2']}-{value['@label2']}"
+                index1 = value['@index1']
+                index2 = value['@index2']
+                lines.append(f"{tag} {speclab1} {speclab2} {index1} {index2} {value['$']:8.3f}")
+    return lines
+
+
 def get_atomic_forces_card(name, **kwargs):
     """
     Convert XML data to ATOMIC_FORCES card
@@ -229,6 +294,27 @@ def get_atomic_forces_card(name, **kwargs):
     return lines
 
 
+def _get_cell_lines(name, cells):
+    """
+    Return cell lines
+
+    :param str name: Card name
+    :params dict cells: Lattice params
+    :return list[str]: List of strings representing the CELL
+    """
+
+    if cells:
+        lines = ['%s bohr' % name]
+        for key in sorted(cells):
+            if key not in ['a1', 'a2', 'a3']:
+                continue
+
+            lines.append((3 * '{:12.8f} ').format(*cells[key]))
+        return lines
+
+    return []
+
+
 def get_cell_parameters_card(name, **kwargs):
     """
     Convert XML data to CELL_PARAMETERS card
@@ -244,14 +330,7 @@ def get_cell_parameters_card(name, **kwargs):
         return []
     # Add cell parameters card
     cells = atomic_structure.get('cell', {})
-    if cells:
-        lines = ['%s bohr' % name]
-        for key in sorted(cells):
-            if key not in ['a1', 'a2', 'a3']:
-                continue
-            lines.append((3 * '{:12.8f} ').format(*cells[key]))
-        return lines
-    return []
+    return _get_cell_lines(name, cells)
 
 
 #
@@ -417,17 +496,27 @@ def get_neb_cell_parameters_card(name, **kwargs):
 
     atomic_structure = images[0]
     cells = atomic_structure.get('cell', {})
-    if cells:
-        lines = ['%s bohr' % name]
-        for key in sorted(cells):
-            if key not in ['a1', 'a2', 'a3']:
-                continue
-            lines.append((3 * '{:12.8f}').format(*cells[key]))
-        return lines
-    return []
+    return _get_cell_lines(name, cells)
 
 
 def get_neb_atomic_forces_card(name, **kwargs):
     # TODO
     assert isinstance(name, str)
     assert isinstance(kwargs, dict)
+
+
+def get_xspectra_k_points_card(name, **kwargs):
+    """
+    Convert XML data to K_POINTS card for xspectra calculation.
+
+    :param name: Card name
+    :param kwargs: Dictionary with converted data from XML file
+    :return: List of strings
+    """
+    lines = []
+    k_points_ibz = kwargs['k_points_IBZ']
+    monkhorst_pack = k_points_ibz.get('monkhorst_pack', {})
+
+    lines.append(' %(@nk1)s %(@nk2)s %(@nk3)s %(@k1)s %(@k2)s %(@k3)s' % monkhorst_pack)
+
+    return lines

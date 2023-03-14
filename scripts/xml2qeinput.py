@@ -26,13 +26,15 @@ def parse_args():
     parser.add_argument("-v", "--verbosity", action="count", default=1,
                         help="Increase output verbosity.")
     parser.add_argument('-in', metavar='FILE', required=True, help="XML input filename.")
+    parser.add_argument('-schema', metavar='FILE', required=False,
+                        help="Specify XSD schema in input", default=None)
     return parser.parse_args()
 
 
 if __name__ == '__main__':
 
-    if sys.version_info < (3, 5, 0):
-        sys.stderr.write("You need python 3.5 or later to run this program\n")
+    if sys.version_info < (3, 7, 0):
+        sys.stderr.write("You need python 3.7 or later to run this program\n")
         sys.exit(1)
 
     args = parse_args()
@@ -49,19 +51,22 @@ if __name__ == '__main__':
     qeschema.set_logger(args.verbosity)
 
     input_fn = getattr(args, 'in')
+    input_schema =  getattr(args,'schema', None) 
     tree = Etree.parse(input_fn)
     root = tree.getroot()
     element_name = root.tag.split('}')[-1]
     if element_name == 'espresso':
-        xml_document = qeschema.PwDocument()
+        xml_document = qeschema.PwDocument(schema=input_schema)
     elif element_name == 'nebRun':
-        xml_document = qeschema.NebDocument()
+        xml_document = qeschema.NebDocument(schema=input_schema)
     elif element_name == 'espressoph':
-        xml_document = qeschema.PhononDocument()
+        xml_document = qeschema.PhononDocument(schema=input_schema)
     elif element_name == 'tddfpt':
-        xml_document = qeschema.TdDocument()
+        xml_document = qeschema.TdDocument(schema=input_schema)
     elif element_name == 'spectrumDoc':
-        xml_document = qeschema.TdSpectrumDocument()
+        xml_document = qeschema.TdSpectrumDocument(schema=input_schema)
+    elif element_name == 'xspectra':
+        xml_document = qeschema.XSpectraDocument(schema=input_schema)
     else:
         sys.stderr.write("Could not find correct XML in %s, exiting...\n" % input_fn)
         sys.exit(1)

@@ -58,7 +58,7 @@ xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes-1.0 ../qespresso/
 </atom>
 </crystal_positions>
 <cell>
-<a1>12.000007 0.000000 0.000000</a1>
+<a1>12.000007 0.000000 100.000000</a1>
 <a2>0.000000 12.000007 0.000000</a2>
 <a3>0.000000 0.000000 12.000007</a3>
 </cell>

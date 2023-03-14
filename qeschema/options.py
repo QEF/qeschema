@@ -34,6 +34,14 @@ def get_specie_related_values(name, **kwargs):
     related_tag = kwargs['_related_tag']
     related_data = kwargs[related_tag]
     try:
+        new_format = kwargs['dftU']['@new_format']
+    except KeyError:
+        new_format = False
+
+    if new_format and related_tag in ['Hubbard_U', 'Hubbard_J', 'Hubbard_alpha',
+                                      'Hubbard_beta', 'Hubbard_J0']:
+        return []
+    try:
         atomic_species = kwargs['atomic_species']
         species = atomic_species['species']
     except KeyError as err:
@@ -277,6 +285,13 @@ def set_one_amass_line(name, **kwargs):
 
 
 def set_lda_plus_u_flag(name, **kwargs):
+    """
+    writes SYSTEM[set_lda_plus_u_flag] for old format
+    """
+    dftu = kwargs.get('dftU', None)
+    if dftu:
+        if dftu.get('@new_format'):
+            return []
     assert isinstance(name, str)
     lines = []
     related_tag = kwargs['_related_tag']
@@ -286,6 +301,38 @@ def set_lda_plus_u_flag(name, **kwargs):
         if value.get('@label') != 'no Hubbard' and value['$'] > 0:
             lines.append(f" {name} = .true.")
             break
+    return lines
+
+
+def set_lda_plus_u_kind(name, **kwargs):
+    """
+    writes SYSTEM[lda_plus_u_kind] flag for old format
+    """
+    dftu = kwargs.get('dftU', None)
+    if dftu:
+        if dftu.get('@new_format', False):
+            return []
+    #
+    assert isinstance(name, str)
+    lines = []
+    if kwargs.get('lda_plus_u_kind', None) is not None:
+        lines.append(f" lda_plus_u_kind = {kwargs['lda_plus_u_kind']}")
+    return lines
+
+
+def set_u_projection_type(name, **kwargs):
+    """
+    writes U_projection_type for old Hubbard format
+    """
+    assert isinstance(name, str)
+    dftu = kwargs.get('dftU', None)
+    if dftu:
+        if dftu.get('@new_format', False):
+            return []
+    lines = []
+    related_tag = kwargs['_related_tag']
+    related_data = kwargs[related_tag]
+    lines.append(f" {related_tag} = '{related_data}'")
     return lines
 
 
@@ -305,3 +352,16 @@ def set_boolean_flag(name, **kwargs):
 def set_what_td_calculation(name, **kwargs):
     assert isinstance(name, str)
     return [kwargs['whatTD']]
+
+
+def get_xspectra_c(name, comma=False, **kwargs):
+    """
+    Get the xspectra component of a vector and print it in the form
+    vector(component)=value
+
+    We may add comma=True to enable the comma - not necessary and need to be tested.
+    """
+    value = float(kwargs[name])
+    lines = []
+    lines.append(f" {name[:-1]}({name[-1]})={value}{',' if comma else ''}")
+    return lines

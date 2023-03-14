@@ -14,7 +14,8 @@ from abc import ABCMeta
 from functools import wraps
 from xml.etree import ElementTree
 import xmlschema
-from xmlschema.etree import etree_tostring
+from xmlschema import etree_tostring
+
 
 try:
     import yaml
@@ -23,7 +24,8 @@ except ImportError:
 
 from .namespaces import XSD_NAMESPACE
 from .converters import RawInputConverter, PwInputConverter, PhononInputConverter, \
-    NebInputConverter, TdInputConverter, TdSpectrumInputConverter
+    NebInputConverter, TdInputConverter, TdSpectrumInputConverter, \
+    XSpectraInputConverter
 from .exceptions import XmlDocumentError
 from .utils import etree_iter_path
 
@@ -446,7 +448,7 @@ class QeDocument(XmlDocument, metaclass=ABCMeta):
             self.input_builder = input_builder
 
         self.default_namespace = self.schema.target_namespace
-        qe_prefixes = ['qes', 'neb', 'qes_ph', 'qes_lr', 'qes_spectrum']
+        qe_prefixes = ['qes', 'neb', 'qes_ph', 'qes_lr', 'qes_spectrum', 'qes_xspectra']
         qe_nslist = list(map(self.schema.namespaces.get, qe_prefixes))
         if self.default_namespace not in qe_nslist:
             raise NotImplementedError(
@@ -699,3 +701,16 @@ class TdSpectrumDocument(QeDocument):
     @property
     def input_path(self):
         return 'spectrumIn'
+
+
+# XSPECTRA custom document
+class XSpectraDocument(QeDocument):
+    """
+    Class to manage XSPECTRA XML documents.
+    """
+    DEFAULT_SCHEMA = 'xspectra.xsd'
+    DEFAULT_INPUT_BUILDER = XSpectraInputConverter
+
+    @property
+    def input_path(self):
+        return 'input'

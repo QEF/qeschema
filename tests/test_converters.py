@@ -16,6 +16,11 @@ import glob
 import platform
 import xml.etree.ElementTree as ElementTree
 
+try:
+    import yaml
+except ImportError:
+    yaml = None
+
 import qeschema
 
 
@@ -36,6 +41,8 @@ def make_test_function(xml_file, ref_in_file):
             xml_conf = qeschema.TdDocument(source=xml_file)
         elif element_name == 'spectrumDoc':
             xml_conf = qeschema.TdSpectrumDocument(source=xml_file)
+        elif element_name == 'xspectra':
+            xml_conf = qeschema.XSpectraDocument(source=xml_file)
         else:
             raise ValueError("XML file %r is not a Quantum ESPRESSO document!" % xml_file)
 
@@ -84,6 +91,7 @@ class ConverterTestCase(unittest.TestCase):
             self.assertTrue(os.path.isfile(in_filename),
                             'Test output file %r missing!' % in_filename)
 
+    @unittest.skipIf(yaml is None, "PyYAML library is not installed")
     def test_yaml2qeinput_script(self):
         xml_filename = os.path.join(self.test_dir, 'resources/pw/Al001_relax_bfgs.yml')
         in_filename = xml_filename[:-4] + '.in'
