@@ -15,7 +15,7 @@ with open("README.rst") as readme:
 
 setup(
     name='qeschema',
-    version='1.4.0',
+    version='1.5.0',
     install_requires=['xmlschema>=1.6.4', 'numpy'],
     extras_require={
         'HDF5': ['h5py'],
@@ -41,6 +41,7 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: Implementation :: CPython',
         'Topic :: Scientific/Engineering :: Physics',
         'Topic :: Utilities',

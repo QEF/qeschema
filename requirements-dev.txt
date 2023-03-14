@@ -1,6 +1,6 @@
 # Requirements for setup a development environment for the qeschema package.
 setuptools
-tox
+tox>=4.0
 flake8
 coverage
 xmlschema>=1.6.4
