@@ -11,8 +11,8 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <elph>true</elph>
         <epbwrite>true</epbwrite>
         <epwread>false</epwread>
-        <amass atom="1">12.01078</amass>
         <nbndsub>4</nbndsub>
+        <amass atom="1">12.01078</amass>
         <nq1>3</nq1>
         <nq2>3</nq2>
         <nq3>3</nq3>

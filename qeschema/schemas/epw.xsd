@@ -32,7 +32,7 @@ datecode 230320
     </sequence>
   </complexType>
   <complexType name="control_variablesType">
-    <all>
+    <sequence>
       <element type="string" name="title" minOccurs="0"/>
       <element type="string" name="prefix" minOccurs="1"/>
       <element type="string" name="outdir" minOccurs="1"/>
@@ -96,7 +96,7 @@ datecode 230320
       <element type="boolean" name="lifc" minOccurs="0"/>
       <element type="epw:asrType" name="asr_typ" minOccurs="0"/>
       <element type="boolean" name="wannierize" minOccurs="1"/>
-    </all>
+    </sequence>
   </complexType>
   <simpleType name="vmeType">
     <restriction base="string">
