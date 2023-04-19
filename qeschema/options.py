@@ -283,6 +283,22 @@ def set_one_amass_line(name, **kwargs):
             lines.append(' {}({})={:7.3f}'.format(name, index, value))
     return lines
 
+def set_one_proj_line(name, **kwargs):
+    """
+    writes projlines for epw input 
+    """
+    lines=[]
+    try:
+        node = kwargs['proj']
+        value = str(node['$'])
+        index = node['@atom']
+        lines.append(f" {name}({index})={value}")
+    except TypeError:
+        for node in kwargs['proj']:
+            value = str(node['$'])
+            index = node['@atom']
+            lines.append(f" {name}({index})={value}")
+    return lines 
 
 def set_lda_plus_u_flag(name, **kwargs):
     """

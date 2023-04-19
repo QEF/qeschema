@@ -8,9 +8,10 @@
 # Authors: Davide Brunato
 #
 from .documents import XmlDocument, QeDocument, PwDocument, PhononDocument, \
-    NebDocument, TdDocument, TdSpectrumDocument, XSpectraDocument
-from .converters import RawInputConverter, PwInputConverter, PhononInputConverter, \
-    NebInputConverter, TdInputConverter, TdSpectrumInputConverter, XSpectraInputConverter
+    NebDocument, TdDocument, TdSpectrumDocument, XSpectraDocument, EPWDocument
+from .converters import RawInputConverter, PwInputConverter, \
+    PhononInputConverter, NebInputConverter, TdInputConverter, \
+    TdSpectrumInputConverter, XSpectraInputConverter, EPWInputConverter 
 from .exceptions import QESchemaError, XmlDocumentError
 from .utils import set_logger
 

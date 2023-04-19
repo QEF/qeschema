@@ -27,75 +27,76 @@ datecode 230320
   </complexType>
   <complexType name="inputType">
     <sequence>
-      <element type="epw:control_variablesType" name="control_variables"/>
-      <element type="epw:w90Type" name="wannier90"/>
+      <element type="epw:control_variablesType" name="control_variables" minOccurs="1"/>
+      <element type="epw:w90Type" name="wannier90" minOccurs="0"/>
     </sequence>
   </complexType>
   <complexType name="control_variablesType">
-    <sequence>
-      <element type="string" name="title"/>
-      <element type="string" name="prefix"/>
-      <element type="string" name="outdir"/>
-      <element type="nonNegativeInteger" name="iverbosity"/>
-      <element type="string" name="dvscf_dir"/>
-      <element type="string" name="filukk"/>
-      <element type="boolean" name="elph"/>
-      <element type="boolean" name="ep_coupling"/>
-      <element type="boolean" name="elecselfen"/>
-      <element type="boolean" name="phonselfen"/>
-      <element type="boolean" name="lindabs"/>
-      <element type="boolean" name="band_plot"/>
-      <element type="boolean" name="fermi_plot"/>
-      <element type="boolean" name="cumulant"/>
-      <element type="boolean" name="prtgkk"/>
-      <element type="boolean" name="epbread"/>
-      <element type="boolean" name="epbwrite"/>
-      <element type="boolean" name="epwread"/>
-      <element type="boolean" name="epwwrite"/>
-      <element type="boolean" name="ephwrite"/>
-      <element type="boolean" name="eig_read"/>
-      <element type="boolean" name="delta_approx"/>
-      <element type="double" name="eps_acustic"/>
-      <element type="nonNegativeInteger" name="etf_mem"/>
-      <element type="positiveInteger" name="nbndsub"/>
-      <element type="positiveInteger" name="nq1"/>
-      <element type="positiveInteger" name="nq2"/>
-      <element type="positiveInteger" name="nq3"/>
-      <element type="positiveInteger" name="nk1"/>
-      <element type="positiveInteger" name="nk2"/>
-      <element type="positiveInteger" name="nk3"/>
-      <element type="positiveInteger" name="nqf1"/>
-      <element type="positiveInteger" name="nqf2"/>
-      <element type="positiveInteger" name="nqf3"/>
-      <element type="positiveInteger" name="nkf1"/>
-      <element type="positiveInteger" name="nkf2"/>
-      <element type="positiveInteger" name="nkf3"/>
-      <element type="boolean" name="mp_mesh_k"/>
-      <element type="string" name="filqf"/>
-      <element type="string" name="filkf"/>
-      <element type="epw:vmeType" name="vme"/>
-      <element type="boolean" name="use_ws"/>
-      <element type="double" name="degaussw"/>
-      <element type="double" name="degaussq"/>
-      <element type="double" name="fsthick"/>
-      <element type="integer" name="ngaussw"/>
-      <element type="positiveInteger" name="nsmear"/>
-      <element type="double" name="delta_smear"/>
-      <element type="boolean" name="restart"/>
-      <element type="positiveInteger" name="restart_step"/>
-      <element type="double" name="scissor"/>
-      <element type="boolean" name="lphase"/>
-      <element type="boolean" name="lpolar"/>
-      <element type="boolean" name="efermi_read"/>
-      <element type="double" name="fermi_energy"/>
-      <element type="boolean" name="lscreen"/>
+    <all>
+      <element type="string" name="title" minOccurs="0"/>
+      <element type="string" name="prefix" minOccurs="1"/>
+      <element type="string" name="outdir" minOccurs="1"/>
+      <element type="nonNegativeInteger" name="iverbosity" minOccurs="0"/>
+      <element type="string" name="dvscf_dir" minOccurs="0"/>
+      <element type="string" name="filukk" minOccurs="0"/>
+      <element type="boolean" name="elph" minOccurs="0"/>
+      <element type="boolean" name="ep_coupling" minOccurs="0"/>
+      <element type="boolean" name="elecselfen" minOccurs="0"/>
+      <element type="boolean" name="phonselfen" minOccurs="0"/>
+      <element type="boolean" name="lindabs" minOccurs="0"/>
+      <element type="boolean" name="band_plot" minOccurs="0"/>
+      <element type="boolean" name="fermi_plot" minOccurs="0"/>
+      <element type="boolean" name="cumulant" minOccurs="0"/>
+      <element type="boolean" name="prtgkk" minOccurs="0"/>
+      <element type="boolean" name="epbread" minOccurs="0"/>
+      <element type="boolean" name="epbwrite" minOccurs="0"/>
+      <element type="boolean" name="epwread" minOccurs="0"/>
+      <element type="boolean" name="epwwrite" minOccurs="0"/>
+      <element type="boolean" name="ephwrite" minOccurs="0"/>
+      <element type="boolean" name="eig_read" minOccurs="0"/>
+      <element type="boolean" name="delta_approx" minOccurs="0"/>
+      <element type="double" name="eps_acustic" minOccurs="0"/>
+      <element type="nonNegativeInteger" name="etf_mem" minOccurs="0"/>
+      <element type="positiveInteger" name="nbndsub" minOccurs="0"/>
+      <element type="epw:amassType" name="amass" minOccurs="0" maxOccurs="unbounded" />
+      <element type="positiveInteger" name="nq1" minOccurs="1"/>
+      <element type="positiveInteger" name="nq2" minOccurs="1"/>
+      <element type="positiveInteger" name="nq3" minOccurs="1"/>
+      <element type="positiveInteger" name="nk1" minOccurs="1"/>
+      <element type="positiveInteger" name="nk2" minOccurs="1"/>
+      <element type="positiveInteger" name="nk3" minOccurs="1"/>
+      <element type="positiveInteger" name="nqf1" minOccurs="0"/>
+      <element type="positiveInteger" name="nqf2" minOccurs="0"/>
+      <element type="positiveInteger" name="nqf3" minOccurs="0"/>
+      <element type="positiveInteger" name="nkf1" minOccurs="0"/>
+      <element type="positiveInteger" name="nkf2" minOccurs="0"/>
+      <element type="positiveInteger" name="nkf3" minOccurs="0"/>
+      <element type="boolean" name="mp_mesh_k" minOccurs="1"/>
+      <element type="string" name="filqf" minOccurs="0"/>
+      <element type="string" name="filkf" minOccurs="0"/>
+      <element type="epw:vmeType" name="vme" minOccurs="0"/>
+      <element type="boolean" name="use_ws" minOccurs="0"/>
+      <element type="double" name="degaussw" minOccurs="0"/>
+      <element type="double" name="degaussq" minOccurs="0"/>
+      <element type="double" name="fsthick" minOccurs="0"/>
+      <element type="integer" name="ngaussw" minOccurs="0"/>
+      <element type="positiveInteger" name="nsmear" minOccurs="0"/>
+      <element type="double" name="delta_smear" minOccurs="0"/>
+      <element type="boolean" name="restart" minOccurs="0"/>
+      <element type="positiveInteger" name="restart_step" minOccurs="0"/>
+      <element type="double" name="scissor" minOccurs="0"/>
+      <element type="boolean" name="lphase" minOccurs="0"/>
+      <element type="boolean" name="lpolar" minOccurs="0"/>
+      <element type="boolean" name="efermi_read" minOccurs="0"/>
+      <element type="double" name="fermi_energy" minOccurs="0"/>
+      <element type="boolean" name="lscreen" minOccurs="0"/>
       <element type="nonNegativeInteger" name="scr_typ"  minOccurs="0"/>
       <element type="double" name="fermi_diff"  minOccurs="0"/>
       <element type="double" name="smear_rpa"  minOccurs="0"/>
-      <element type="boolean" name="lifc"/>
-      <element type="epw:asrType" name="asr_typ"/>
-      <element type="boolean" name="wannierize"/>
-    </sequence>
+      <element type="boolean" name="lifc" minOccurs="0"/>
+      <element type="epw:asrType" name="asr_typ" minOccurs="0"/>
+      <element type="boolean" name="wannierize" minOccurs="1"/>
+    </all>
   </complexType>
   <simpleType name="vmeType">
     <restriction base="string">
@@ -115,11 +116,11 @@ datecode 230320
     <sequence>
       <element type="nonNegativeInteger" name="num_iter"/>
       <element type="double" name="dis_win_max"/>
-      <element type="double" name="dis_win_min"/>
-      <element type="double" name="dis_froz_min"/>
+      <element type="double" name="dis_win_min" minOccurs="0"/>
+      <element type="double" name="dis_froz_min" minOccurs="0"/>
       <element type="double" name="dis_froz_max"/>
-      <element type="string" name="proj"/>
-      <element type="string" name="bands_skipped"/>
+      <element type="epw:wprojType" name="proj" minOccurs="1" maxOccurs="unbounded"/>
+      <element type="string" name="bands_skipped" minOccurs="0"/>
       <element type="nonNegativeInteger" name="iprint"/>
       <element type="boolean" name="wannier_plot"/>
       <element type="epw:pi3vectorType" name="wannier_plot_supercell" minOccurs="0"/>
@@ -127,7 +128,7 @@ datecode 230320
       <element type="double" name="wannier_plot_radius" minOccurs="0"/>
       <element type="string" name="wannier_plot_list" minOccurs="0"/>
       <element type="boolean" name="reduce_unk" minOccurs="0"/>
-      <element type="boolean" name="scdm_proj"/>
+      <element type="boolean" name="scdm_proj" minOccurs="0"/>
       <element type="double" name="scdm_sigma" minOccurs="0"/>
       <element type="boolean" name="auto_projections" minOccurs="0"/>
       <element type="string" name="scdm_entanglement" minOccurs="0"/>
@@ -149,4 +150,23 @@ datecode 230320
       <enumeration value="gaussian"/>
     </restriction>
   </simpleType>
+  <!--types importes from qes.xsd 
+    opyright (c), 2015-2016, Quantum Espresso Foundation. All rights reserved.
+This file is distributed under the terms of the MIT License. See the
+file 'LICENSE' in the root directory of the present distribution, or
+http://opensource.org/licenses/MIT.--> 
+  <complexType name="amassType">
+    <simpleContent>
+        <extension base="double">
+            <attribute type="positiveInteger" name="atom"/>
+        </extension>
+      </simpleContent>
+  </complexType>
+  <complexType name="wprojType">
+    <simpleContent>
+      <extension base="string">
+        <attribute type="positiveInteger" name="atom"/>
+      </extension>
+    </simpleContent>
+  </complexType>
 </schema>

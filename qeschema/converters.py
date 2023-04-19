@@ -593,7 +593,7 @@ class PhononInputConverter(RawInputConverter):
     """
     PHONON_TEMPLATE_MAP = {
         'xq': {
-         '$': ('qPointsSpecs', cards.get_qpoints_card, None),
+            '$': ('qPointsSpecs', cards.get_qpoints_card, None),
         },
         'scf_ph': {
             'tr2_ph': "INPUTPH[tr2_ph]",
@@ -1000,3 +1000,103 @@ class XSpectraInputConverter(RawInputConverter):
             input_namelists=('input_xspectra', 'plot', 'pseudos', 'cut_occ'),
             input_cards=("K_POINTS",)
         )
+
+
+class EPWInputConverter(RawInputConverter):
+    """
+    converts the XML input file for EPW to the namelist format 
+    expected by epw.x 
+    """
+    EPW_TEMPLATE_MAP = {
+        'control_variables': {
+            # 'title': ("TITLE", title.get_epw_title(), None),
+            'prefix': "inputepw[prefix]",
+            'outdir': "inputepw[outdir]",
+            'iverbosity': "inputepw[iverbosity]",
+            'dvscf_dir': "inputepw[dvscf_dir]",
+            'filukk': "inputepw[filukk]",
+            'elph': "inputepw[elph]",
+            'ep_coupling': "inputepw[ep_coupling]",
+            'elecselfen': "inputepw[elecselfen]",
+            'phonselfen': "inputepw[phonselfen]",
+            'lindabs': "inputepw[lindabs]",
+            'band_plot': "inputepw[band_plot]",
+            'fermi_plot': "inputepw[fermi_plot]",
+            'cumulant': "inputepw[cumulant]",
+            'prtgkk':  "inputepw[prtgkk]",
+            'epbread': "inputepw[epbread]",
+            'epbwrite': "inputepw[epbwrite]",
+            'epwread': "inputepw[epwread]",
+            'epwwrite': "inputepw[epwwrite]",
+            'ephwrite': "inputepw[ephwrite]",
+            'eig_read': "inputepw[eig_read]",
+            'delta_approx': "inputepw[delta_approx]",
+            'eps_acustic': "inputepw[eps_acustic]",
+            'etf_mem': "inputepw[etcmem]",
+            'nbndsub': "inputepw[nbndsub]",
+            'nq1': "inputepw[nq1]",
+            'nq2': "inputepw[nq2]",
+            'nq3': "inputepw[nq3]",
+            'nk1': "inputepw[nk1]",
+            'nk2': "inputepw[nk2]",
+            'nk3': "inputepw[nk3]",
+            'nqf1': "inputepw[nqf1]",
+            'nqf2': "inputepw[nqf2]",
+            'nqf3': "inputepw[nqf3]",
+            'nkf1': "inputepw[nkf1]",
+            'nkf2': "inputepw[nkf2]",
+            'nkf3': "inputepw[nkf3]",
+            'mp_mesh_k': "inputepw[mp_mesh_k]",
+            'filqf': "inputepw[filqf]",
+            'filkf': "inputepw[filkf]",
+            'vme': "inputepw[vme]",
+            'use_ws': "inputepw[use_ws]",
+            'degaussw': "inputepw[degaussw]",
+            'degaussq': "inputepw[degaussq]",
+            'fsthick': "inputepw[fsthick]",
+            'ngaussw': "inputepw[ngaussw]",
+            'nsmear': "inputepw[nsmear]",
+            'delta_smear': "inputepw[delta_smear]",
+            'restart': "inputepw[restart]",
+            'restart_step': "inputepw[restart_step]",
+            'scissor': "inputepw[scissor]",
+            'lphase': "inputepw[lphase]",
+            'lpolar': "inputepw[lpolar]",
+            'efermi_read': "inputepw[efermi_read]",
+            'fermi_energy': "inputepw[fermi_energy]",
+            'lscreen': "inputepw[lscreen]",
+            'scr_typ': "inputepw[scr_typ]",
+            'fermi_diff': "inputepw[fermi_diff]",
+            'smear_rpa': "inputepw[smear_rpa]",
+            'lifc': "inputepw[lifc]",
+            'asr_typ': "inputepw[asr_typ]",
+            'wannierize': "inputepw[wannierize]", 
+            'amass': {'$': ("inputepw[amass]", options.set_one_amass_line, None)} 
+            },
+        'wannier90': {
+            'num_iter': "inputepw[num_iter]",
+            'dis_win_max': "inputepw[dis_win_max]",
+            'dis_win_min': "inputepw[dis_win_min]",
+            'dis_froz_min': "inputepw[dis_froz_min]",
+            'dis_froz_max': "inputepw[dis_frox_max]",
+            'proj': {'$':("inputepw[proj]", options.set_one_proj_line, None)},
+            'bands_skipped': "inputepw[bands_skipped]",
+            'iprint': "inputepw[iprint]",
+            'wannier_plot': "inputepw[wannier_plot]",
+            'wannier_plot_supercell': "inputepw[wannier_plot_supercell]",
+            'wannier_plot_scale': "inputepw[wannier_plot_scale]",
+            'wannier_plot_radius': "inputepw[wannier_plot_radius]",
+            'wannier_plot_list': "inputepw[wannier_plot_list]",
+            'reduce_unk': "inputepw[reduce_unk]",
+            'scdm_proj': "inputepw[scdm_proj]",
+            'scdm_sigma': "inputepw[scdm_sigma]",
+            'auto_projections': "inputepw[auto_projections]",
+            'scdm_entanglement': "inputepw[scdm_entaglement]",
+            'scdm_mu': "inputepw[scdm_mu]",
+        }
+    }
+
+    def __init__(self, **kwargs):
+        super().__init__(*conversion_maps_builder(self.EPW_TEMPLATE_MAP),
+                         input_namelists=['inputepw'],
+                         input_cards=[])

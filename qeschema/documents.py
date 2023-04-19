@@ -25,7 +25,7 @@ except ImportError:
 from .namespaces import XSD_NAMESPACE
 from .converters import RawInputConverter, PwInputConverter, PhononInputConverter, \
     NebInputConverter, TdInputConverter, TdSpectrumInputConverter, \
-    XSpectraInputConverter
+    XSpectraInputConverter, EPWInputConverter
 from .exceptions import XmlDocumentError
 from .utils import etree_iter_path
 
@@ -714,3 +714,15 @@ class XSpectraDocument(QeDocument):
     @property
     def input_path(self):
         return 'input'
+
+
+class EPWDocument(QeDocument):
+    """
+    class to manage EPW XML documents 
+    """
+    DEFAULT_SCHEMA = 'epw.xsd'
+    DEFAULT_INPUT_BUILDER = EPWInputConverter
+
+    @property
+    def input_path(self):
+        return 'epwin'
