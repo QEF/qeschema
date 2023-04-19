@@ -488,6 +488,7 @@ datecode 211101
       <element type="qes:basisSetItemType" name="fft_grid" minOccurs="0" />
       <element type="qes:basisSetItemType" name="fft_smooth" minOccurs="0" />
       <element type="qes:basisSetItemType" name="fft_box" minOccurs="0" />
+      <element type="boolean" name="spline_ps" minOccurs="0" maxOccurs="1"/>
     </sequence>
   </complexType>
   <complexType name="basis_setType">

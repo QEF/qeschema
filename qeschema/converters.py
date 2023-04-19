@@ -866,9 +866,7 @@ class TdInputConverter(RawInputConverter):
         Overrides superclass get_qe_input with use_defaults set to False.
         :return: the input as obtained from its input builder
         """
-        temp = super(TdInputConverter, self).get_qe_input().split('\n')
-        for i, j in enumerate(temp):
-            print(i, " - ", j)
+        temp = super().get_qe_input().split('\n')
         td = temp[1]
         start = temp.index('&lr_input')
         end = start + temp[start:].index('/')
