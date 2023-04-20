@@ -292,13 +292,38 @@ def set_one_proj_line(name, **kwargs):
         node = kwargs['proj']
         value = str(node['$'])
         index = node['@atom']
-        lines.append(f" {name}({index})={value}")
+        lines.append(f" {name}({index})='{value}'")
     except TypeError:
         for node in kwargs['proj']:
             value = str(node['$'])
             index = node['@atom']
-            lines.append(f" {name}({index})={value}")
-    return lines 
+            lines.append(f" {name}({index})='{value}'")
+    return lines
+
+def set_wdata_lines(name, **kwargs):
+    """
+    writes wdata strings for epw input
+    """
+    res = []
+    if kwargs.get('wannier_plot',False):
+        res = [f" wdata(1) ='bands_plot = .true.'",
+                 f" wdata(2) = 'begin kpoint_path'"]
+        iline = 2
+        points = kwargs['wannier_plot_list']
+        points.sort(key = lambda s: s['@segment'])
+        for p in points:
+            iline += 1
+            res.append(f" wdata({iline}) = '{p['$'].strip()}'")
+        iline += 1
+        res.append(f" wdata({iline}) = 'end kpoint_path'")
+        if kwargs.get('wannier_plot_format',None):
+            iline +=1
+            plot_format = kwargs['wannier_plot_format'].strip() 
+            res.append(f" wdata{iline} = 'bands_plot_format = {plot_format}'")
+        use_ws_distance = "T" if kwargs.get('use_ws', False) else "F"
+        iline += 1
+        res.append(f" wdata({iline}) = 'use_ws_distance = {use_ws_distance}'")
+    return res
 
 def set_lda_plus_u_flag(name, **kwargs):
     """

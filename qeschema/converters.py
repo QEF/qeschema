@@ -1009,7 +1009,6 @@ class EPWInputConverter(RawInputConverter):
     """
     EPW_TEMPLATE_MAP = {
         'control_variables': {
-            # 'title': ("TITLE", title.get_epw_title(), None),
             'prefix': "inputepw[prefix]",
             'outdir': "inputepw[outdir]",
             'iverbosity': "inputepw[iverbosity]",
@@ -1050,7 +1049,6 @@ class EPWInputConverter(RawInputConverter):
             'filqf': "inputepw[filqf]",
             'filkf': "inputepw[filkf]",
             'vme': "inputepw[vme]",
-            'use_ws': "inputepw[use_ws]",
             'degaussw': "inputepw[degaussw]",
             'degaussq': "inputepw[degaussq]",
             'fsthick': "inputepw[fsthick]",
@@ -1082,11 +1080,15 @@ class EPWInputConverter(RawInputConverter):
             'proj': {'$':("inputepw[proj]", options.set_one_proj_line, None)},
             'bands_skipped': "inputepw[bands_skipped]",
             'iprint': "inputepw[iprint]",
-            'wannier_plot': "inputepw[wannier_plot]",
+            'wannier_plot': ["inputepw[wannier_plot]",
+                             ("inputepw[wdata]", options.set_wdata_lines, None)
+                             ],
             'wannier_plot_supercell': "inputepw[wannier_plot_supercell]",
             'wannier_plot_scale': "inputepw[wannier_plot_scale]",
             'wannier_plot_radius': "inputepw[wannier_plot_radius]",
-            'wannier_plot_list': "inputepw[wannier_plot_list]",
+            'wannier_plot_list': {'@segment': ("inputepw[wdata]", options.set_wdata_lines, None)},
+            'wannier_plot_format': ('inputepw[wdata]', options.set_wdata_lines, None),
+            'use_ws': ("inputepw[wdata]", options.set_wdata_lines, None),
             'reduce_unk': "inputepw[reduce_unk]",
             'scdm_proj': "inputepw[scdm_proj]",
             'scdm_sigma': "inputepw[scdm_sigma]",

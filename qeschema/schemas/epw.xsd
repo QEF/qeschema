@@ -75,7 +75,6 @@ datecode 230320
       <element type="string" name="filqf" minOccurs="0"/>
       <element type="string" name="filkf" minOccurs="0"/>
       <element type="epw:vmeType" name="vme" minOccurs="0"/>
-      <element type="boolean" name="use_ws" minOccurs="0"/>
       <element type="double" name="degaussw" minOccurs="0"/>
       <element type="double" name="degaussq" minOccurs="0"/>
       <element type="double" name="fsthick" minOccurs="0"/>
@@ -126,7 +125,9 @@ datecode 230320
       <element type="epw:pi3vectorType" name="wannier_plot_supercell" minOccurs="0"/>
       <element type="double" name="wannier_plot_scale" minOccurs="0"/>
       <element type="double" name="wannier_plot_radius" minOccurs="0"/>
-      <element type="string" name="wannier_plot_list" minOccurs="0"/>
+      <element type="epw:wannierPlotListType" name="wannier_plot_list" minOccurs="0" maxOccurs="unbounded"/>
+      <element type="boolean" name="use_ws" minOccurs="0"/>
+      <element type="string" name="wannier_plot_format" minOccurs="0"/>
       <element type="boolean" name="reduce_unk" minOccurs="0"/>
       <element type="boolean" name="scdm_proj" minOccurs="0"/>
       <element type="double" name="scdm_sigma" minOccurs="0"/>
@@ -166,6 +167,13 @@ http://opensource.org/licenses/MIT.-->
     <simpleContent>
       <extension base="string">
         <attribute type="positiveInteger" name="atom"/>
+      </extension>
+    </simpleContent>
+  </complexType>
+  <complexType name="wannierPlotListType">
+    <simpleContent>
+      <extension base="string">
+        <attribute type="positiveInteger" name="segment" use="required"/>
       </extension>
     </simpleContent>
   </complexType>
