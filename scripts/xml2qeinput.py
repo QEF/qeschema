@@ -51,24 +51,24 @@ if __name__ == '__main__':
     qeschema.set_logger(args.verbosity)
 
     input_fn = getattr(args, 'in')
-    input_schema =  getattr(args,'schema', None) 
+    INPUT_SCHEMA =  getattr(args,'schema', None) 
     tree = Etree.parse(input_fn)
     root = tree.getroot()
     element_name = root.tag.split('}')[-1]
     if element_name == 'espresso':
-        xml_document = qeschema.PwDocument(schema=input_schema)
+        xml_document = qeschema.PwDocument(schema=INPUT_SCHEMA)
     elif element_name == 'nebRun':
-        xml_document = qeschema.NebDocument(schema=input_schema)
+        xml_document = qeschema.NebDocument(schema=INPUT_SCHEMA)
     elif element_name == 'espressoph':
-        xml_document = qeschema.PhononDocument(schema=input_schema)
+        xml_document = qeschema.PhononDocument(schema=INPUT_SCHEMA)
     elif element_name == 'tddfpt':
-        xml_document = qeschema.TdDocument(schema=input_schema)
+        xml_document = qeschema.TdDocument(schema=INPUT_SCHEMA)
     elif element_name == 'spectrumDoc':
-        xml_document = qeschema.TdSpectrumDocument(schema=input_schema)
+        xml_document = qeschema.TdSpectrumDocument(schema=INPUT_SCHEMA)
     elif element_name == 'xspectra':
-        xml_document = qeschema.XSpectraDocument(schema=input_schema)
+        xml_document = qeschema.XSpectraDocument(schema=INPUT_SCHEMA)
     elif element_name == 'epw':
-        xml_document = qeschema.EPWDocument(schema=input_schema)
+        xml_document = qeschema.EPWDocument(schema=INPUT_SCHEMA)
     else:
         sys.stderr.write("Could not find correct XML in %s, exiting...\n" % input_fn)
         sys.exit(1)
