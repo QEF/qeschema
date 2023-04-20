@@ -1002,8 +1002,8 @@ class XSpectraInputConverter(RawInputConverter):
 
 class EPWInputConverter(RawInputConverter):
     """
-    converts the XML input file for EPW to the namelist format 
-    expected by epw.x 
+    converts the XML input file for EPW to the namelist format
+    expected by epw.x
     """
     EPW_TEMPLATE_MAP = {
         'control_variables': {
@@ -1066,8 +1066,8 @@ class EPWInputConverter(RawInputConverter):
             'smear_rpa': "inputepw[smear_rpa]",
             'lifc': "inputepw[lifc]",
             'asr_typ': "inputepw[asr_typ]",
-            'wannierize': "inputepw[wannierize]", 
-            'amass': {'$': ("inputepw[amass]", options.set_one_amass_line, None)} 
+            'wannierize': "inputepw[wannierize]",
+            'amass': {'$': ("inputepw[amass]", options.set_one_amass_line, None)}
             },
         'wannier90': {
             'num_iter': "inputepw[num_iter]",
@@ -1075,7 +1075,7 @@ class EPWInputConverter(RawInputConverter):
             'dis_win_min': "inputepw[dis_win_min]",
             'dis_froz_min': "inputepw[dis_froz_min]",
             'dis_froz_max': "inputepw[dis_frox_max]",
-            'proj': {'$':("inputepw[proj]", options.set_one_proj_line, None)},
+            'proj': {'$': ("inputepw[proj]", options.set_one_proj_line, None)},
             'bands_skipped': "inputepw[bands_skipped]",
             'iprint': "inputepw[iprint]",
             'wannier_plot': ["inputepw[wannier_plot]",
@@ -1084,8 +1084,10 @@ class EPWInputConverter(RawInputConverter):
             'wannier_plot_supercell': "inputepw[wannier_plot_supercell]",
             'wannier_plot_scale': "inputepw[wannier_plot_scale]",
             'wannier_plot_radius': "inputepw[wannier_plot_radius]",
-            'wannier_plot_list': {'@segment': ("inputepw[wdata]", options.set_wdata_lines, None)},
-            'wannier_plot_format': ('inputepw[wdata]', options.set_wdata_lines, None),
+            'wannier_plot_list': {'@segment': ("inputepw[wdata]",
+                                               options.set_wdata_lines, None)},
+            'wannier_plot_format': ('inputepw[wdata]',
+                                    options.set_wdata_lines, None),
             'use_ws': ("inputepw[wdata]", options.set_wdata_lines, None),
             'reduce_unk': "inputepw[reduce_unk]",
             'scdm_proj': "inputepw[scdm_proj]",

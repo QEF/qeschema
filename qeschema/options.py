@@ -283,11 +283,12 @@ def set_one_amass_line(name, **kwargs):
             lines.append(' {}({})={:7.3f}'.format(name, index, value))
     return lines
 
+
 def set_one_proj_line(name, **kwargs):
     """
-    writes projlines for epw input 
+    writes projlines for epw input
     """
-    lines=[]
+    lines = []
     try:
         node = kwargs['proj']
         value = str(node['$'])
@@ -300,30 +301,32 @@ def set_one_proj_line(name, **kwargs):
             lines.append(f" {name}({index})='{value}'")
     return lines
 
+
 def set_wdata_lines(name, **kwargs):
     """
     writes wdata strings for epw input
     """
     res = []
-    if kwargs.get('wannier_plot',False):
-        res = [f" wdata(1) ='bands_plot = .true.'",
-                 f" wdata(2) = 'begin kpoint_path'"]
+    if kwargs.get('wannier_plot', False):
+        res = [" wdata(1) = 'bands_plot = .true.'",
+               " wdata(2) = 'begin kpoint_path'"]
         iline = 2
         points = kwargs['wannier_plot_list']
-        points.sort(key = lambda s: s['@segment'])
-        for p in points:
+        points.sort(key=lambda s: s['@segment'])
+        for ppt in points:
             iline += 1
-            res.append(f" wdata({iline}) = '{p['$'].strip()}'")
+            res.append(f" wdata({iline}) = '{ppt['$'].strip()}'")
         iline += 1
         res.append(f" wdata({iline}) = 'end kpoint_path'")
-        if kwargs.get('wannier_plot_format',None):
-            iline +=1
-            plot_format = kwargs['wannier_plot_format'].strip() 
+        if kwargs.get('wannier_plot_format', None):
+            iline += 1
+            plot_format = kwargs['wannier_plot_format'].strip()
             res.append(f" wdata{iline} = 'bands_plot_format = {plot_format}'")
         use_ws_distance = "T" if kwargs.get('use_ws', False) else "F"
         iline += 1
         res.append(f" wdata({iline}) = 'use_ws_distance = {use_ws_distance}'")
     return res
+
 
 def set_lda_plus_u_flag(name, **kwargs):
     """

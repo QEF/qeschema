@@ -29,7 +29,7 @@ sic
  vme='dipole'
  wannier_plot=.true.
  wannierize=.true.
- wdata(1) ='bands_plot = .true.'
+ wdata(1) = 'bands_plot = .true.'
  wdata(2) = 'begin kpoint_path'
  wdata(3) = 'L 0.50 0.00 0.00 G 0.00 0.00 0.00'
  wdata(4) = 'G 0.00 0.00 0.00 X 0.50 0.50 0.00'

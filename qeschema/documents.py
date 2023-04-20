@@ -448,8 +448,8 @@ class QeDocument(XmlDocument, metaclass=ABCMeta):
             self.input_builder = input_builder
 
         self.default_namespace = self.schema.target_namespace
-        qe_prefixes = ['qes', 'neb', 'qes_ph', 'qes_lr', 'qes_spectrum', 'qes_xspectra', 
-                       'epw']
+        qe_prefixes = ['qes', 'neb', 'qes_ph', 'qes_lr', 'qes_spectrum',
+                       'qes_xspectra', 'epw']
         qe_nslist = list(map(self.schema.namespaces.get, qe_prefixes))
         if self.default_namespace not in qe_nslist:
             raise NotImplementedError(
@@ -719,7 +719,7 @@ class XSpectraDocument(QeDocument):
 
 class EPWDocument(QeDocument):
     """
-    class to manage EPW XML documents 
+    class to manage EPW XML documents
     """
     DEFAULT_SCHEMA = 'epw.xsd'
     DEFAULT_INPUT_BUILDER = EPWInputConverter
@@ -727,12 +727,12 @@ class EPWDocument(QeDocument):
     @property
     def input_path(self):
         return 'input'
-    
+
     def get_fortran_input(self, use_defaults=False):
-        """overrides get_fortran_input adding title-line on top and 
+        """overrides get_fortran_input adding title-line on top and
            and setting *use_defaults* optional argument to false
         """
-        path ='./input/control_variables/title'
+        path = './input/control_variables/title'
         element = self.find(path)
         if element is not None:
             title = str(element.text)
