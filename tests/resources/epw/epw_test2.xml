@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<epw:epw xsi:schemaLocation="https://epw-code.org/ns/epw-0.1 ../../../qeschema/schemas/epw.xsd"
+xmlns:epw="https://epw-code.org/ns/epw-0.1"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<input>
+    <control_variables>
+        <title>sic</title>
+        <prefix>sic</prefix>
+        <outdir>./</outdir>
+        <iverbosity>0</iverbosity>
+        <elph>true</elph>
+        <epbread>false</epbread>
+        <epbwrite>true</epbwrite>
+	    <epwread>false</epwread> 
+	    <epwwrite>true</epwwrite>
+	    <etf_mem>1</etf_mem> 
+	    <nbndsub>4</nbndsub>
+	    <amass atom="2">12.01078</amass>
+	    <amass atom="1">28.0855</amass> 
+        <nq1>3</nq1>
+        <nq2>3</nq2>
+        <nq3>3</nq3>
+        <nk1>3</nk1>
+        <nk2>3</nk2>
+        <nk3>3</nk3>
+        <mp_mesh_k>false</mp_mesh_k>
+  	    <vme>dipole</vme> 
+	    <lphase>true</lphase>
+	    <lpolar>true</lpolar>
+        <wannierize>true</wannierize>
+    </control_variables>
+    <wannier90>
+        <num_iter>300</num_iter>
+        <dis_win_max>12</dis_win_max>
+        <dis_froz_max>7</dis_froz_max>
+        <proj atom="1">Si:sp3</proj>
+        <iprint>2</iprint>
+        <wannier_plot>true</wannier_plot>
+        <wannier_plot_list segment="1">
+            L 0.50 0.00 0.00 G 0.00 0.00 0.00
+        </wannier_plot_list>
+        <wannier_plot_list segment="2">
+            G 0.00 0.00 0.00 X 0.50 0.50 0.00
+        </wannier_plot_list>
+        <use_ws>true</use_ws>
+        <wannier_plot_format>gnuplot</wannier_plot_format>
+    </wannier90>
+</input> 
+
+</epw:epw> 

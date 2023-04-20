@@ -19,7 +19,7 @@ diamond
  num_iter=300
  outdir='./'
  prefix='diam'
- proj(1)=f=0,0,0:l=3
+ proj(1)='f=0,0,0:l=3'
  wannier_plot=.false.
  wannierize=.true.
 /
