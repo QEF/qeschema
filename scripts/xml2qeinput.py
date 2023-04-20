@@ -56,19 +56,19 @@ if __name__ == '__main__':
     root = tree.getroot()
     element_name = root.tag.split('}')[-1]
     if element_name == 'espresso':
-        xml_document = qeschema.PwDocument(schema=INPUT_SCHEMA)
+        xml_document = qeschema.PwDocument(source=input_fn, schema=INPUT_SCHEMA)
     elif element_name == 'nebRun':
-        xml_document = qeschema.NebDocument(schema=INPUT_SCHEMA)
+        xml_document = qeschema.NebDocument(source=input_fn, schema=INPUT_SCHEMA)
     elif element_name == 'espressoph':
-        xml_document = qeschema.PhononDocument(schema=INPUT_SCHEMA)
+        xml_document = qeschema.PhononDocument(source=input_fn, schema=INPUT_SCHEMA)
     elif element_name == 'tddfpt':
-        xml_document = qeschema.TdDocument(schema=INPUT_SCHEMA)
+        xml_document = qeschema.TdDocument(source=input_fn, schema=INPUT_SCHEMA)
     elif element_name == 'spectrumDoc':
-        xml_document = qeschema.TdSpectrumDocument(schema=INPUT_SCHEMA)
+        xml_document = qeschema.TdSpectrumDocument(source=input_fn, schema=INPUT_SCHEMA)
     elif element_name == 'xspectra':
-        xml_document = qeschema.XSpectraDocument(schema=INPUT_SCHEMA)
+        xml_document = qeschema.XSpectraDocument(source=input_fn, schema=INPUT_SCHEMA)
     elif element_name == 'epw':
-        xml_document = qeschema.EPWDocument(schema=INPUT_SCHEMA)
+        xml_document = qeschema.EPWDocument(souce=input_fn, schema=INPUT_SCHEMA)
     else:
         sys.stderr.write("Could not find correct XML in %s, exiting...\n" % input_fn)
         sys.exit(1)
@@ -76,7 +76,6 @@ if __name__ == '__main__':
     root = None
     tree = None
 
-    xml_document.read(input_fn)
     qe_in = xml_document.get_fortran_input()
 
     input_fn_name, input_fn_ext = os.path.splitext(input_fn)
