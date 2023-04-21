@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<epw:epw xsi:schemaLocation="https://epw-code.org/ns/epw-0.1 ../../../qeschema/schemas/epw.xsd"
+xmlns:epw="https://epw-code.org/ns/epw-0.1"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<input>
+    <control_variables>
+        <title>diamond</title>
+        <prefix>diam</prefix>
+        <outdir>./</outdir>
+        <iverbosity>0</iverbosity>
+        <elph>true</elph>
+        <epbwrite>true</epbwrite>
+        <epwread>false</epwread>
+        <nbndsub>4</nbndsub>
+        <amass atom="1">12.01078</amass>
+        <nq1>3</nq1>
+        <nq2>3</nq2>
+        <nq3>3</nq3>
+        <nk1>3</nk1>
+        <nk2>3</nk2>
+        <nk3>3</nk3>
+        <mp_mesh_k>false</mp_mesh_k>
+        <wannierize>true</wannierize>
+    </control_variables>
+    <wannier90>
+        <num_iter>300</num_iter>
+        <dis_win_max>12</dis_win_max>
+        <dis_froz_max>7</dis_froz_max>
+        <proj atom="1">f=0,0,0:l=3</proj>
+        <iprint>0</iprint>
+        <wannier_plot>false</wannier_plot>
+    </wannier90>
+</input> 
+
+</epw:epw> 

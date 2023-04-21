@@ -1,0 +1,180 @@
+<?xml version="1.0"?>
+<!--
+Copyright (C) 2010-2016 Samuel Ponce', Roxana Margine, Carla Verdi, Feliciano Giustino
+Copyright (C) 2007-2009 Jesse Noffsinger, Brad Malone, Feliciano Giustino
+This file is distributed under the terms of the GNU General Public
+License. See the file `LICENSE' in the root directory of the
+present distribution, or http://www.gnu.org/copyleft.gpl.txt .
+Author: Hyungjun Lee
+datecode 230320
+-->
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:epw="https://epw-code.org/ns/epw-0.1"
+	targetNamespace="https://epw-code.org/ns/epw-0.1"
+        version= "230320">
+  <element name="epw" type="epw:epwType"/>
+  <complexType name="epwType">
+    <sequence>
+      <element type="epw:parallel_infoType" name="parallel_info" minOccurs="0"/>
+      <element type="epw:inputType" name="input"/>
+    </sequence>
+  </complexType>
+  <complexType name="parallel_infoType">
+    <sequence>
+      <element type="positiveInteger" name="nprocs"/>
+      <element type="positiveInteger" name="npool"/>
+    </sequence>
+  </complexType>
+  <complexType name="inputType">
+    <sequence>
+      <element type="epw:control_variablesType" name="control_variables" minOccurs="1"/>
+      <element type="epw:w90Type" name="wannier90" minOccurs="0"/>
+    </sequence>
+  </complexType>
+  <complexType name="control_variablesType">
+    <sequence>
+      <element type="string" name="title" minOccurs="0"/>
+      <element type="string" name="prefix" minOccurs="1"/>
+      <element type="string" name="outdir" minOccurs="1"/>
+      <element type="nonNegativeInteger" name="iverbosity" minOccurs="0"/>
+      <element type="string" name="dvscf_dir" minOccurs="0"/>
+      <element type="string" name="filukk" minOccurs="0"/>
+      <element type="boolean" name="elph" minOccurs="0"/>
+      <element type="boolean" name="ep_coupling" minOccurs="0"/>
+      <element type="boolean" name="elecselfen" minOccurs="0"/>
+      <element type="boolean" name="phonselfen" minOccurs="0"/>
+      <element type="boolean" name="lindabs" minOccurs="0"/>
+      <element type="boolean" name="band_plot" minOccurs="0"/>
+      <element type="boolean" name="fermi_plot" minOccurs="0"/>
+      <element type="boolean" name="cumulant" minOccurs="0"/>
+      <element type="boolean" name="prtgkk" minOccurs="0"/>
+      <element type="boolean" name="epbread" minOccurs="0"/>
+      <element type="boolean" name="epbwrite" minOccurs="0"/>
+      <element type="boolean" name="epwread" minOccurs="0"/>
+      <element type="boolean" name="epwwrite" minOccurs="0"/>
+      <element type="boolean" name="ephwrite" minOccurs="0"/>
+      <element type="boolean" name="eig_read" minOccurs="0"/>
+      <element type="boolean" name="delta_approx" minOccurs="0"/>
+      <element type="double" name="eps_acustic" minOccurs="0"/>
+      <element type="nonNegativeInteger" name="etf_mem" minOccurs="0"/>
+      <element type="positiveInteger" name="nbndsub" minOccurs="0"/>
+      <element type="epw:amassType" name="amass" minOccurs="0" maxOccurs="unbounded" />
+      <element type="positiveInteger" name="nq1" minOccurs="1"/>
+      <element type="positiveInteger" name="nq2" minOccurs="1"/>
+      <element type="positiveInteger" name="nq3" minOccurs="1"/>
+      <element type="positiveInteger" name="nk1" minOccurs="1"/>
+      <element type="positiveInteger" name="nk2" minOccurs="1"/>
+      <element type="positiveInteger" name="nk3" minOccurs="1"/>
+      <element type="positiveInteger" name="nqf1" minOccurs="0"/>
+      <element type="positiveInteger" name="nqf2" minOccurs="0"/>
+      <element type="positiveInteger" name="nqf3" minOccurs="0"/>
+      <element type="positiveInteger" name="nkf1" minOccurs="0"/>
+      <element type="positiveInteger" name="nkf2" minOccurs="0"/>
+      <element type="positiveInteger" name="nkf3" minOccurs="0"/>
+      <element type="boolean" name="mp_mesh_k" minOccurs="1"/>
+      <element type="string" name="filqf" minOccurs="0"/>
+      <element type="string" name="filkf" minOccurs="0"/>
+      <element type="epw:vmeType" name="vme" minOccurs="0"/>
+      <element type="double" name="degaussw" minOccurs="0"/>
+      <element type="double" name="degaussq" minOccurs="0"/>
+      <element type="double" name="fsthick" minOccurs="0"/>
+      <element type="integer" name="ngaussw" minOccurs="0"/>
+      <element type="positiveInteger" name="nsmear" minOccurs="0"/>
+      <element type="double" name="delta_smear" minOccurs="0"/>
+      <element type="boolean" name="restart" minOccurs="0"/>
+      <element type="positiveInteger" name="restart_step" minOccurs="0"/>
+      <element type="double" name="scissor" minOccurs="0"/>
+      <element type="boolean" name="lphase" minOccurs="0"/>
+      <element type="boolean" name="lpolar" minOccurs="0"/>
+      <element type="boolean" name="efermi_read" minOccurs="0"/>
+      <element type="double" name="fermi_energy" minOccurs="0"/>
+      <element type="boolean" name="lscreen" minOccurs="0"/>
+      <element type="nonNegativeInteger" name="scr_typ"  minOccurs="0"/>
+      <element type="double" name="fermi_diff"  minOccurs="0"/>
+      <element type="double" name="smear_rpa"  minOccurs="0"/>
+      <element type="boolean" name="lifc" minOccurs="0"/>
+      <element type="epw:asrType" name="asr_typ" minOccurs="0"/>
+      <element type="boolean" name="wannierize" minOccurs="1"/>
+    </sequence>
+  </complexType>
+  <simpleType name="vmeType">
+    <restriction base="string">
+      <enumeration value="dipole"/>
+      <enumeration value="wannier"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="asrType">
+    <restriction base="string">
+      <enumeration value="simple"/>
+      <enumeration value="crystal"/>
+      <enumeration value="one-dim"/>
+      <enumeration value="zero-dim"/>
+    </restriction>
+  </simpleType>
+  <complexType name="w90Type">
+    <sequence>
+      <element type="nonNegativeInteger" name="num_iter"/>
+      <element type="double" name="dis_win_max"/>
+      <element type="double" name="dis_win_min" minOccurs="0"/>
+      <element type="double" name="dis_froz_min" minOccurs="0"/>
+      <element type="double" name="dis_froz_max"/>
+      <element type="epw:wprojType" name="proj" minOccurs="1" maxOccurs="unbounded"/>
+      <element type="string" name="bands_skipped" minOccurs="0"/>
+      <element type="nonNegativeInteger" name="iprint"/>
+      <element type="boolean" name="wannier_plot"/>
+      <element type="epw:pi3vectorType" name="wannier_plot_supercell" minOccurs="0"/>
+      <element type="double" name="wannier_plot_scale" minOccurs="0"/>
+      <element type="double" name="wannier_plot_radius" minOccurs="0"/>
+      <element type="epw:wannierPlotListType" name="wannier_plot_list" minOccurs="0" maxOccurs="unbounded"/>
+      <element type="boolean" name="use_ws" minOccurs="0"/>
+      <element type="string" name="wannier_plot_format" minOccurs="0"/>
+      <element type="boolean" name="reduce_unk" minOccurs="0"/>
+      <element type="boolean" name="scdm_proj" minOccurs="0"/>
+      <element type="double" name="scdm_sigma" minOccurs="0"/>
+      <element type="boolean" name="auto_projections" minOccurs="0"/>
+      <element type="string" name="scdm_entanglement" minOccurs="0"/>
+      <element type="double" name="scdm_mu" minOccurs="0"/>
+    </sequence>
+  </complexType>
+  <simpleType name="pi3vectorType">
+    <restriction>
+      <simpleType>
+        <list itemType="positiveInteger"/>
+      </simpleType>
+      <length value="3"/>
+    </restriction>
+  </simpleType>
+  <simpleType name="scdmType">
+    <restriction base="string">
+      <enumeration value="isolated"/>
+      <enumeration value="erfc"/>
+      <enumeration value="gaussian"/>
+    </restriction>
+  </simpleType>
+  <!--types importes from qes.xsd 
+    opyright (c), 2015-2016, Quantum Espresso Foundation. All rights reserved.
+This file is distributed under the terms of the MIT License. See the
+file 'LICENSE' in the root directory of the present distribution, or
+http://opensource.org/licenses/MIT.--> 
+  <complexType name="amassType">
+    <simpleContent>
+        <extension base="double">
+            <attribute type="positiveInteger" name="atom"/>
+        </extension>
+      </simpleContent>
+  </complexType>
+  <complexType name="wprojType">
+    <simpleContent>
+      <extension base="string">
+        <attribute type="positiveInteger" name="atom"/>
+      </extension>
+    </simpleContent>
+  </complexType>
+  <complexType name="wannierPlotListType">
+    <simpleContent>
+      <extension base="string">
+        <attribute type="positiveInteger" name="segment" use="required"/>
+      </extension>
+    </simpleContent>
+  </complexType>
+</schema>

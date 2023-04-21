@@ -1,0 +1,25 @@
+diamond
+&inputepw
+ amass(1)= 12.011
+ dis_frox_max=7.0
+ dis_win_max=12.0
+ elph=.true.
+ epbwrite=.true.
+ epwread=.false.
+ iprint=0
+ iverbosity=0
+ mp_mesh_k=.false.
+ nbndsub=4
+ nk1=3
+ nk2=3
+ nk3=3
+ nq1=3
+ nq2=3
+ nq3=3
+ num_iter=300
+ outdir='./'
+ prefix='diam'
+ proj(1)='f=0,0,0:l=3'
+ wannier_plot=.false.
+ wannierize=.true.
+/

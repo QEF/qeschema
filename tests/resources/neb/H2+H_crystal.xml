@@ -1,6 +1,6 @@
 <neb:nebRun xmlns:neb="http://www.quantum-espresso.org/ns/neb"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:schemaLocation="file:///home/pietro/qexsd-gh/qespresso/scheme/qes_neb.xsd" >
+            xsi:schemaLocation="http://www.quantum-espresso.org/ns/neb   releases/qes_neb-211101.xsd" >
     <input>
         <path>
             <stringMethod>neb</stringMethod>

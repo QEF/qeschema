@@ -23,7 +23,7 @@ logger = logging.getLogger('qeschema')
 
 FCP_NAMELIST = 'FCP'
 PH_NAT_TODO_CARD = 'ph_nat_todo_card'
-OPTIONAL_CARDS = {PH_NAT_TODO_CARD}
+OPTIONAL_CARDS = {PH_NAT_TODO_CARD, "CONSTRAINTS", "HUBBARD", "SOLVENTS"}
 
 
 def conversion_maps_builder(template_map):
@@ -363,27 +363,42 @@ class PwInputConverter(RawInputConverter):
                 'ecutvcut': ('SYSTEM[ecutvcut]', options.ha2ry, None)
             },
             'dftU': {
-                'lda_plus_u_kind': 'SYSTEM[lda_plus_u_kind]',
+                '@new_format': [('HUBBARD', cards.get_hubbard_card, None),
+                                ('SYSTEM[lda_plus_u_kind]', options.set_lda_plus_u_kind, None),
+                                ('SYSTEM[lda_plus_u]', options.set_lda_plus_u_flag, None),
+                                ('SYSTEM[Hubbard_U]', options.get_specie_related_values, None),
+                                ('SYSTEM[Hubbard_J]', options.get_specie_related_values, None),
+                                ('SYSTEM[Hubbard_J0]', options.get_specie_related_values, None),
+                                ('SYSTEM[Hubbard_alpha]', options.get_specie_related_values, None),
+                                ('SYSTEM[Hubbard_beta]', options.get_specie_related_values, None),
+                                ('SYSTEM[U_projection_type]', options.set_u_projection_type, None)],
+                'lda_plus_u_kind': ('SYSTEM[lda_plus_u_kind]', options.set_lda_plus_u_kind, None),
                 'Hubbard_U': {
                     '$': [('SYSTEM[Hubbard_U]', options.get_specie_related_values, None),
+                          ('HUBBARD', cards.get_hubbard_card, None),
                           ('SYSTEM[lda_plus_u]', options.set_lda_plus_u_flag, None)]
                 },
                 'Hubbard_J0': {
-                    '$': ('SYSTEM[Hubbard_J0]', options.get_specie_related_values, None),
+                    '$': [('SYSTEM[Hubbard_J0]', options.get_specie_related_values, None),
+                          ('HUBBARD', cards.get_hubbard_card, None)]
                 },
                 'Hubbard_alpha': {
-                    '$': ('SYSTEM[Hubbard_alpha]', options.get_specie_related_values, None),
+                    '$': [('SYSTEM[Hubbard_alpha]', options.get_specie_related_values, None),
+                          ('HUBBARD', cards.get_hubbard_card, None)]
                 },
                 'Hubbard_beta': {
-                    '$': ('SYSTEM[Hubbard_beta]', options.get_specie_related_values, None),
+                    '$': [('SYSTEM[Hubbard_beta]', options.get_specie_related_values, None),
+                          ('HUBBARD', cards.get_hubbard_card, None)]
                 },
                 'Hubbard_J': {
-                    '$': ('SYSTEM[Hubbard_J]', options.get_specie_related_values, None),
+                    '$': [('SYSTEM[Hubbard_J]', options.get_specie_related_values, None),
+                          ('HUBBARD', cards.get_hubbard_card, None)]
                 },
                 'starting_ns': {
                     '$': ('SYSTEM[starting_ns_eigenvalue]', options.get_specie_related_values, None)
                 },
-                'U_projection_type': 'SYSTEM[U_projection_type]',
+                'U_projection_type': ('SYSTEM[U_projection_type]',
+                                      options.set_u_projection_type, None)
             },
             'vdW': {
                 'vdw_corr': 'SYSTEM[vdw_corr]',
@@ -561,7 +576,7 @@ class PwInputConverter(RawInputConverter):
             input_namelists=('CONTROL', 'SYSTEM', 'ELECTRONS', 'IONS', 'CELL',
                              FCP_NAMELIST),
             input_cards=('ATOMIC_SPECIES', 'ATOMIC_POSITIONS', 'K_POINTS',
-                         'CELL_PARAMETERS', 'ATOMIC_FORCES')
+                         'CELL_PARAMETERS', 'ATOMIC_FORCES', 'CONSTRAINTS', 'SOLVENTS', 'HUBBARD')
         )
         if 'xml_file' in kwargs:
             self._input['CONTROL']['input_xml_schema_file'] = "{!r}".format(
@@ -578,7 +593,7 @@ class PhononInputConverter(RawInputConverter):
     """
     PHONON_TEMPLATE_MAP = {
         'xq': {
-         '$': ('qPointsSpecs', cards.get_qpoints_card, None),
+            '$': ('qPointsSpecs', cards.get_qpoints_card, None),
         },
         'scf_ph': {
             'tr2_ph': "INPUTPH[tr2_ph]",
@@ -741,7 +756,7 @@ class NebInputConverter(RawInputConverter):
             *conversion_maps_builder(self.NEB_TEMPLATE_MAP),
             input_namelists=('PATH', 'CONTROL', 'SYSTEM', 'ELECTRONS', 'IONS', 'CELL'),
             input_cards=('CLIMBING_IMAGES', 'ATOMIC_SPECIES', 'ATOMIC_POSITIONS', 'K_POINTS',
-                         'CELL_PARAMETERS', 'ATOMIC_FORCES')
+                         'CELL_PARAMETERS', 'ATOMIC_FORCES', 'CONSTRAINTS')
         )
 
     def get_qe_input(self):
@@ -851,9 +866,7 @@ class TdInputConverter(RawInputConverter):
         Overrides superclass get_qe_input with use_defaults set to False.
         :return: the input as obtained from its input builder
         """
-        temp = super(TdInputConverter, self).get_qe_input().split('\n')
-        for i, j in enumerate(temp):
-            print(i, " - ", j)
+        temp = super().get_qe_input().split('\n')
         td = temp[1]
         start = temp.index('&lr_input')
         end = start + temp[start:].index('/')
@@ -985,3 +998,107 @@ class XSpectraInputConverter(RawInputConverter):
             input_namelists=('input_xspectra', 'plot', 'pseudos', 'cut_occ'),
             input_cards=("K_POINTS",)
         )
+
+
+class EPWInputConverter(RawInputConverter):
+    """
+    converts the XML input file for EPW to the namelist format
+    expected by epw.x
+    """
+    EPW_TEMPLATE_MAP = {
+        'control_variables': {
+            'prefix': "inputepw[prefix]",
+            'outdir': "inputepw[outdir]",
+            'iverbosity': "inputepw[iverbosity]",
+            'dvscf_dir': "inputepw[dvscf_dir]",
+            'filukk': "inputepw[filukk]",
+            'elph': "inputepw[elph]",
+            'ep_coupling': "inputepw[ep_coupling]",
+            'elecselfen': "inputepw[elecselfen]",
+            'phonselfen': "inputepw[phonselfen]",
+            'lindabs': "inputepw[lindabs]",
+            'band_plot': "inputepw[band_plot]",
+            'fermi_plot': "inputepw[fermi_plot]",
+            'cumulant': "inputepw[cumulant]",
+            'prtgkk':  "inputepw[prtgkk]",
+            'epbread': "inputepw[epbread]",
+            'epbwrite': "inputepw[epbwrite]",
+            'epwread': "inputepw[epwread]",
+            'epwwrite': "inputepw[epwwrite]",
+            'ephwrite': "inputepw[ephwrite]",
+            'eig_read': "inputepw[eig_read]",
+            'delta_approx': "inputepw[delta_approx]",
+            'eps_acustic': "inputepw[eps_acustic]",
+            'etf_mem': "inputepw[etcmem]",
+            'nbndsub': "inputepw[nbndsub]",
+            'nq1': "inputepw[nq1]",
+            'nq2': "inputepw[nq2]",
+            'nq3': "inputepw[nq3]",
+            'nk1': "inputepw[nk1]",
+            'nk2': "inputepw[nk2]",
+            'nk3': "inputepw[nk3]",
+            'nqf1': "inputepw[nqf1]",
+            'nqf2': "inputepw[nqf2]",
+            'nqf3': "inputepw[nqf3]",
+            'nkf1': "inputepw[nkf1]",
+            'nkf2': "inputepw[nkf2]",
+            'nkf3': "inputepw[nkf3]",
+            'mp_mesh_k': "inputepw[mp_mesh_k]",
+            'filqf': "inputepw[filqf]",
+            'filkf': "inputepw[filkf]",
+            'vme': "inputepw[vme]",
+            'degaussw': "inputepw[degaussw]",
+            'degaussq': "inputepw[degaussq]",
+            'fsthick': "inputepw[fsthick]",
+            'ngaussw': "inputepw[ngaussw]",
+            'nsmear': "inputepw[nsmear]",
+            'delta_smear': "inputepw[delta_smear]",
+            'restart': "inputepw[restart]",
+            'restart_step': "inputepw[restart_step]",
+            'scissor': "inputepw[scissor]",
+            'lphase': "inputepw[lphase]",
+            'lpolar': "inputepw[lpolar]",
+            'efermi_read': "inputepw[efermi_read]",
+            'fermi_energy': "inputepw[fermi_energy]",
+            'lscreen': "inputepw[lscreen]",
+            'scr_typ': "inputepw[scr_typ]",
+            'fermi_diff': "inputepw[fermi_diff]",
+            'smear_rpa': "inputepw[smear_rpa]",
+            'lifc': "inputepw[lifc]",
+            'asr_typ': "inputepw[asr_typ]",
+            'wannierize': "inputepw[wannierize]",
+            'amass': {'$': ("inputepw[amass]", options.set_one_amass_line, None)}
+            },
+        'wannier90': {
+            'num_iter': "inputepw[num_iter]",
+            'dis_win_max': "inputepw[dis_win_max]",
+            'dis_win_min': "inputepw[dis_win_min]",
+            'dis_froz_min': "inputepw[dis_froz_min]",
+            'dis_froz_max': "inputepw[dis_frox_max]",
+            'proj': {'$': ("inputepw[proj]", options.set_one_proj_line, None)},
+            'bands_skipped': "inputepw[bands_skipped]",
+            'iprint': "inputepw[iprint]",
+            'wannier_plot': ["inputepw[wannier_plot]",
+                             ("inputepw[wdata]", options.set_wdata_lines, None)
+                             ],
+            'wannier_plot_supercell': "inputepw[wannier_plot_supercell]",
+            'wannier_plot_scale': "inputepw[wannier_plot_scale]",
+            'wannier_plot_radius': "inputepw[wannier_plot_radius]",
+            'wannier_plot_list': {'@segment': ("inputepw[wdata]",
+                                               options.set_wdata_lines, None)},
+            'wannier_plot_format': ('inputepw[wdata]',
+                                    options.set_wdata_lines, None),
+            'use_ws': ("inputepw[wdata]", options.set_wdata_lines, None),
+            'reduce_unk': "inputepw[reduce_unk]",
+            'scdm_proj': "inputepw[scdm_proj]",
+            'scdm_sigma': "inputepw[scdm_sigma]",
+            'auto_projections': "inputepw[auto_projections]",
+            'scdm_entanglement': "inputepw[scdm_entaglement]",
+            'scdm_mu': "inputepw[scdm_mu]",
+        }
+    }
+
+    def __init__(self, **kwargs):
+        super().__init__(*conversion_maps_builder(self.EPW_TEMPLATE_MAP),
+                         input_namelists=['inputepw'],
+                         input_cards=[])

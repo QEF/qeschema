@@ -1,0 +1,39 @@
+sic
+&inputepw
+ amass(2)= 12.011
+ amass(1)= 28.085
+ dis_frox_max=7.0
+ dis_win_max=12.0
+ elph=.true.
+ epbread=.false.
+ epbwrite=.true.
+ epwread=.false.
+ epwwrite=.true.
+ etcmem=1
+ iprint=2
+ iverbosity=0
+ lphase=.true.
+ lpolar=.true.
+ mp_mesh_k=.false.
+ nbndsub=4
+ nk1=3
+ nk2=3
+ nk3=3
+ nq1=3
+ nq2=3
+ nq3=3
+ num_iter=300
+ outdir='./'
+ prefix='sic'
+ proj(1)='Si:sp3'
+ vme='dipole'
+ wannier_plot=.true.
+ wannierize=.true.
+ wdata(1) = 'bands_plot = .true.'
+ wdata(2) = 'begin kpoint_path'
+ wdata(3) = 'L 0.50 0.00 0.00 G 0.00 0.00 0.00'
+ wdata(4) = 'G 0.00 0.00 0.00 X 0.50 0.50 0.00'
+ wdata(5) = 'end kpoint_path'
+ wdata6 = 'bands_plot_format = gnuplot'
+ wdata(7) = 'use_ws_distance = T'
+/

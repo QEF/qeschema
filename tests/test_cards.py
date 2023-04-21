@@ -153,16 +153,20 @@ class TestCardsFunctions(unittest.TestCase):
                                           'when building CONSTRAINTS card!'])
 
         result = get_atomic_constraints_card(
-            'CONSTRAINTS', num_of_constraints=1, tolerance=0.2, atomic_constraints=[]
-        )
+                'CONSTRAINTS', **{'atomic_constraints': {'num_of_constraints': 1,
+                                                         'tolerance': 0.2,
+                                                         'atomic_constraint': []}})
         self.assertListEqual(result, ['CONSTRAINTS', '1 0.2'])
         result = get_atomic_constraints_card(
-            'CONSTRAINTS', num_of_constraints=1, tolerance=0.2, atomic_constraints=[{
-                'constr_parms': [0.2, 0.3, 0.1, 0.9],
-                'constr_type': 'test_constraint',
-                'constr_target': 0.3,
-            }]
-        )
+                'CONSTRAINTS',
+                **{'atomic_constraints': {'num_of_constraints': 1, 'tolerance': 0.2,
+                                          'atomic_constraint': [
+                                             {'constr_parms': [0.2, 0.3, 0.1, 0.9],
+                                              'constr_type': 'test_constraint',
+                                              'constr_target': 0.3
+                                              }]
+                                          }
+                   })
         self.assertListEqual(result, ['CONSTRAINTS', '1 0.2',
                                       'test_constraint 0.2 0.3 0.1 0.9 0.3'])
 

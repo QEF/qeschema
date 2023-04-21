@@ -3,7 +3,7 @@
  disk_io='low'
  etot_conv_thr=0.0001
  forc_conv_thr=0.001
- input_xml_schema_file='FeO_LDAU_with_starting_ns.xml'
+ input_xml_schema_file='FeO_LDAU_with_starting_ns_230210.xml'
  iprint=100000
  max_seconds=10000000
  outdir='./'
@@ -21,12 +21,8 @@
  ecutrho=240.0
  ecutwfc=30.0
  force_symmorphic=.false.
- Hubbard_U(2)=0.3160442
- Hubbard_U(3)=0.3160442
  ibrav=0
  input_dft='PZ'
- lda_plus_u = .true.
- lda_plus_u_kind = 0
  lspinorb=.false.
  nat=4
  nbnd=20
@@ -45,7 +41,6 @@
  starting_ns_eigenvalue(3,1,3)=1.0
  starting_ns_eigenvalue(3,2,2)=1.0
  tot_charge=0.0
- U_projection_type = 'atomic'
  use_all_frac=.false.
 /
 &ELECTRONS
@@ -89,3 +84,16 @@ CELL_PARAMETERS bohr
   4.09500000   4.09500000   8.19000000 
   4.09500000   8.19000000   4.09500000 
   8.19000000   4.09500000   4.09500000 
+HUBBARD atomic
+U  Fe1-3d     0.316
+U  Fe2-3d     0.316
+J0  Fe1-3d     0.000
+J0  Fe2-3d     0.000
+alpha  Fe1-3d     0.000
+alpha  Fe2-3d     0.000
+beta  Fe1-3d     0.000
+beta  Fe2-3d     0.000
+J Fe1-3d    0.000
+B Fe1-3d    0.000
+J Fe2-3d    0.000
+B Fe2-3d    0.000

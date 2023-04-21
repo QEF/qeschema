@@ -34,6 +34,14 @@ def get_specie_related_values(name, **kwargs):
     related_tag = kwargs['_related_tag']
     related_data = kwargs[related_tag]
     try:
+        new_format = kwargs['dftU']['@new_format']
+    except KeyError:
+        new_format = False
+
+    if new_format and related_tag in ['Hubbard_U', 'Hubbard_J', 'Hubbard_alpha',
+                                      'Hubbard_beta', 'Hubbard_J0']:
+        return []
+    try:
         atomic_species = kwargs['atomic_species']
         species = atomic_species['species']
     except KeyError as err:
@@ -276,7 +284,58 @@ def set_one_amass_line(name, **kwargs):
     return lines
 
 
+def set_one_proj_line(name, **kwargs):
+    """
+    writes projlines for epw input
+    """
+    lines = []
+    try:
+        node = kwargs['proj']
+        value = str(node['$'])
+        index = node['@atom']
+        lines.append(f" {name}({index})='{value}'")
+    except TypeError:
+        for node in kwargs['proj']:
+            value = str(node['$'])
+            index = node['@atom']
+            lines.append(f" {name}({index})='{value}'")
+    return lines
+
+
+def set_wdata_lines(name, **kwargs):
+    """
+    writes wdata strings for epw input
+    """
+    res = []
+    if kwargs.get('wannier_plot', False):
+        res = [" wdata(1) = 'bands_plot = .true.'",
+               " wdata(2) = 'begin kpoint_path'"]
+        iline = 2
+        points = kwargs['wannier_plot_list']
+        points.sort(key=lambda s: s['@segment'])
+        for ppt in points:
+            iline += 1
+            res.append(f" wdata({iline}) = '{ppt['$'].strip()}'")
+        iline += 1
+        res.append(f" wdata({iline}) = 'end kpoint_path'")
+        if kwargs.get('wannier_plot_format', None):
+            iline += 1
+            plot_format = kwargs['wannier_plot_format'].strip()
+            res.append(f" wdata{iline} = 'bands_plot_format = {plot_format}'")
+        use_ws_distance = "T" if kwargs.get('use_ws', False) else "F"
+        iline += 1
+        res.append(f" wdata({iline}) = 'use_ws_distance = {use_ws_distance}'")
+    return res
+
+
 def set_lda_plus_u_flag(name, **kwargs):
+    """
+    writes SYSTEM[set_lda_plus_u_flag] for old format
+    """
+    dftu = kwargs.get('dftU', None)
+    if dftu:
+        if dftu.get('@new_format'):
+            return []
     assert isinstance(name, str)
     lines = []
     related_tag = kwargs['_related_tag']
@@ -286,6 +345,38 @@ def set_lda_plus_u_flag(name, **kwargs):
         if value.get('@label') != 'no Hubbard' and value['$'] > 0:
             lines.append(f" {name} = .true.")
             break
+    return lines
+
+
+def set_lda_plus_u_kind(name, **kwargs):
+    """
+    writes SYSTEM[lda_plus_u_kind] flag for old format
+    """
+    dftu = kwargs.get('dftU', None)
+    if dftu:
+        if dftu.get('@new_format', False):
+            return []
+    #
+    assert isinstance(name, str)
+    lines = []
+    if kwargs.get('lda_plus_u_kind', None) is not None:
+        lines.append(f" lda_plus_u_kind = {kwargs['lda_plus_u_kind']}")
+    return lines
+
+
+def set_u_projection_type(name, **kwargs):
+    """
+    writes U_projection_type for old Hubbard format
+    """
+    assert isinstance(name, str)
+    dftu = kwargs.get('dftU', None)
+    if dftu:
+        if dftu.get('@new_format', False):
+            return []
+    lines = []
+    related_tag = kwargs['_related_tag']
+    related_data = kwargs[related_tag]
+    lines.append(f" {related_tag} = '{related_data}'")
     return lines
 
 

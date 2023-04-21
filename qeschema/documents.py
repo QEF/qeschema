@@ -14,7 +14,8 @@ from abc import ABCMeta
 from functools import wraps
 from xml.etree import ElementTree
 import xmlschema
-from xmlschema.etree import etree_tostring
+from xmlschema import etree_tostring
+
 
 try:
     import yaml
@@ -24,7 +25,7 @@ except ImportError:
 from .namespaces import XSD_NAMESPACE
 from .converters import RawInputConverter, PwInputConverter, PhononInputConverter, \
     NebInputConverter, TdInputConverter, TdSpectrumInputConverter, \
-    XSpectraInputConverter
+    XSpectraInputConverter, EPWInputConverter
 from .exceptions import XmlDocumentError
 from .utils import etree_iter_path
 
@@ -447,7 +448,8 @@ class QeDocument(XmlDocument, metaclass=ABCMeta):
             self.input_builder = input_builder
 
         self.default_namespace = self.schema.target_namespace
-        qe_prefixes = ['qes', 'neb', 'qes_ph', 'qes_lr', 'qes_spectrum', 'qes_xspectra']
+        qe_prefixes = ['qes', 'neb', 'qes_ph', 'qes_lr', 'qes_spectrum',
+                       'qes_xspectra', 'epw']
         qe_nslist = list(map(self.schema.namespaces.get, qe_prefixes))
         if self.default_namespace not in qe_nslist:
             raise NotImplementedError(
@@ -713,3 +715,27 @@ class XSpectraDocument(QeDocument):
     @property
     def input_path(self):
         return 'input'
+
+
+class EPWDocument(QeDocument):
+    """
+    class to manage EPW XML documents
+    """
+    DEFAULT_SCHEMA = 'epw.xsd'
+    DEFAULT_INPUT_BUILDER = EPWInputConverter
+
+    @property
+    def input_path(self):
+        return 'input'
+
+    def get_fortran_input(self, use_defaults=False):
+        """overrides get_fortran_input adding title-line on top and
+           and setting *use_defaults* optional argument to false
+        """
+        path = './input/control_variables/title'
+        element = self.find(path)
+        if element is not None:
+            title = str(element.text)
+        else:
+            title = "---"
+        return "\n".join([title, super().get_fortran_input(use_defaults)])

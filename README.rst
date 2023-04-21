@@ -60,10 +60,10 @@ Loaded data can be decoded to Python data dictionary or written to JSON or YAML 
 
 Authors
 -------
-Davide Brunato
-Pietro Delugas
-Giovanni Borghi
-Alexandr Fonari
+* Davide Brunato
+* Pietro Delugas
+* Giovanni Borghi
+* Alexandr Fonari
 
 
 License
