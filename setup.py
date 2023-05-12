@@ -25,6 +25,7 @@ setup(
     package_data={'qeschema': ['schemas/*.xsd', 'schemas/releases/*.xsd']},
     scripts = ['scripts/xml2qeinput.py', 'scripts/yaml2qeinput.py'],
     url='https://github.com/QEF/qeschema',
+    authors='Davide Brunato,Pietro Delugas,Giovanni Borghi,Alexandr Fonari',
     license='MIT',
     license_file='LICENSE',
     description='Schema-based tools and interfaces for Quantum Espresso data',
