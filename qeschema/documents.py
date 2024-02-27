@@ -615,7 +615,7 @@ class PwDocument(QeDocument):
 
         :return: nested list with k_points
         """
-        path = './/output//k_point'
+        path = './/output//ks_energies/k_point'
         return [self.schema.find(path).decode(e)['$'] for e in self.findall(path)]
 
     @requires_xml_data
