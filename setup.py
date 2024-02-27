@@ -16,7 +16,7 @@ with open("README.rst") as readme:
 setup(
     name='qeschema',
     version='1.5.0',
-    install_requires=['xmlschema>=1.6.4', 'numpy'],
+    install_requires=['xmlschema>=1.6.4,<2.4.0', 'numpy'],
     extras_require={
         'HDF5': ['h5py'],
         'YAML': ['pyyaml'],
