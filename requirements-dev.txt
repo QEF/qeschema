@@ -3,7 +3,7 @@ setuptools
 tox>=4.0
 flake8
 coverage
-xmlschema>=1.6.4
+xmlschema>=1.6.4<=2.3.99
 pyyaml
 numpy
 h5py
