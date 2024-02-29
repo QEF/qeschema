@@ -149,7 +149,7 @@ class TestDocuments(unittest.TestCase):
             self.assertEqual(document.filename, xml_file)
         else:
             self.assertTrue(document.filename.endswith('CO_bgfs_relax.xml'))
-        self.assertTrue(document.schema.url.endswith("qeschema/schemas/qes_test_ref.xsd"))
+        self.assertTrue(document.schema.url.endswith("qes_230310.xsd"))
 
     def test_init_with_schema_only(self):
         schema = os.path.join(self.schemas_dir, 'qes.xsd')
@@ -734,10 +734,12 @@ class TestDocuments(unittest.TestCase):
         stress = document.get_stress()
         self.assertListEqual(
             stress,
-            [[-1.825058728527109e-06, 1.058791184067875e-22, -1.058791184067875e-22],
-             [1.058791184067875e-22, -1.825058728527109e-06, 0.0],
-             [-1.058791184067875e-22, 1.058791184067875e-22, -1.825058728527109e-06]]
-        )
+            [
+                [0.0001200028001026682, -3.388131789017201e-20, 1.355252715606881e-20],
+                [-3.388131789017201e-20, 0.0001200028001026682, -1.355252715606881e-20],
+                [6.776263578034403e-21, -6.776263578034403e-21, 0.0001200028001026683]
+                ]
+            )
 
 
 if __name__ == '__main__':

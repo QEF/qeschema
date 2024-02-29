@@ -1,14 +1,15 @@
 &CONTROL
  calculation='relax'
  disk_io='low'
- etot_conv_thr=0.0001
- forc_conv_thr=0.001
+ etot_conv_thr=5e-05
+ forc_conv_thr=0.0005
  input_xml_schema_file='CO_bgfs_relax.xml'
  iprint=100000
  max_seconds=10000000
- outdir='/scratch/pdelugas/espresso-xsd/tempdir'
+ nstep=50
+ outdir='./'
  prefix='CO'
- pseudo_dir='/scratch/pdelugas/espresso-xsd/pseudo'
+ pseudo_dir='./'
  restart_mode='from_scratch'
  title='CO bfgs relaxation'
  tprnfor=.false.
@@ -17,8 +18,8 @@
  wf_collect=.false.
 /
 &SYSTEM
- ecutrho=144.0
- ecutwfc=24.0
+ ecutrho=72.0
+ ecutwfc=12.0
  force_symmorphic=.false.
  ibrav=0
  input_dft='PZ'
@@ -32,14 +33,13 @@
  nspin=1
  ntyp=2
  occupations='fixed'
- spline_ps=.true.
  starting_magnetization(1)=0.0
  starting_magnetization(2)=0.0
  tot_charge=0.0
  use_all_frac=.false.
 /
 &ELECTRONS
- conv_thr=1e-07
+ conv_thr=5e-08
  diago_cg_maxiter=20
  diago_full_acc=.false.
  diago_thr_init=0.0
@@ -65,20 +65,20 @@
  w_2=0.5
 /
 &CELL
+ cell_dofree = 'all'
  cell_dynamics='none'
- cell_factor=0.0
  press=0.0
  press_conv_thr=0.5
- wmass=1822.888
+ wmass=0.0
 /
 ATOMIC_SPECIES
- O 1.0 O.pz-rrkjus.UPF
- C 1.0 C.pz-rrkjus.UPF
+ O 1.0 O.pbesol-n-kjpaw_psl.0.1.UPF
+ C 1.0 C.pbesol-n-kjpaw_psl.1.0.0.UPF
 ATOMIC_POSITIONS bohr
 C      0.18800000    0.00000000    0.00000000
 O      0.00000000    0.00000000    0.00000000    0   0   0
 K_POINTS gamma
 CELL_PARAMETERS bohr
-  1.00000000   0.00000000   0.00000000 
-  0.00000000   1.00000000   0.00000000 
-  0.00000000   0.00000000   1.00000000 
+ 10.00000000   0.00000000   0.00000000 
+  0.00000000  10.00000000   0.00000000 
+  0.00000000   0.00000000  10.00000000 
