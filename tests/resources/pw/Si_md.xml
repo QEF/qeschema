@@ -1,6 +1,6 @@
 <qes:espresso xmlns:qes="http://www.quantum-espresso.org/ns/qes/qes-1.0"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes-1.0 ../../../qeschema/schemas/qes.xsd">
+              xsi:schemaLocation="http://www.quantum-espresso.org/ns/qes/qes-1.0 qes_test_ref.xsd">
   <input>
     <control_variables>
       <title>Si_molecular_dynamics</title>

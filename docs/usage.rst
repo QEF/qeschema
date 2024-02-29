@@ -16,7 +16,7 @@ by qeschema.
    
    >>> import qeschema
    >>> doc = qeschema.PwDocument(schema='qes.xsd')
-   >>> doc.read('tests/resources/pw/Al001_relax_bfgs.xml')
+   >>> doc.read('tests/resources/pw/Si.xml')
    >>> pw_data = doc.to_dict()
    >>> control_variables = pw_data['qes:espresso']['input']['control_variables']
 

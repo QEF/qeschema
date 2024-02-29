@@ -48,7 +48,7 @@ Quantum ESPRESSO suite:
 
 .. code-block:: pycon
 
-    >>> pw_document.read("tests/examples/pw/Al001_relax_bfgs.xml")
+    >>> pw_document.read("tests/examples/pw/Si.xml")
 
 Loaded data can be decoded to Python data dictionary or written to JSON or YAML formats:
 

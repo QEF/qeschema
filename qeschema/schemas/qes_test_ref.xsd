@@ -5,12 +5,11 @@ This file is distributed under the terms of the MIT License. See the
 file 'LICENSE' in the root directory of the present distribution, or
 http://opensource.org/licenses/MIT.
 Authors: Antonio Zambon, Paolo Giannozzi, Pietro Delugas
-datecode 220603
+datecode 211101
 -->
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
 	xmlns:qes="http://www.quantum-espresso.org/ns/qes/qes-1.0"
-	targetNamespace="http://www.quantum-espresso.org/ns/qes/qes-1.0"
-        version= "230310">
+	targetNamespace="http://www.quantum-espresso.org/ns/qes/qes-1.0">
   <!-- ESPRESSO (root element) -->
   <element name="espresso" type="qes:espressoType" />
   <complexType name="espressoType">
@@ -67,9 +66,6 @@ datecode 220603
       <element type="qes:cell_controlType" name="cell_control"/>
       <element type="qes:symmetry_flagsType" name="symmetry_flags" minOccurs="0" />
       <element type="qes:boundary_conditionsType" name="boundary_conditions" minOccurs="0" />
-      <element type="qes:fcpType" name="fcp_settings" minOccurs="0" />
-      <element type="qes:rismType" name="rism_settings" minOccurs="0" />
-      <element type="qes:solventsType" name="solvents" minOccurs="0" maxOccurs="1"/>
       <element type="qes:ekin_functionalType" name="ekin_functional" minOccurs="0" />
       <element type="qes:matrixType" name="external_atomic_forces" minOccurs="0" />
       <element type="qes:integerMatrixType" name="free_positions" minOccurs="0" />
@@ -87,8 +83,8 @@ datecode 220603
       <element type="qes:total_energyType" name="total_energy"/>
       <element type="qes:matrixType" name="forces"/>
       <element type="qes:matrixType" name="stress" minOccurs="0" />
-      <element type="double"         name="fcp_force" minOccurs="0"/>
-      <element type="double"         name="fcp_tot_charge" minOccurs ="0"/>
+      <element type="double"         name="FCP_force" minOccurs="0"/>
+      <element type="double"         name="FCP_tot_charge" minOccurs ="0"/>
     </sequence>
     <attribute type="positiveInteger" name="n_step"/>
   </complexType>
@@ -109,10 +105,8 @@ datecode 220603
       <element type="qes:matrixType" name="forces" minOccurs="0"/>
       <element type="qes:matrixType" name="stress" minOccurs="0" />
       <element type="qes:outputElectricFieldType" name="electric_field" minOccurs="0" />
-      <element type="double"  name="fcp_force" minOccurs="0"/>
-      <element type="double"  name="fcp_tot_charge" minOccurs="0"/>
-      <element type="qes:rism3dType" name="rism3d" minOccurs="0" />
-      <element type="qes:rismlaueType" name="rismlaue" minOccurs="0" />
+      <element type="double"  name="FCP_force" minOccurs="0"/>
+      <element type="double"  name="FCP_tot_charge" minOccurs="0"/>
     </sequence>
   </complexType>
   <!-- Timing Info -->
@@ -150,8 +144,6 @@ datecode 220603
       <element type="double" name="press_conv_thr" default="5e-1"/>
       <element type="qes:lowhighType" name="verbosity" default="low"/>
       <element type="positiveInteger" name="print_every"/>
-       <element type="boolean" name="fcp"/>
-      <element type="boolean" name="rism"/>    
     </sequence>
   </complexType>
   <!-- COMMON TYPES -->
@@ -298,7 +290,6 @@ datecode 220603
     <pattern value="[vV][dD][wW]-[dD][fF]2-[cC]09"/>
     <pattern value="[vV][dD][wW]-[dD][fF]2-[bB]86[rR]"/>
     <pattern value="[rR][vV][vV]10"/>
-    <pattern value="[rR][sS][cC][aA][nN]"/>
     <pattern value="[bB][eE][eE][fF]"/>
     <pattern value="[sS][Cc][Aa][nN]"/> 
     <pattern value="[rR]2[sS][cC][aA][nN]"/> 
@@ -337,39 +328,25 @@ datecode 220603
   <complexType name="dftUType">
     <sequence>
       <element type="unsignedByte" name="lda_plus_u_kind" minOccurs="0"/>
-      <element type="qes:HubbardOccType" name="Hubbard_Occ" minOccurs="0" maxOccurs="unbounded"/>
       <element type="qes:HubbardCommonType" name="Hubbard_U" minOccurs="0" maxOccurs="unbounded"/>
       <element type="qes:HubbardCommonType" name="Hubbard_J0" minOccurs="0" maxOccurs="unbounded"/>
       <element type="qes:HubbardCommonType" name="Hubbard_alpha" minOccurs="0" maxOccurs="unbounded"/>
       <element type="qes:HubbardCommonType" name="Hubbard_beta" minOccurs="0" maxOccurs="unbounded"/>
       <element type="qes:HubbardJType" name="Hubbard_J" minOccurs="0" maxOccurs="unbounded"/>
       <element type="qes:starting_nsType" name="starting_ns" minOccurs="0" maxOccurs="unbounded"/>
-      <element type="qes:HubbardInterSpecieVType" name="Hubbard_V" minOccurs="0" maxOccurs="unbounded"/> 
       <element type="qes:Hubbard_nsType" name="Hubbard_ns" minOccurs="0" maxOccurs="unbounded"/>
       <element type="qes:HubbardProjType" name="U_projection_type" minOccurs="0"/>
       <element type="qes:HubbardBackType"  name="Hubbard_back"  minOccurs="0" maxOccurs="unbounded"/>
+      <element type="qes:HubbardCommonType" name="Hubbard_U_back" minOccurs="0" maxOccurs="unbounded"/>
       <element type="qes:HubbardCommonType" name="Hubbard_alpha_back" minOccurs="0" maxOccurs="unbounded"/>
       <element type="qes:Hubbard_nsType" name="Hubbard_ns_nc" minOccurs="0" maxOccurs="unbounded"/>
     </sequence>
-    <attribute type="boolean" name="new_format"/>
   </complexType>
   <complexType name="HubbardCommonType">
     <simpleContent>
       <extension base="double">
         <attribute type="string" name="specie"/>
         <attribute type="string" name="label" use="optional"/>
-      </extension>
-    </simpleContent>
-  </complexType>
-  <complexType name="HubbardInterSpecieVType">
-    <simpleContent>
-      <extension base="double">
-        <attribute type ="string" name="specie1" use="required"/>
-        <attribute type="integer" name="index1" use="required" />
-        <attribute type ="string" name="label1" />
-        <attribute type="string"  name="specie2" use="required"/>
-        <attribute type="integer" name="index2" use="required"/>  
-        <attribute type="string"  name="label2"/>
       </extension>
     </simpleContent>
   </complexType>
@@ -389,20 +366,6 @@ datecode 220603
         <attribute type="string" name="label"/>
       </extension>
     </simpleContent>
-  </complexType>
-  <complexType name="ChannelOccType">
-    <simpleContent>
-      <extension base="qes:HubbardCommonType">
-        <attribute type="integer" name="index" use="required" />
-      </extension>
-    </simpleContent>
-  </complexType>
-  <complexType name="HubbardOccType">
-    <sequence>
-      <element type="qes:ChannelOccType" name="channel_occ" minOccurs="1" maxOccurs="3"/>
-    </sequence>
-    <attribute type="positiveInteger" name="channels" use="required" />
-    <attribute type="string" name="specie" use="required"/> 
   </complexType>
   <complexType name="SitMagType">
     <simpleContent>
@@ -443,14 +406,9 @@ datecode 220603
   </simpleType>
   <complexType name="HubbardBackType">
     <sequence>
-      <element type="double" name="Hubbard_U2" minOccurs="1" maxOccurs="1" />
-      <element type="positiveInteger" name="n2_number" minOccurs="1" maxOccurs="1"/>
-      <element type="positiveInteger" name="l2_number" minOccurs="1" maxOccurs="1"/>
-      <element type="positiveInteger" name="n3_number" minOccurs="0" maxOccurs="1"/>
-      <element type="positiveInteger" name="l3_number" minOccurs="0" maxOccurs="1"/>
+      <element type="qes:backrestrType" name="background" minOccurs="1" maxOccurs="1"/>
+      <element type="qes:backLType" name="l_number" minOccurs="1" maxOccurs="unbounded"/>
     </sequence>
-    <attribute type="qes:backrestrType" name="background" use="required"/>
-    <attribute type='string' name="label"/> 
     <attribute type="string" name="species"/>
   </complexType>
   <simpleType name="backrestrType">
@@ -459,6 +417,13 @@ datecode 220603
       <enumeration value="one_orbital"/>
     </restriction>
   </simpleType>
+  <complexType name="backLType">
+    <simpleContent>
+      <extension base="nonNegativeInteger">
+      <attribute name="l_index" type="nonNegativeInteger"/>
+    </extension>
+    </simpleContent>
+  </complexType>
   <complexType name="vdWType">
     <sequence>
       <element type="string" name = "vdw_corr" minOccurs = "0"/>
@@ -523,6 +488,7 @@ datecode 220603
       <element type="qes:basisSetItemType" name="fft_grid" minOccurs="0" />
       <element type="qes:basisSetItemType" name="fft_smooth" minOccurs="0" />
       <element type="qes:basisSetItemType" name="fft_box" minOccurs="0" />
+      <element type="boolean" name="spline_ps" minOccurs="0" maxOccurs="1"/>
     </sequence>
   </complexType>
   <complexType name="basis_setType">
@@ -563,7 +529,6 @@ datecode 220603
       <element type="double" name="conv_thr"/>
       <element type="positiveInteger" name="mixing_ndim"/>
       <element type="positiveInteger" name="max_nstep"/>
-      <element type="positiveInteger" name="exx_nstep" minOccurs="0"/> 
       <element type="boolean" name="real_space_q" minOccurs="0" default="false" />
       <element type="boolean" name="real_space_beta" minOccurs="0" default ="false"/>
       <element type="boolean" name="tq_smoothing"/>
@@ -578,88 +543,6 @@ datecode 220603
       <element type=" boolean" name="diago_rmm_conv" minOccurs="0" default="false"/> 
     </sequence>
   </complexType>
-  <complexType name="fcpType">
-    <sequence>
-      <element type="double" name="fcp_mu" minOccurs="0"/>
-      <element type="string" name="fcp_dynamics" minOccurs="0"/>
-      <element type="double" name="fcp_conv_thr" minOccurs="0"/>
-      <element type="integer" name="fcp_ndiis" minOccurs="0"/>
-      <element type="double" name="fcp_rdiis" minOccurs="0"/>
-      <element type="double" name="fcp_mass" minOccurs="0"/>
-      <element type="double" name="fcp_velocity" minOccurs="0"/>
-      <element type="string" name="fcp_temperature" minOccurs="0"/>
-      <element type="double" name="fcp_tempw" minOccurs="0"/>
-      <element type="double" name="fcp_tolp" minOccurs="0"/>
-      <element type="double" name="fcp_delta_t" minOccurs="0"/>
-      <element type="integer" name="fcp_nraise" minOccurs="0"/>
-      <element type="boolean" name="freeze_all_atoms" minOccurs="0"/>
-    </sequence>
-  </complexType>
-  <complexType name="rismType">
-    <sequence>
-      <element type="integer" name="nsolv" minOccurs="1"/>
-      <element type="qes:soluteType"   name="solute" minOccurs="1" maxOccurs="unbounded" />
-      <element type="string"  name="closure" minOccurs="0"/>
-      <element type="double"  name="tempv" minOccurs="0"/>
-      <element type="double"  name="ecutsolv" minOccurs="0"/>
-      <element type="double"  name="rmax_lj" minOccurs="0"/>
-      <element type="double"  name="rmax1d" minOccurs="0"/>
-      <element type="string"  name="starting1d" minOccurs="0"/>
-      <element type="string"  name="starting3d" minOccurs="0"/>
-      <element type="double"  name="smear1d" minOccurs="0"/>
-      <element type="double"  name="smear3d" minOccurs="0"/>
-      <element type="integer" name="rism1d_maxstep" minOccurs="0"/>
-      <element type="integer" name="rism3d_maxstep" minOccurs="0"/>
-      <element type="double"  name="rism1d_conv_thr" minOccurs="0"/>
-      <element type="double"  name="rism3d_conv_thr" minOccurs="0"/>
-      <element type="integer" name="mdiis1d_size" minOccurs="0"/>
-      <element type="integer" name="mdiis3d_size" minOccurs="0"/>
-      <element type="double"  name="mdiis1d_step" minOccurs="0"/>
-      <element type="double"  name="mdiis3d_step" minOccurs="0"/>
-      <element type="double"  name="rism1d_bond_width" minOccurs="0"/>
-      <element type="double"  name="rism1d_dielectric" minOccurs="0"/>
-      <element type="double"  name="rism1d_molesize" minOccurs="0"/>
-      <element type="integer" name="rism1d_nproc" minOccurs="0"/>
-      <element type="integer" name="rism1d_nproc_switch" minOccurs="0"/>
-      <element type="double"  name="rism3d_conv_level" minOccurs="0"/>
-      <element type="boolean" name="rism3d_planar_average" minOccurs="0"/>
-      <element type="integer" name="laue_nfit" minOccurs="0"/>
-      <element type="double"  name="laue_expand_right" minOccurs="0"/>
-      <element type="double"  name="laue_expand_left" minOccurs="0"/>
-      <element type="double"  name="laue_starting_right" minOccurs="0"/>
-      <element type="double"  name="laue_starting_left" minOccurs="0"/>
-      <element type="double"  name="laue_buffer_right" minOccurs="0"/>
-      <element type="double"  name="laue_buffer_right_solu" minOccurs="0"/>
-      <element type="double"  name="laue_buffer_right_solv" minOccurs="0"/>
-      <element type="double"  name="laue_buffer_left" minOccurs="0"/>
-      <element type="double"  name="laue_buffer_left_solu" minOccurs="0"/>
-      <element type="double"  name="laue_buffer_left_solv" minOccurs="0"/>
-      <element type="boolean" name="laue_both_hands" minOccurs="0"/>
-      <element type="string"  name="laue_reference" minOccurs="0"/>
-      <element type="string"  name="laue_wall" minOccurs="0"/>
-      <element type="double"  name="laue_wall_z" minOccurs="0"/>
-      <element type="double"  name="laue_wall_rho" minOccurs="0"/>
-      <element type="double"  name="laue_wall_epsilon" minOccurs="0"/>
-      <element type="double"  name="laue_wall_sigma" minOccurs="0"/>
-      <element type="boolean" name="laue_wall_lj6" minOccurs="0"/>
-    </sequence>
-  </complexType>
-  <complexType name="soluteType">
-    <sequence>
-      <element type="string" name="solute_lj" minOccurs="1"/>
-      <element type="double" name="epsilon" minOccurs="1"/>
-      <element type="double" name="sigma" minOccurs="1"/>
-    </sequence>
-  </complexType>
-  <complexType name="solventType">
-    <sequence>
-      <element type="string" name="label" minOccurs="1"/>
-      <element type="string" name="molec_file" minOccurs="1"/>
-      <element type="double" name="density1" minOccurs="1"/>
-      <element type="double" name="density2" minOccurs="0"/>
-      <element type="string" name="unit" minOccurs="0"/>
-    </sequence>
-  </complexType>
   <simpleType name="mixingModeType">
     <restriction base="string">
       <enumeration value="plain"/>
@@ -669,11 +552,11 @@ datecode 220603
   </simpleType>
   <simpleType name="diagoType">
     <restriction base="string">
-    <pattern value="davidson"/>
-    <pattern value="cg"/>
-    <pattern value="ppcg"/>
-    <pattern value="paro"/>
-    <pattern value="\s*rmm(-davidson|-paro)\s*"/>
+    <enumeration value="davidson"/>
+    <enumeration value="cg"/>
+    <enumeration value="ppcg"/>
+    <enumeration value="paro"/>
+    <enumeration value="rmm(-davidson){0,1}(-paro){01}"/>
     </restriction>
   </simpleType>
   <complexType name="k_points_IBZType">
@@ -757,16 +640,16 @@ datecode 220603
   </complexType>
   <simpleType name="celldofreeType">
     <restriction base="string">
-      <pattern value="\s*all\s*"/>
-      <pattern value="\s*ibrav(\+all)\s*"/>
-      <pattern value="\s*(ibrav\+){0,1}[xyz]\s*"/>
-      <pattern value="\s*(ibrav\+){0,1}x[yz]\s*"/>
-      <pattern value="\s*(ibrav\+)xyz\s*"/>
-      <pattern value="\s*(ibrav\+){0,1}shape\s*"/>
-      <pattern value="\s*(ibrav\+){0,1}volume\s*"/>
-      <pattern value="\s*(ibrav\+){0,1}2Dxy\s*"/> 
-      <pattern value="\s*(ibrav\+){0,1}2DShape\s*"/>
-      <pattern value="\s*(ibrav\+){0,1}epitaxial_[ab][bc]\s*"/>
+      <pattern value="all"/>
+      <pattern value="ibrav(\+all)"/>
+      <pattern value="(ibrav\+){0,1}[xyz]"/>
+      <pattern value="(ibrav\+){0,1}x[yz]"/>
+      <pattern value="(ibrav\+)xyz"/>
+      <pattern value="(ibrav\+){0,1}shape"/>
+      <pattern value="(ibrav\+){0,1}volume"/>
+      <pattern value="(ibrav\+){0,1}2Dxy"/> 
+      <pattern value="(ibrav\+){0,1}2DShape"/>
+      <pattern value="(ibrav\+){0,1}epitaxial_[ab][bc]"/>
     </restriction>
   </simpleType>
   <complexType name="symmetry_flagsType">
@@ -783,34 +666,16 @@ datecode 220603
     <sequence>
       <element type="string" name="assume_isolated"/>
       <element type="qes:esmType" name="esm" minOccurs = "0"/>
-      <element type="qes:gcscfType" name="gcscf" minOccurs = "0"/>
+      <element type="boolean"     name="fcp_opt" minOccurs = "0"/>
+      <element type="double" name="fcp_mu" minOccurs ="0" />
     </sequence>
   </complexType>
   <complexType name="esmType">
     <sequence>
       <element type="string" name="bc"/>
-      <element type="positiveInteger" name="nfit" minOccurs = "0"/>
-      <element type="double" name="w" minOccurs = "0"/>
-      <element type="double" name="efield" minOccurs = "0"/>
-      <element type="double" name="a" minOccurs = "0"/>
-      <element type="double" name="zb" minOccurs = "0"/>
-      <element type="boolean" name="debug" minOccurs = "0"/>
-      <element type="integer" name="debug_gpmax" minOccurs = "0"/>
-    </sequence>
-  </complexType>
-  <complexType name="gcscfType">
-    <sequence>
-      <element type="boolean" name="ignore_mun" minOccurs = "0"/>
-      <element type="double" name="mu" minOccurs = "0"/>
-      <element type="double" name="conv_thr" minOccurs = "0"/>
-      <element type="double" name="gk" minOccurs = "0"/>
-      <element type="double" name="gh" minOccurs = "0"/>
-      <element type="double" name="beta" minOccurs = "0"/>
-    </sequence>
-  </complexType>
-  <complexType name="solventsType">
-    <sequence>
-      <element type="qes:solventType"  name="solvent" minOccurs="1" maxOccurs="unbounded" />
+      <element type="positiveInteger" name="nfit"/>
+      <element type="double" name="w"/>
+      <element type="double" name="efield"/>
     </sequence>
   </complexType>
   <complexType name="ekin_functionalType">
@@ -871,7 +736,7 @@ datecode 220603
      <sequence>
         <element type="qes:constr_parms_listType" name="constr_parms" />
         <element type="qes:constr_typeType" name="constr_type"/>
-        <element type="double"  name="constr_target" minOccurs="0"/>
+        <element type="double"  name="constr_target" />
      </sequence>
   </complexType>
   <simpleType name="constr_parms_listType">
@@ -879,8 +744,7 @@ datecode 220603
        <simpleType>
          <list itemType="double"/>
        </simpleType>
-       <minLength value="2"/>
-       <maxLength value="4"/> 
+       <length value="4"/>
     </restriction>
   </simpleType>
 
@@ -892,7 +756,6 @@ datecode 220603
         <enumeration value="planar_angle"/>
         <enumeration value="torsional_angle"/>
         <enumeration value="bennet_proj"/>
-	<enumeration value="potential_wall"/> 
      </restriction>
   </simpleType>
 
@@ -1085,8 +948,6 @@ datecode 220603
       <element type="double" name="potentiostat_contr" minOccurs="0"/>
       <element type="double" name="gatefield_contr" minOccurs="0"/>
       <element type="double" name="vdW_term" minOccurs="0"/>
-      <element type="double" name="esol" minOccurs="0"/>
-      <element type="double" name="levelshift_contr" minOccurs="0"/>
     </sequence>
   </complexType>
   <complexType name="band_structureType">
@@ -1334,34 +1195,8 @@ datecode 220603
     <simpleContent>
       <extension base="double">
         <attribute type="string" name="Units"/>
-        <!--attribute type="string" name="UNITS"/-->
+        <attribute type="string" name="UNITS"/>
       </extension>
     </simpleContent>
   </complexType>
-   <complexType name="rism3dType">
-    <sequence>
-      <element type="integer" name="nmol" minOccurs="1"/>
-      <element type="string" name="molec_dir" minOccurs="0"/>
-      <element type="qes:solventType" name="solvent" minOccurs="1" maxOccurs="unbounded"/>
-      <element type="double" name="ecutsolv" minOccurs="1"/>
-    </sequence>
-  </complexType>
-  <complexType name="rismlaueType">
-    <sequence>
-      <element type="boolean" name="both_hands"  minOccurs="0"/>
-      <element type="integer" name="nfit"  minOccurs="0"/>
-      <element type="integer" name="pot_ref"  minOccurs="0"/>
-      <element type="double"  name="charge"  minOccurs="0"/>
-      <element type="double"  name="right_start"  minOccurs="0"/>
-      <element type="double"  name="right_expand"  minOccurs="0"/>
-      <element type="double"  name="right_buffer"  minOccurs="0"/>
-      <element type="double"  name="right_buffer_u"  minOccurs="0"/>
-      <element type="double"  name="right_buffer_v"  minOccurs="0"/>
-      <element type="double"  name="left_start"  minOccurs="0"/>
-      <element type="double"  name="left_expand"  minOccurs="0"/>
-      <element type="double"  name="left_buffer"  minOccurs="0"/>
-      <element type="double"  name="left_buffer_u"  minOccurs="0"/>
-      <element type="double"  name="left_buffer_v"  minOccurs="0"/>
-    </sequence>
-  </complexType> 
 </schema>

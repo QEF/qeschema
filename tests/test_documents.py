@@ -116,7 +116,7 @@ class TestDocuments(unittest.TestCase):
             self.assertEqual(document.filename, source)
         else:
             self.assertTrue(document.filename.endswith('Al001_rlx_damp.xml'))
-        self.assertTrue(document.schema.url.endswith("qeschema/schemas/qes.xsd"))
+        self.assertTrue(document.schema.url.endswith("qeschema/schemas/qes_test_ref.xsd"))
 
     def test_phonon_document_init(self):
         schema = os.path.join(self.schemas_dir, 'ph_temp.xsd')
@@ -149,7 +149,7 @@ class TestDocuments(unittest.TestCase):
             self.assertEqual(document.filename, xml_file)
         else:
             self.assertTrue(document.filename.endswith('CO_bgfs_relax.xml'))
-        self.assertTrue(document.schema.url.endswith("qeschema/schemas/qes.xsd"))
+        self.assertTrue(document.schema.url.endswith("qes_230310.xsd"))
 
     def test_init_with_schema_only(self):
         schema = os.path.join(self.schemas_dir, 'qes.xsd')
@@ -216,7 +216,7 @@ class TestDocuments(unittest.TestCase):
         with self.assertRaises(XmlDocumentError):
             document.get_fortran_input()
 
-        schema = os.path.join(self.schemas_dir, 'qes.xsd')
+        schema = os.path.join(self.schemas_dir, 'qes_test_ref.xsd')
         document = TdSpectrumDocument(schema=schema)
         document.read(os.path.join(self.test_dir, 'resources/pw/Al001_relax_bfgs.xml'))
 
@@ -631,7 +631,7 @@ class TestDocuments(unittest.TestCase):
 
     def test_neb_document(self):
         xml_filename = os.path.join(self.test_dir, 'resources/neb/Al001_plus_H_bc3.xml')
-        document = NebDocument()
+        document = NebDocument(schema='qes_neb_test_ref.xsd') 
 
         document.read(xml_filename)
         self.assertTrue(hasattr(document.root, 'tag'))
@@ -683,7 +683,7 @@ class TestDocuments(unittest.TestCase):
 
     def test_fortran_input_generator(self):
         xml_filename = os.path.join(self.test_dir, 'resources/pw/Al001_relax_bfgs.xml')
-        document = PwDocument()
+        document = PwDocument(schema='qes_test_ref.xsd')
         document.read(xml_filename)
 
         self.assertFalse(os.path.isfile(self.output_file))
@@ -734,10 +734,12 @@ class TestDocuments(unittest.TestCase):
         stress = document.get_stress()
         self.assertListEqual(
             stress,
-            [[-1.825058728527109e-06, 1.058791184067875e-22, -1.058791184067875e-22],
-             [1.058791184067875e-22, -1.825058728527109e-06, 0.0],
-             [-1.058791184067875e-22, 1.058791184067875e-22, -1.825058728527109e-06]]
-        )
+            [
+                [0.0001200028001026682, -3.388131789017201e-20, 1.355252715606881e-20],
+                [-3.388131789017201e-20, 0.0001200028001026682, -1.355252715606881e-20],
+                [6.776263578034403e-21, -6.776263578034403e-21, 0.0001200028001026683]
+                ]
+            )
 
 
 if __name__ == '__main__':
