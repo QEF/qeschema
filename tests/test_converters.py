@@ -102,7 +102,7 @@ class ConverterTestCase(unittest.TestCase):
             os.remove(in_filename)
 
         if platform.system() == 'Windows':
-            os.system("python %s -in %s" % (py_filename, xml_filename))
+            os.system("python %s -schema qes_test_ref.xsd -in %s" % (py_filename, xml_filename))
             self.assertTrue('Al001_relax_bfgs.in' in os.listdir(os.path.dirname(xml_filename)))
         else:
             if platform.system() == 'Linux':
