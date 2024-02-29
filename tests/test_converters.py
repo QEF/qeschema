@@ -106,9 +106,9 @@ class ConverterTestCase(unittest.TestCase):
             self.assertTrue('Al001_relax_bfgs.in' in os.listdir(os.path.dirname(xml_filename)))
         else:
             if platform.system() == 'Linux':
-                command = 'python %s -in %s 1> /dev/null 2> /dev/null'
+                command = 'python %s -schema qes_test_ref.xsd -in %s 1> /dev/null 2> /dev/null'
             else:
-                command = 'python3 %s -in %s 1> /dev/null 2> /dev/null'
+                command = 'python3 %s -schema qes_test_ref.xsd -in %s 1> /dev/null 2> /dev/null'
 
             os.system(command % (py_filename, xml_filename))
             self.assertTrue(os.path.isfile(in_filename),
