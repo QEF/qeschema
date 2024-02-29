@@ -25,6 +25,9 @@ def parse_args():
     parser.add_argument("-v", "--verbosity", action="count", default=1,
                         help="Increase output verbosity.")
     parser.add_argument('-in', metavar='FILE', required=True, help="YAML input filename.")
+    parser.add_argument('-schema', metavar='FILE', required=False,
+                        help="Specify XSD schema in input", default=None)
+
     return parser.parse_args()
 
 
@@ -48,6 +51,7 @@ if __name__ == '__main__':
     qeschema.set_logger(args.verbosity)
 
     input_fn = getattr(args, 'in')
+    schema_fn = getattr(args, 'schema', None)  
 
     with open(input_fn) as f:
         data = yaml.load(f, Loader=yaml.Loader)
@@ -55,15 +59,15 @@ if __name__ == '__main__':
     for key in data:
         element_name = key.split('}')[-1]
         if element_name == 'espresso':
-            xml_document = qeschema.PwDocument()
+            xml_document = qeschema.PwDocument(schema=schema_fn)
         elif element_name == 'nebRun':
-            xml_document = qeschema.NebDocument()
+            xml_document = qeschema.NebDocument(schema=schema_fn)
         elif element_name == 'espressoph':
-            xml_document = qeschema.PhononDocument()
+            xml_document = qeschema.PhononDocument(schema=schema_fn)
         elif element_name == 'tddfpt':
-            xml_document = qeschema.TdDocument()
+            xml_document = qeschema.TdDocument(schema=schema_fn)
         elif element_name == 'spectrumDoc':
-            xml_document = qeschema.TdSpectrumDocument()
+            xml_document = qeschema.TdSpectrumDocument(schema=schema_fn)
         else:
             continue
         break
